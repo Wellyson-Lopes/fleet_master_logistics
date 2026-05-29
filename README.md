@@ -126,4 +126,5 @@ O ecossistema é coberto por testes robustos seguindo as práticas de BDD. A cob
 ---
 
 ### 📄 Licença
-Este projeto é de propriedade intelectual fechada e exclusivo da plataforma **FleetMaster Logistics**. Todos os direitos reservados.
+Este projeto é open-source e está licenciado sob os termos da [Licença MIT](LICENSE). Sinta-se livre para clonar, modificar, distribuir e contribuir com a plataforma!
+

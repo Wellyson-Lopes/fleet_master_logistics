@@ -1,0 +1,94 @@
+# --------------------------------------------------------------------------------------------------
+# FleetMaster Development Multi-Container Environment (Baseado em RubyFlow 🚀)
+# --------------------------------------------------------------------------------------------------
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: fleetmaster_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - fleetmaster_net
+
+  db:
+    image: postgres:16-alpine
+    container_name: fleetmaster_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-fleet_master_development}
+      TERM: xterm-256color
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - fleetmaster_net
+
+  web:
+    build: .
+    container_name: fleetmaster_web
+    stdin_open: true
+    tty: true
+    entrypoint: config/setup.sh
+    command: bash -c "bin/rails tailwindcss:watch & bundle exec rails s -b 0.0.0.0 -p 3000"
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - ./.env.development
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-fleet_master_development}
+    networks:
+      - fleetmaster_net
+
+  worker:
+    build:
+      context: .
+      dockerfile: ./worker/Dockerfile
+    container_name: fleetmaster_worker
+    env_file:
+      - ./.env.development
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-fleet_master_development}
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    networks:
+      - fleetmaster_net
+
+  test:
+    build: .
+    container_name: fleetmaster_test
+    entrypoint: config/setup.sh
+    command: bundle exec rspec
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - ./.env.test
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/fleet_master_test
+    networks:
+      - fleetmaster_net
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  fleetmaster_net:
+    driver: bridge

@@ -1,0 +1,112 @@
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: fleetmaster_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: fleet_master_development
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fleetmaster_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: fleetmaster_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - fleetmaster_net
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      args:
+        RUBY_VERSION: 3.4.9
+    container_name: fleetmaster_app
+    command: ./bin/rails server -b 0.0.0.0
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/fleet_master_development
+      REDIS_URL: redis://redis:6379/1
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - fleetmaster_net
+
+  solid_queue:
+    build:
+      context: .
+      args:
+        RUBY_VERSION: 3.4.9
+    container_name: fleetmaster_solid_queue
+    command: ./bin/rails solid_queue:start
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/fleet_master_development
+      REDIS_URL: redis://redis:6379/1
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - fleetmaster_net
+
+  sidekiq:
+    build:
+      context: .
+      args:
+        RUBY_VERSION: 3.4.9
+    container_name: fleetmaster_sidekiq
+    command: bundle exec sidekiq
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/fleet_master_development
+      REDIS_URL: redis://redis:6379/1
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - fleetmaster_net
+
+volumes:
+  postgres_data:
+  redis_data:
+  bundle_cache:
+
+networks:
+  fleetmaster_net:
+    driver: bridge

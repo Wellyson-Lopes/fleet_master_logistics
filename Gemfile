@@ -28,6 +28,11 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 
+# Background processing and key-value store support
+gem "redis", "~> 5.0"
+gem "sidekiq", "~> 7.2"
+
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 

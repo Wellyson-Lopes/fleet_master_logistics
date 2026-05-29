@@ -2,4 +2,3 @@
 
 pin "application"
 pin "flowbite", to: "flowbite.turbo.js"
-

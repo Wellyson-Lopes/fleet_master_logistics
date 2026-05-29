@@ -27,31 +27,6 @@ O FleetMaster foi planejado como um ecossistema integrado que une facilidade de 
 
 ---
 
-## 💎 Modelo SaaS e Planos de Assinatura
-
-Qualquer distribuidora no Brasil pode realizar o cadastro na Landing Page, escolher um plano de assinatura e começar a gerenciar sua logística em minutos. O onboarding conta com **14 dias de teste gratuito (Trial)**.
-
-### 📊 Comparador de Planos
-
-| Recurso / Limite | Starter (R$ 197/mês) | Professional (R$ 397/mês) ⭐️ | Enterprise (R$ 797/mês) |
-| :--- | :---: | :---: | :---: |
-| **Preço Anual (20% off)** | R$ 157/mês | R$ 317/mês | R$ 637/mês |
-| **Funcionários (Web)** | Até 3 | Até 10 | Ilimitados |
-| **Motoristas (App)** | Até 5 | Até 20 | Ilimitados |
-| **Caminhões na Frota** | Até 5 | Até 20 | Ilimitados |
-| **Dashboards & Viagens** | Incluído | Incluído | Incluído |
-| **Relatórios (PDF/Excel)**| Incluído | Incluído | Incluído |
-| **Alertas (CNH, Seguro)** | Incluído | Incluído | Incluído |
-| **Controle de Abastecimento** | Incluído | Incluído | Incluído |
-| **Personalização de Logo**| Incluído | Incluído | Incluído |
-| **IA Gemini (OCR)** | Não disponível | **Habilitado** | **Habilitado** |
-| **Suporte** | E-mail | WhatsApp + E-mail | WhatsApp Dedicado + E-mail |
-
-> [!IMPORTANT]
-> **Controle de Limites**: O sistema possui o serviço `PlanLimitService` que valida os limites em tempo real. Ao atingir o teto de cadastro de funcionários, motoristas ou caminhões do plano, o sistema bloqueia novos registros e exibe um modal ou tooltip direcionando o usuário para o upgrade de assinatura.
-
----
-
 ## 🛡️ Arquitetura Multi-Tenant e Segurança
 
 O isolamento lógico de dados é o coração do SaaS do FleetMaster. Todas as tabelas operacionais utilizam **UUID** como chave primária e possuem a coluna `company_id` como chave estrangeira obrigatória.

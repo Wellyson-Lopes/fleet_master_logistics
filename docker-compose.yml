@@ -9,7 +9,8 @@
 #    O serviço `sidekiq` permanecerá inativo (dormant) por não receber jobs.
 #
 # 2. Usar Sidekiq (Redis-backed):
-#    Suba especificando o adaptador: `QUEUE_ADAPTER=sidekiq docker compose up`
+#    Suba especificando o adaptador no seu arquivo `.env` ou via comando:
+#    `QUEUE_ADAPTER=sidekiq docker compose up`
 #    (Opcional): Você pode parar o container `solid_queue` se preferir para economizar recursos:
 #    `QUEUE_ADAPTER=sidekiq docker compose up --scale solid_queue=0`
 # --------------------------------------------------------------------------------------------------
@@ -19,9 +20,9 @@ services:
     image: postgres:16-alpine
     container_name: fleetmaster_db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: fleet_master_development
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-fleet_master_development}
     ports:
       - "5432:5432"
     volumes:
@@ -29,7 +30,7 @@ services:
     networks:
       - fleetmaster_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -58,7 +59,7 @@ services:
     command: ./bin/rails server -b 0.0.0.0
     environment:
       RAILS_ENV: development
-      DATABASE_URL: postgres://postgres:password@db:5432/fleet_master_development
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-fleet_master_development}
       REDIS_URL: redis://redis:6379/1
       QUEUE_ADAPTER: ${QUEUE_ADAPTER:-solid_queue} # Define o backend ActiveJob (solid_queue ou sidekiq)
     volumes:
@@ -83,7 +84,7 @@ services:
     command: ./bin/rails solid_queue:start
     environment:
       RAILS_ENV: development
-      DATABASE_URL: postgres://postgres:password@db:5432/fleet_master_development
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-fleet_master_development}
       REDIS_URL: redis://redis:6379/1
       QUEUE_ADAPTER: solid_queue # Trava este container de worker no Solid Queue
     volumes:
@@ -106,7 +107,7 @@ services:
     command: bundle exec sidekiq
     environment:
       RAILS_ENV: development
-      DATABASE_URL: postgres://postgres:password@db:5432/fleet_master_development
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-fleet_master_development}
       REDIS_URL: redis://redis:6379/1
       QUEUE_ADAPTER: sidekiq # Trava este container de worker no Sidekiq
     volumes:

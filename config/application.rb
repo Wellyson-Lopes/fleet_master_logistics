@@ -1,6 +1,8 @@
-require_relative "boot"
+# frozen_string_literal: true
 
-require "rails/all"
+require_relative 'boot'
+
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -12,8 +14,7 @@ module FleetMasterLogistics
     config.load_defaults 8.0
 
     # Use dynamic queue adapter for ActiveJob, defaulting to solid_queue
-    config.active_job.queue_adapter = ENV.fetch("QUEUE_ADAPTER", "solid_queue").to_sym
-
+    config.active_job.queue_adapter = ENV.fetch('QUEUE_ADAPTER', 'solid_queue').to_sym
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.

@@ -1,3 +1,18 @@
+# --------------------------------------------------------------------------------------------------
+# FleetMaster Development Multi-Container Environment
+#
+# COMO ESCOLHER O ADAPTADOR DE FILAS (QUEUE_ADAPTER):
+#
+# 1. Usar Solid Queue (Padrão):
+#    Apenas suba normalmente: `docker compose up`
+#    O app irá enfileirar no Postgres e o serviço `solid_queue` processará os jobs.
+#    O serviço `sidekiq` permanecerá inativo (dormant) por não receber jobs.
+#
+# 2. Usar Sidekiq (Redis-backed):
+#    Suba especificando o adaptador: `QUEUE_ADAPTER=sidekiq docker compose up`
+#    (Opcional): Você pode parar o container `solid_queue` se preferir para economizar recursos:
+#    `QUEUE_ADAPTER=sidekiq docker compose up --scale solid_queue=0`
+# --------------------------------------------------------------------------------------------------
 
 services:
   db:
@@ -45,6 +60,7 @@ services:
       RAILS_ENV: development
       DATABASE_URL: postgres://postgres:password@db:5432/fleet_master_development
       REDIS_URL: redis://redis:6379/1
+      QUEUE_ADAPTER: ${QUEUE_ADAPTER:-solid_queue} # Define o backend ActiveJob (solid_queue ou sidekiq)
     volumes:
       - .:/rails
       - bundle_cache:/usr/local/bundle
@@ -69,6 +85,7 @@ services:
       RAILS_ENV: development
       DATABASE_URL: postgres://postgres:password@db:5432/fleet_master_development
       REDIS_URL: redis://redis:6379/1
+      QUEUE_ADAPTER: solid_queue # Trava este container de worker no Solid Queue
     volumes:
       - .:/rails
       - bundle_cache:/usr/local/bundle
@@ -91,6 +108,7 @@ services:
       RAILS_ENV: development
       DATABASE_URL: postgres://postgres:password@db:5432/fleet_master_development
       REDIS_URL: redis://redis:6379/1
+      QUEUE_ADAPTER: sidekiq # Trava este container de worker no Sidekiq
     volumes:
       - .:/rails
       - bundle_cache:/usr/local/bundle

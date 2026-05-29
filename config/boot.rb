@@ -7,11 +7,18 @@ require "bootsnap/setup" # Speed up boot time by caching expensive operations.
 
 # Auto-detect if running outside Docker (on host machine) and resolve service hosts dynamically [SC-15]
 unless File.exist?("/.dockerenv") || ENV["DOCKERIZED"] == "true"
+  require "uri"
+
   # 1. Resolve PostgreSQL Database host
   if ENV["DATABASE_URL"]
-    ENV["DATABASE_URL"] = ENV["DATABASE_URL"]
-      .gsub("@db:", "@localhost:")
-      .gsub("@db/", "@localhost/")
+    begin
+      uri = URI.parse(ENV["DATABASE_URL"])
+      if uri.host == "db"
+        uri.host = "localhost"
+        ENV["DATABASE_URL"] = uri.to_s
+      end
+    rescue URI::InvalidURIError
+    end
   end
 
   if ENV["POSTGRES_HOST"] == "db"
@@ -20,8 +27,13 @@ unless File.exist?("/.dockerenv") || ENV["DOCKERIZED"] == "true"
 
   # 2. Resolve Redis host
   if ENV["REDIS_URL"]
-    ENV["REDIS_URL"] = ENV["REDIS_URL"]
-      .gsub("//redis:", "//localhost:")
-      .gsub("//redis/", "//localhost/")
+    begin
+      uri = URI.parse(ENV["REDIS_URL"])
+      if uri.host == "redis"
+        uri.host = "localhost"
+        ENV["REDIS_URL"] = uri.to_s
+      end
+    rescue URI::InvalidURIError
+    end
   end
 end

@@ -1,140 +1,86 @@
 # --------------------------------------------------------------------------------------------------
-# FleetMaster Development Multi-Container Environment
-#
-# COMO ESCOLHER O ADAPTADOR DE FILAS (QUEUE_ADAPTER):
-#
-# 1. Usar Solid Queue (Padrão):
-#    Apenas suba normalmente: `docker compose up`
-#    O app irá enfileirar no Postgres e o serviço `solid_queue` processará os jobs.
-#    O serviço `sidekiq` permanecerá inativo (dormant) por não receber jobs.
-#
-# 2. Usar Sidekiq (Redis-backed):
-#    Suba especificando o adaptador no seu arquivo `.env` ou via comando:
-#    `QUEUE_ADAPTER=sidekiq docker compose up`
-#    (Opcional): Você pode parar o container `solid_queue` se preferir para economizar recursos:
-#    `QUEUE_ADAPTER=sidekiq docker compose up --scale solid_queue=0`
-#
-# CONFLITOS DE PORTA COM BANCO DE DADOS LOCAL (POSTGRESQL):
-#
-# Se você já tiver uma instância local do PostgreSQL rodando em sua máquina e ocupando a porta 5432,
-# o Docker falhará em subir o container 'db' ("address already in use").
-# Para corrigir isso sem parar seu banco de dados local:
-# 1. Altere a porta exposta no seu arquivo `.env`: `POSTGRES_PORT=5433` (ou qualquer porta livre)
-# 2. Suba os containers novamente: `docker compose up`
-# A rede interna do Docker continuará se comunicando perfeitamente pela porta 5432 e sua aplicação
-# funcionará sem nenhuma necessidade de alteração de código!
+# FleetMaster Development Multi-Container Environment (Baseado em RubyFlow 🚀)
 # --------------------------------------------------------------------------------------------------
 
 services:
-  db:
-    image: postgres:16-alpine
-    container_name: fleetmaster_db
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_DB: ${POSTGRES_DB:-fleet_master_development}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - fleetmaster_net
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   redis:
     image: redis:7-alpine
     container_name: fleetmaster_redis
+    restart: always
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
       - fleetmaster_net
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  app:
-    build:
-      context: .
-      args:
-        RUBY_VERSION: 3.4.9
-    container_name: fleetmaster_app
-    command: ./bin/rails server -b 0.0.0.0
+  db:
+    image: postgres:15.7-alpine
+    container_name: fleetmaster_db
+    restart: always
     environment:
-      RAILS_ENV: development
-      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-fleet_master_development}
-      REDIS_URL: redis://redis:6379/1
-      QUEUE_ADAPTER: ${QUEUE_ADAPTER:-solid_queue} # Define o backend ActiveJob (solid_queue ou sidekiq)
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-fleet_master_development}
+      TERM: xterm-256color
     volumes:
-      - .:/rails
-      - bundle_cache:/usr/local/bundle
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - fleetmaster_net
+
+  web:
+    build: .
+    container_name: fleetmaster_web
+    stdin_open: true
+    tty: true
+    entrypoint: config/setup.sh
+    command: bash -c "bin/rails tailwindcss:watch & bundle exec rails s -b 0.0.0.0 -p 3000"
+    volumes:
+      - .:/app
     ports:
       - "3000:3000"
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
+    env_file:
+      - ./.env.development
     networks:
       - fleetmaster_net
 
-  solid_queue:
+  worker:
     build:
       context: .
-      args:
-        RUBY_VERSION: 3.4.9
-    container_name: fleetmaster_solid_queue
-    command: ./bin/rails solid_queue:start
-    environment:
-      RAILS_ENV: development
-      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-fleet_master_development}
-      REDIS_URL: redis://redis:6379/1
-      QUEUE_ADAPTER: solid_queue # Trava este container de worker no Solid Queue
+      dockerfile: ./worker/Dockerfile
+    container_name: fleetmaster_worker
+    env_file:
+      - ./.env.development
     volumes:
-      - .:/rails
-      - bundle_cache:/usr/local/bundle
+      - .:/app
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
     networks:
       - fleetmaster_net
 
-  sidekiq:
-    build:
-      context: .
-      args:
-        RUBY_VERSION: 3.4.9
-    container_name: fleetmaster_sidekiq
-    command: bundle exec sidekiq
-    environment:
-      RAILS_ENV: development
-      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-fleet_master_development}
-      REDIS_URL: redis://redis:6379/1
-      QUEUE_ADAPTER: sidekiq # Trava este container de worker no Sidekiq
+  test:
+    build: .
+    container_name: fleetmaster_test
+    command: bash -c "RAILS_ENV=test bundle exec rails db:prepare && bundle exec rspec"
     volumes:
-      - .:/rails
-      - bundle_cache:/usr/local/bundle
+      - .:/app
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
+    env_file:
+      - ./.env.test
     networks:
       - fleetmaster_net
 
 volumes:
   postgres_data:
   redis_data:
-  bundle_cache:
 
 networks:
   fleetmaster_net:

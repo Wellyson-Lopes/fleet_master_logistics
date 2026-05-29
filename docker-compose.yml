@@ -15,7 +15,7 @@ services:
       - fleetmaster_net
 
   db:
-    image: postgres:15.7-alpine
+    image: postgres:16-alpine
     container_name: fleetmaster_db
     restart: always
     environment:
@@ -26,7 +26,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "5433:5432"
     networks:
       - fleetmaster_net
 
@@ -46,6 +46,8 @@ services:
       - redis
     env_file:
       - ./.env.development
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-fleet_master_development}
     networks:
       - fleetmaster_net
 
@@ -56,6 +58,8 @@ services:
     container_name: fleetmaster_worker
     env_file:
       - ./.env.development
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-fleet_master_development}
     volumes:
       - .:/app
     depends_on:
@@ -67,7 +71,8 @@ services:
   test:
     build: .
     container_name: fleetmaster_test
-    command: bash -c "RAILS_ENV=test bundle exec rails db:prepare && bundle exec rspec"
+    entrypoint: config/setup.sh
+    command: bundle exec rspec
     volumes:
       - .:/app
     depends_on:
@@ -75,6 +80,8 @@ services:
       - redis
     env_file:
       - ./.env.test
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/fleet_master_test
     networks:
       - fleetmaster_net
 

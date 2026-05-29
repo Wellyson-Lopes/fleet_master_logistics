@@ -13,6 +13,16 @@
 #    `QUEUE_ADAPTER=sidekiq docker compose up`
 #    (Opcional): Você pode parar o container `solid_queue` se preferir para economizar recursos:
 #    `QUEUE_ADAPTER=sidekiq docker compose up --scale solid_queue=0`
+#
+# CONFLITOS DE PORTA COM BANCO DE DADOS LOCAL (POSTGRESQL):
+#
+# Se você já tiver uma instância local do PostgreSQL rodando em sua máquina e ocupando a porta 5432,
+# o Docker falhará em subir o container 'db' ("address already in use").
+# Para corrigir isso sem parar seu banco de dados local:
+# 1. Altere a porta exposta no seu arquivo `.env`: `POSTGRES_PORT=5433` (ou qualquer porta livre)
+# 2. Suba os containers novamente: `docker compose up`
+# A rede interna do Docker continuará se comunicando perfeitamente pela porta 5432 e sua aplicação
+# funcionará sem nenhuma necessidade de alteração de código!
 # --------------------------------------------------------------------------------------------------
 
 services:
@@ -24,7 +34,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: ${POSTGRES_DB:-fleet_master_development}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:

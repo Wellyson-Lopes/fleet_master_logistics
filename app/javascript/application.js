@@ -11,3 +11,4 @@ document.addEventListener("DOMContentLoaded", initFlowbiteComponents);
 document.addEventListener("turbo:load", initFlowbiteComponents);
 document.addEventListener("turbo:render", initFlowbiteComponents);
 
+import "controllers"

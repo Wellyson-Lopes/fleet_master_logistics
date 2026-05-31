@@ -36,7 +36,7 @@ services:
     stdin_open: true
     tty: true
     entrypoint: config/setup.sh
-    command: bash -c "bin/rails tailwindcss:watch & bundle exec rails s -b 0.0.0.0 -p 3000"
+    command: ./bin/dev
     volumes:
       - .:/app
     ports:

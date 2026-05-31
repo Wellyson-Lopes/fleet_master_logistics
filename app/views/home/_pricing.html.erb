@@ -1,0 +1,105 @@
+<!-- SEÇÃO DE PLANOS E PREÇOS -->
+<section class="lp-pricing" id="precos" data-controller="pricing">
+  <div class="lp-pricing-inner">
+    <div class="text-center mb-16">
+      <div class="lp-section-label mx-auto">Planos e Preços</div>
+      <h2 class="lp-section-title">Simples, transparente, sem surpresas</h2>
+      <p class="lp-section-sub mx-auto">Comece grátis por 14 dias. Sem cartão de crédito. Cancele quando quiser.</p>
+    </div>
+
+    <!-- Toggle de Faturamento -->
+    <div class="lp-pricing-toggle">
+      <span class="lp-toggle-label active" data-pricing-target="monthLabel">Mensal</span>
+      <button class="lp-toggle-switch" data-pricing-target="toggleSwitch" data-action="click->pricing#toggle"></button>
+      <span class="lp-toggle-label" data-pricing-target="annualLabel">Anual</span>
+      <span class="lp-toggle-badge">20% off</span>
+    </div>
+
+    <!-- Cards dos Planos -->
+    <div class="lp-pricing-grid">
+      <!-- Starter -->
+      <div class="lp-plan-card">
+        <div class="lp-plan-name">Starter</div>
+        <div class="lp-plan-price">
+          <span class="lp-plan-price-currency">R$</span>
+          <span class="lp-plan-price-val" data-pricing-target="priceStarter">197</span>
+          <span class="lp-plan-price-period">/mês</span>
+        </div>
+        <div class="lp-plan-price-annual" data-pricing-target="annualStarter"></div>
+        <p class="text-sm text-gray-500 mb-6">Para pequenas frotas que estão iniciando</p>
+        <div class="lp-plan-divider"></div>
+        <div class="lp-plan-features">
+          <div class="lp-plan-feature">
+            <div class="lp-plan-feature-icon check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span>Até 3 funcionários (painel web)</span>
+          </div>
+          <div class="lp-plan-feature">
+            <div class="lp-plan-feature-icon check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span>Até 5 motoristas cadastrados</span>
+          </div>
+          <div class="lp-plan-feature">
+            <div class="lp-plan-feature-icon check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span>Até 5 caminhões na frota</span>
+          </div>
+        </div>
+        <button class="lp-plan-cta ghost" data-action="click->auth-modal#open" data-auth-type="register">Começar grátis</button>
+      </div>
+
+      <div class="lp-plan-card popular">
+        <div class="lp-plan-badge-pop">⭐ Mais popular</div>
+        <div class="lp-plan-name lp-text-blue">Professional</div>
+        <div class="lp-plan-price">
+          <span class="lp-plan-price-currency">R$</span>
+          <span class="lp-plan-price-val lp-text-blue" data-pricing-target="pricePro">397</span>
+          <span class="lp-plan-price-period">/mês</span>
+        </div>
+        <div class="lp-plan-price-annual" data-pricing-target="annualPro"></div>
+        <p class="text-sm text-gray-500 mb-6">Para distribuidoras operando em crescimento</p>
+        <div class="lp-plan-divider"></div>
+        <div class="lp-plan-features">
+          <div class="lp-plan-feature">
+            <div class="lp-plan-feature-icon check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span>Até 10 funcionários (painel web)</span>
+          </div>
+          <div class="lp-plan-feature">
+            <div class="lp-plan-feature-icon check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span>Até 20 motoristas cadastrados</span>
+          </div>
+          <div class="lp-plan-feature">
+            <div class="lp-plan-feature-icon check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span>Personalização de marca no sistema</span>
+          </div>
+        </div>
+        <button class="lp-plan-cta primary" data-action="click->auth-modal#open" data-auth-type="register">Começar grátis</button>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="lp-plan-card">
+        <div class="lp-plan-name">Enterprise</div>
+        <div class="lp-plan-price">
+          <span class="lp-plan-price-currency">R$</span>
+          <span class="lp-plan-price-val" data-pricing-target="priceEnt">797</span>
+          <span class="lp-plan-price-period">/mês</span>
+        </div>
+        <div class="lp-plan-price-annual" data-pricing-target="annualEnt"></div>
+        <p class="text-sm text-gray-500 mb-6">Para grandes operações logísticas sem limites</p>
+        <div class="lp-plan-divider"></div>
+        <div class="lp-plan-features">
+          <div class="lp-plan-feature">
+            <div class="lp-plan-feature-icon check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Ilimitados</strong> — funcionários (web)</span>
+          </div>
+          <div class="lp-plan-feature">
+            <div class="lp-plan-feature-icon check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span><strong>Ilimitados</strong> — caminhões na frota</span>
+          </div>
+          <div class="lp-plan-feature">
+            <div class="lp-plan-feature-icon check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span>SLA garantido + onboarding dedicado</span>
+          </div>
+        </div>
+        <button class="lp-plan-cta ghost" data-action="click->auth-modal#open" data-auth-type="register">Falar com vendas</button>
+      </div>
+    </div>
+  </div>
+</section>

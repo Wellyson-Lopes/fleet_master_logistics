@@ -1,0 +1,37 @@
+<!-- Formulário de Login (Fidelidade ao Mockup) -->
+<div id="login-section" data-auth-modal-target="loginSection">
+  <div class="lp-modal-logo">
+    <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-12 w-auto" %>
+  </div>
+  
+  <h3 class="lp-modal-title">Bem-vindo de volta</h3>
+  <p class="lp-modal-sub">Insira seus dados abaixo para acessar sua central de controle.</p>
+
+  <form data-action="submit->auth-modal#submitLogin">
+    <div class="lp-modal-group">
+      <label class="lp-modal-label">E-mail Corporativo</label>
+      <input type="email" class="lp-modal-input" placeholder="ex: seu@email.com.br" required>
+    </div>
+    
+    <div class="lp-modal-group">
+      <div class="flex justify-between items-center mb-1.5">
+        <label class="lp-modal-label mb-0">Senha de Acesso</label>
+        <button type="button" class="text-[11px] font-semibold text-[#1A6CF6] hover:underline">Esqueceu a senha?</button>
+      </div>
+      <input type="password" class="lp-modal-input" placeholder="••••••••" required>
+    </div>
+
+    <button type="submit" class="lp-modal-submit">
+      Entrar na Plataforma
+    </button>
+
+    <div class="lp-modal-divider">
+      <span></span><p>ou cadastre-se grátis</p><span></span>
+    </div>
+
+    <div class="lp-modal-switch">
+      Ainda não tem conta? 
+      <button type="button" data-action="click->auth-modal#showRegister">Criar conta grátis →</button>
+    </div>
+  </form>
+</div>

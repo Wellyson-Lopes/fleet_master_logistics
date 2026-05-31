@@ -1,0 +1,223 @@
+<div class="lp-wrap antialiased overflow-x-hidden" data-controller="auth-modal">
+
+  <!-- NAVBAR -->
+  <%= render "layouts/navbar" %>
+
+  <!-- HERO SECTION -->
+  <section class="lp-hero">
+    <div class="lp-hero-inner">
+      <div class="lp-hero-content">
+        <div class="lp-hero-badge"><span></span> Novo — App mobile para motoristas</div>
+        
+        <h1>
+          Gerencie sua frota<br>com <em>inteligência</em><br>e velocidade
+        </h1>
+        
+        <p>
+          Controle viagens, motoristas, veículos e entregas em tempo real. Para distribuidoras que precisam de mais do que uma planilha.
+        </p>
+        
+        <div class="lp-hero-ctas">
+          <button class="lp-hero-cta-primary" data-action="click->auth-modal#open" data-auth-type="register">Começar grátis — 14 dias</button>
+          <a href="#features" class="lp-hero-cta-secondary">Ver demonstração →</a>
+        </div>
+        
+        <div class="lp-hero-stats">
+          <div class="lp-hero-stat">
+            <div class="lp-hero-stat-val">+2.400</div>
+            <div class="lp-hero-stat-label">Viagens registradas</div>
+          </div>
+          <div class="lp-hero-divider"></div>
+          <div class="lp-hero-stat">
+            <div class="lp-hero-stat-val">98,6%</div>
+            <div class="lp-hero-stat-label">Uptime garantido</div>
+          </div>
+          <div class="lp-hero-divider"></div>
+          <div class="lp-hero-stat">
+            <div class="lp-hero-stat-val">&lt; 3min</div>
+            <div class="lp-hero-stat-label">Para começar</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- HERO MOCKUP -->
+      <div class="lp-hero-mockup">
+        <div class="lp-screen">
+          <div class="lp-screen-bar">
+            <div class="lp-screen-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="lp-screen-url">app.fleetmaster.com.br/dashboard</div>
+          </div>
+          <div class="lp-screen-body">
+            <div class="lp-mock-kpis">
+              <div class="lp-mock-kpi">
+                <div class="lp-mock-kpi-val"><%= @kpis[:trips_in_progress][:value] %></div>
+                <div class="lp-mock-kpi-label">Viagens ativas</div>
+                <div class="lp-mock-kpi-tag up"><%= @kpis[:trips_in_progress][:delta] %></div>
+              </div>
+              <div class="lp-mock-kpi">
+                <div class="lp-mock-kpi-val"><%= @kpis[:fleet_efficiency][:value] %></div>
+                <div class="lp-mock-kpi-label">Eficiência</div>
+                <div class="lp-mock-kpi-tag up"><%= @kpis[:fleet_efficiency][:delta] %></div>
+              </div>
+              <div class="lp-mock-kpi">
+                <div class="lp-mock-kpi-val"><%= @kpis[:pending_incidents][:value] %></div>
+                <div class="lp-mock-kpi-label">Ocorrências</div>
+                <div class="lp-mock-kpi-tag warn">Atenção</div>
+              </div>
+              <div class="lp-mock-kpi">
+                <div class="lp-mock-kpi-val"><%= @kpis[:active_vehicles][:value] %></div>
+                <div class="lp-mock-kpi-label">Frota ativa</div>
+                <div class="lp-mock-kpi-tag up"><%= @kpis[:active_vehicles][:delta] %></div>
+              </div>
+            </div>
+            
+            <div class="lp-mock-chart-wrap">
+              <div class="lp-mock-chart-title">Entregas por dia — maio 2026</div>
+              <div class="lp-mock-chart">
+                <div class="lp-mock-bar lp-mock-bar-45"></div>
+                <div class="lp-mock-bar lp-mock-bar-60"></div>
+                <div class="lp-mock-bar lp-mock-bar-38"></div>
+                <div class="lp-mock-bar lp-mock-bar-72"></div>
+                <div class="lp-mock-bar lp-mock-bar-55"></div>
+                <div class="lp-mock-bar lp-mock-bar-80"></div>
+                <div class="lp-mock-bar lp-mock-bar-90"></div>
+              </div>
+            </div>
+            
+            <table class="lp-mock-table">
+              <thead>
+                <tr>
+                  <th>Viagem</th>
+                  <th>Motorista</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @recent_trips.each do |trip| %>
+                  <tr>
+                    <td class="lp-font-mono"><%= trip[:id] %></td>
+                    <td><%= trip[:driver] %></td>
+                    <td><span class="lp-mock-badge <%= trip[:status_color] %>"><%= trip[:status] %></span></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES PARTIAL -->
+  <%= render "features" %>
+
+  <!-- SYSTEM AND MOBILE PARTIAL -->
+  <%= render "sistema" %>
+
+  <!-- PRICING PARTIAL -->
+  <%= render "pricing" %>
+
+  <!-- TESTIMONIALS -->
+  <section class="lp-trust" id="depoimentos">
+    <div class="lp-trust-inner">
+      <div class="lp-section-label">Depoimentos</div>
+      <h2 class="lp-section-title">Quem já usa o FleetMaster</h2>
+      
+      <div class="lp-testimonials">
+        <div class="lp-testimonial">
+          <div class="lp-testi-stars">★★★★★</div>
+          <p class="lp-testi-text">"Antes a gente controlava tudo em planilha. Agora o gestor vê em tempo real onde cada caminhão está. Economizamos horas por semana."</p>
+          <div class="lp-testi-author">
+            <div class="lp-testi-avatar lp-avatar-blue-teal">MF</div>
+            <div>
+              <div class="lp-testi-name">Marcos Ferreira</div>
+              <div class="lp-testi-role">Gerente de Logística · Distribuidora Nordeste</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="lp-testimonial">
+          <div class="lp-testi-stars">★★★★★</div>
+          <p class="lp-testi-text">"O app para motorista é muito fácil. Eles registram a entrega com foto na hora. Nunca mais tivemos disputa sobre se entregou ou não."</p>
+          <div class="lp-testi-author">
+            <div class="lp-testi-avatar lp-avatar-amber-red">RS</div>
+            <div>
+              <div class="lp-testi-name">Renata Souza</div>
+              <div class="lp-testi-role">Diretora Operacional · Constrular PE</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="lp-testimonial">
+          <div class="lp-testi-stars">★★★★★</div>
+          <p class="lp-testi-text">"Os alertas de CNH me salvaram duas vezes. O sistema avisa 30 dias antes — antes, a gente descobria quando o motorista já estava irregular."</p>
+          <div class="lp-testi-author">
+            <div class="lp-testi-avatar lp-avatar-green-blue">JC</div>
+            <div>
+              <div class="lp-testi-name">João Carlos</div>
+              <div class="lp-testi-role">Proprietário · Transportes JC Ltda</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BOTTOM -->
+  <section class="lp-cta-bottom">
+    <div class="lp-cta-bottom-inner">
+      <h2>Sua frota merece mais<br>do que uma planilha</h2>
+      <p>Comece hoje, sem cartão de crédito. Configure em menos de 3 minutos.</p>
+      <div class="lp-cta-bottom-btns">
+        <button class="lp-hero-cta-primary" data-action="click->auth-modal#open" data-auth-type="register">Criar conta grátis — 14 dias</button>
+        <button class="lp-hero-cta-secondary" data-action="click->auth-modal#open" data-auth-type="login">Já tenho conta →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="lp-footer">
+    <div class="lp-footer-inner">
+      <div class="lp-footer-top">
+        <div class="lp-footer-brand">
+          <div class="lp-logo lp-mb-0">
+            <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-14 w-auto" %>
+          </div>
+          <p>Plataforma de gestão de frotas para distribuidoras. Simples, rápido e confiável.</p>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Produto</h4>
+          <a href="#features">Funcionalidades</a>
+          <a href="#precos">Preços</a>
+          <a href="#">Changelog</a>
+          <a href="#">Roadmap</a>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Empresa</h4>
+          <a href="#">Sobre</a>
+          <a href="#">Blog</a>
+          <a href="#">Contato</a>
+          <a href="#">Suporte</a>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Legal</h4>
+          <a href="#">Termos de uso</a>
+          <a href="#">Privacidade</a>
+          <a href="#">LGPD</a>
+        </div>
+      </div>
+      <div class="lp-footer-bottom">
+        <span>© 2026 FleetMaster. Todos os direitos reservados.</span>
+        <span>Feito com ❤️ para distribuidoras brasileiras</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AUTHENTICATION MODAL PARTIAL -->
+  <%= render "auth_modal" %>
+
+</div>

@@ -1,0 +1,15 @@
+<!-- Modal de Autenticação Unificado (Fidelidade ao Mockup) -->
+<div data-auth-modal-target="overlay" data-action="click->auth-modal#closeOnOutsideClick" class="lp-modal-overlay">
+  <div class="lp-modal">
+    <!-- Botão de Fechar -->
+    <button type="button" data-action="click->auth-modal#close" class="lp-modal-close">
+      <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+      </svg>
+      <span class="sr-only">Fechar</span>
+    </button>
+
+    <%= render "login" %>
+    <%= render "cadastro" %>
+  </div>
+</div>

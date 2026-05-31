@@ -1,0 +1,16 @@
+<nav class="lp-nav">
+  <div class="lp-nav-inner">
+    <a class="lp-logo" href="#">
+      <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-14 w-auto" %>
+    </a>
+    <div class="lp-nav-links">
+      <a href="#features">Funcionalidades</a>
+      <a href="#sistema">Sistema</a>
+      <a href="#precos">Preços</a>
+    </div>
+    <div class="lp-nav-right">
+      <button class="lp-btn-ghost" data-action="click->auth-modal#open" data-auth-type="login">Entrar</button>
+      <button class="lp-btn-primary" data-action="click->auth-modal#open" data-auth-type="register">Começar grátis</button>
+    </div>
+  </div>
+</nav>

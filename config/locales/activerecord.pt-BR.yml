@@ -1,0 +1,32 @@
+pt-BR:
+  activerecord:
+    models:
+      user: "Usuário"
+      driver: "Motorista"
+    attributes:
+      user:
+        name: "Nome"
+        email: "E-mail"
+        password: "Senha"
+        password_confirmation: "Confirmação de Senha"
+        company_name: "Nome da Empresa"
+        cnpj: "CNPJ"
+        company_logo: "Logo da Empresa"
+      driver:
+        name: "Nome"
+        email: "E-mail"
+        cpf: "CPF"
+        password: "Senha"
+        password_confirmation: "Confirmação de Senha"
+    errors:
+      messages:
+        taken: "já está em uso"
+        blank: "não pode ficar em branco"
+        too_short: "é muito curto (mínimo: %{count} caracteres)"
+        invalid: "não é válido"
+        confirmation: "não coincide com a confirmação"
+  errors:
+    messages:
+      taken: "já está em uso"
+      blank: "não pode ficar em branco"
+      invalid: "não é válido"

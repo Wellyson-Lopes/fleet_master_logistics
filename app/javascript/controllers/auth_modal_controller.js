@@ -46,22 +46,6 @@ export default class extends Controller {
     }
   }
 
-  submitLogin(event) {
-    event.preventDefault()
-    this.showToast("Login efetuado com sucesso (Simulado)!")
-    setTimeout(() => {
-      this.close()
-    }, 1500)
-  }
-
-  submitRegister(event) {
-    event.preventDefault()
-    this.showToast("Conta criada com sucesso (Simulado)!")
-    setTimeout(() => {
-      this.close()
-    }, 1500)
-  }
-
   showToast(message) {
     const existingToast = document.getElementById("auth-toast")
     if (existingToast) existingToast.remove()

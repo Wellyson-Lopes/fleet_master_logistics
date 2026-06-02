@@ -18,5 +18,24 @@ AllCops:
 Style/Documentation:
   Enabled: false
 
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'config/initializers/devise.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'config/environments/*.rb'
+    - 'config/routes.rb'
+    - 'config/initializers/*.rb'
+    - 'spec/**/*'
+
+Naming/PredicatePrefix:
+  Enabled: false
+
+Style/SymbolProc:
+  Exclude:
+    - 'config/routes.rb'
+
 
 

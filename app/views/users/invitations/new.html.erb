@@ -1,0 +1,35 @@
+<div class='min-h-[80vh] flex items-center justify-center px-4 py-12'>
+  <div class='w-full max-w-[440px] bg-white rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-gray-100 p-8 md:p-10'>
+    
+    <h3 class='text-[24px] font-bold text-gray-900 text-center mb-2'>Enviar Convite</h3>
+    <p class='text-[14px] text-gray-500 text-center mb-8 leading-relaxed'>
+      Convide um novo colaborador para gerenciar a frota da empresa.
+    </p>
+
+    <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post }) do |f| %>
+      <%= render 'users/shared/error_messages', resource: resource %>
+
+      <div class='space-y-6'>
+        <% resource.class.invite_key_fields.each do |field| %>
+          <div>
+            <%= f.label field, 'E-mail do Colaborador', class: 'block text-[13px] font-semibold text-gray-700 mb-2 ml-1' %>
+            <%= f.text_field field, autofocus: true, 
+                class: 'w-full h-[52px] px-5 bg-gray-50 border border-gray-200 rounded-[14px] text-[15px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A6CF6]/20 focus:border-[#1A6CF6] transition-all duration-200', 
+                placeholder: 'ex: colaborador@empresa.com.br', required: true %>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.button type: :submit, 
+              class: "w-full h-[54px] bg-blue-600 hover:bg-blue-700 text-white font-bold text-[16px] rounded-[14px] shadow-lg shadow-blue-500/30 transition-all duration-300 transform active:scale-[0.98] cursor-pointer flex items-center justify-center" do %>
+            Enviar Convite
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class='mt-10 pt-8 border-t border-gray-100 text-center'>
+      <%= link_to 'Voltar para o Dashboard', dashboard_index_path, class: 'font-bold text-[#1A6CF6] hover:underline' %>
+    </div>
+  </div>
+</div>

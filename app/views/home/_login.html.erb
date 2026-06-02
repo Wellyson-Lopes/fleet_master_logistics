@@ -1,4 +1,4 @@
-<!-- Formulário de Login (Fidelidade ao Mockup) -->
+<!-- Formulário de Login (Integrado com Devise) -->
 <div id="login-section" data-auth-modal-target="loginSection">
   <div class="lp-modal-logo">
     <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-12 w-auto" %>
@@ -7,23 +7,21 @@
   <h3 class="lp-modal-title">Bem-vindo de volta</h3>
   <p class="lp-modal-sub">Insira seus dados abaixo para acessar sua central de controle.</p>
 
-  <form data-action="submit->auth-modal#submitLogin">
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
     <div class="lp-modal-group">
-      <label class="lp-modal-label">E-mail Corporativo</label>
-      <input type="email" class="lp-modal-input" placeholder="ex: seu@email.com.br" required>
+      <%= f.label :email, "E-mail Corporativo", class: "lp-modal-label" %>
+      <%= f.email_field :email, class: "lp-modal-input", placeholder: "ex: seu@email.com.br", required: true, autofocus: true %>
     </div>
     
     <div class="lp-modal-group">
       <div class="flex justify-between items-center mb-1.5">
-        <label class="lp-modal-label mb-0">Senha de Acesso</label>
-        <button type="button" class="text-[11px] font-semibold text-[#1A6CF6] hover:underline">Esqueceu a senha?</button>
+        <%= f.label :password, "Senha de Acesso", class: "lp-modal-label mb-0" %>
+        <%= link_to "Esqueceu a senha?", new_password_path(resource_name), class: "text-[11px] font-semibold text-[#1A6CF6] hover:underline" %>
       </div>
-      <input type="password" class="lp-modal-input" placeholder="••••••••" required>
+      <%= f.password_field :password, class: "lp-modal-input", placeholder: "••••••••", required: true %>
     </div>
 
-    <button type="submit" class="lp-modal-submit">
-      Entrar na Plataforma
-    </button>
+    <%= f.submit "Entrar na Plataforma", class: "lp-modal-submit" %>
 
     <div class="lp-modal-divider">
       <span></span><p>ou cadastre-se grátis</p><span></span>
@@ -33,5 +31,5 @@
       Ainda não tem conta? 
       <button type="button" data-action="click->auth-modal#showRegister">Criar conta grátis →</button>
     </div>
-  </form>
+  <% end %>
 </div>

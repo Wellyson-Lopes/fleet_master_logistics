@@ -23,8 +23,14 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen antialiased font-sans">
+  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen antialiased font-sans" data-controller="auth-modal">
+    <%= render "layouts/navbar" %>
     <%= yield %>
+
+    <%# Modais de Autenticação Disponíveis globalmente para visitantes %>
+    <% unless user_signed_in? %>
+      <%= render "home/auth_modal" %>
+    <% end %>
   </body>
 
 

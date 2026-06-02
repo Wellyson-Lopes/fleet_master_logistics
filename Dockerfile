@@ -39,7 +39,7 @@ WORKDIR /app
 
 # Copy only Gemfile and install gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle install --jobs 4 --retry 4
+RUN bundle install --jobs 4 --retry 4 && gem install foreman
 
 # Copy the rest of the application code
 COPY . .
@@ -47,4 +47,4 @@ COPY . .
 SHELL ["/bin/zsh", "-c"]
 
 # Start server
-CMD ["bash", "-c", "bundle exec rails db:prepare && bundle exec rails server -b 0.0.0.0 -p 3000"]
+CMD ["./bin/dev"]

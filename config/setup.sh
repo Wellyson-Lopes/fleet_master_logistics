@@ -27,6 +27,11 @@ if [ -f tmp/pids/server.pid ]; then
   rm tmp/pids/server.pid
 fi
 
+if [ "$RAILS_ENV" = "development" ]; then
+  echo '--> Preparing database'
+  bundle exec rails db:prepare
+fi
+
 if [ "$RAILS_ENV" != "development" ]; then
   echo '--> Running migrations'
   rails db:migrate

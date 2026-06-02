@@ -1,0 +1,73 @@
+<div class="p-8">
+  <div class="mb-4 inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider">
+    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse mr-2"></span>
+    Sessão Ativa: Autenticado como Usuário Principal
+  </div>
+
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-2xl font-bold">Painel de Controle - <%= current_user.company_name %></h1>
+    <div class="flex items-center gap-4">
+      <% if current_user.company_logo.attached? %>
+        <%= image_tag current_user.company_logo, class: "h-12 w-12 rounded-full object-cover border-2 border-blue-500" %>
+      <% end %>
+      <div class="text-right">
+        <p class="font-semibold text-gray-800"><%= current_user.name %></p>
+        <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "text-xs text-red-600 hover:underline" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <h3 class="text-gray-500 text-sm font-medium">CNPJ da Empresa</h3>
+      <p class="text-xl font-bold mt-1 text-gray-900"><%= current_user.cnpj %></p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <h3 class="text-gray-500 text-sm font-medium">Tipo de Acesso</h3>
+      <p class="text-xl font-bold mt-1 text-blue-600">
+        <%= current_user.owner? ? "Administrador (Dono)" : "Colaborador" %>
+      </p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <h3 class="text-gray-500 text-sm font-medium">Status da Conta</h3>
+      <p class="text-xl font-bold mt-1 text-green-600">Ativo</p>
+    </div>
+  </div>
+
+  <!-- Nova Seção: Gestão de Equipe -->
+  <div class="mt-8 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+      <div>
+        <h2 class="text-xl font-bold text-gray-900">Gestão de Equipe</h2>
+        <p class="text-sm text-gray-500">Convide colaboradores para gerenciar a frota com você.</p>
+      </div>
+    </div>
+
+    <%= form_for(User.new, url: user_invitation_path, html: { class: "flex flex-col md:flex-row gap-3" }) do |f| %>
+      <div class="flex-1">
+        <%= f.email_field :email, placeholder: "E-mail do colaborador", 
+            class: "w-full h-[48px] px-4 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all",
+            required: true %>
+      </div>
+      <div class="w-full md:w-auto">
+        <%= f.submit "Enviar Convite", 
+            class: "w-full h-[48px] px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-lg shadow-blue-500/20 transition-all cursor-pointer" %>
+      </div>
+    <% end %>
+    
+    <div class="mt-6">
+      <p class="text-[11px] text-gray-400 uppercase font-bold tracking-wider mb-3">Dica</p>
+      <div class="flex items-start gap-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        O colaborador receberá um e-mail para definir a própria senha e terá acesso automático aos dados da sua empresa.
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-12 bg-blue-50 border border-blue-100 p-8 rounded-2xl text-center">
+    <h2 class="text-xl font-bold text-blue-900 mb-2">Bem-vindo ao FleetMaster!</h2>
+    <p class="text-blue-700">Este é o seu novo centro de logística. Em breve você poderá gerenciar sua frota, motoristas e viagens aqui.</p>
+  </div>
+</div>

@@ -1,16 +1,25 @@
 <nav class="lp-nav">
   <div class="lp-nav-inner">
-    <a class="lp-logo" href="#">
+    <%= link_to root_path, class: "lp-logo" do %>
       <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-14 w-auto" %>
-    </a>
-    <div class="lp-nav-links">
-      <a href="#features">Funcionalidades</a>
-      <a href="#sistema">Sistema</a>
-      <a href="#precos">Preços</a>
-    </div>
+    <% end %>
+    
+    <% unless user_signed_in? %>
+      <div class="lp-nav-links">
+        <a href="#features">Funcionalidades</a>
+        <a href="#sistema">Sistema</a>
+        <a href="#precos">Preços</a>
+      </div>
+    <% end %>
+
     <div class="lp-nav-right">
-      <button class="lp-btn-ghost" data-action="click->auth-modal#open" data-auth-type="login">Entrar</button>
-      <button class="lp-btn-primary" data-action="click->auth-modal#open" data-auth-type="register">Começar grátis</button>
+      <% if user_signed_in? %>
+        <%= link_to "Dashboard", dashboard_index_path, class: "lp-btn-ghost" %>
+        <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "lp-btn-primary" %>
+      <% else %>
+        <button class="lp-btn-ghost" data-action="click->auth-modal#open" data-auth-type="login">Entrar</button>
+        <button class="lp-btn-primary" data-action="click->auth-modal#open" data-auth-type="register">Começar grátis</button>
+      <% end %>
     </div>
   </div>
 </nav>

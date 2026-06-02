@@ -1,4 +1,4 @@
-<!-- Formulário de Cadastro (Fidelidade ao Mockup) -->
+<!-- Formulário de Cadastro (Integrado com Devise) -->
 <div id="register-section" data-auth-modal-target="registerSection" class="hidden">
   <div class="lp-modal-logo">
     <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-12 w-auto" %>
@@ -7,40 +7,40 @@
   <h3 class="lp-modal-title">Crie sua conta</h3>
   <p class="lp-modal-sub">Experimente o FleetMaster gratuitamente por 14 dias.</p>
 
-  <form data-action="submit->auth-modal#submitRegister">
-    <div class="grid grid-cols-2 gap-3 mb-4">
-      <div>
-        <label class="lp-modal-label">Nome</label>
-        <input type="text" class="lp-modal-input" placeholder="João" required>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+    <%= render "users/shared/error_messages", resource: resource %>
+
+    <div class="lp-modal-group">
+      <%= f.label :name, "Nome Completo", class: "lp-modal-label" %>
+      <%= f.text_field :name, class: "lp-modal-input", placeholder: "Ex: João Silva", required: true %>
+    </div>
+    
+    <div class="lp-modal-group">
+      <%= f.label :email, "E-mail da Empresa", class: "lp-modal-label" %>
+      <%= f.email_field :email, class: "lp-modal-input", placeholder: "ex: joao@empresa.com.br", required: true %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div class="lp-modal-group">
+        <%= f.label :company_name, "Nome da Empresa", class: "lp-modal-label" %>
+        <%= f.text_field :company_name, class: "lp-modal-input", placeholder: "Ex: Horus Logística", required: true %>
       </div>
-      <div>
-        <label class="lp-modal-label">Sobrenome</label>
-        <input type="text" class="lp-modal-input" placeholder="Silva" required>
+      <div class="lp-modal-group">
+        <%= f.label :cnpj, "CNPJ (Opcional)", class: "lp-modal-label" %>
+        <%= f.text_field :cnpj, class: "lp-modal-input", placeholder: "00.000.000/0001-00" %>
       </div>
     </div>
     
     <div class="lp-modal-group">
-      <label class="lp-modal-label">E-mail da Empresa</label>
-      <input type="email" class="lp-modal-input" placeholder="ex: joao@empresa.com.br" required>
-    </div>
-    
-    <div class="lp-modal-group">
-      <label class="lp-modal-label">Nome da Empresa</label>
-      <input type="text" class="lp-modal-input" placeholder="ex: Distribuidora Nordeste Ltda" required>
-    </div>
-    
-    <div class="lp-modal-group">
-      <label class="lp-modal-label">Criar Senha</label>
-      <input type="password" class="lp-modal-input" placeholder="Mínimo 8 caracteres" required>
+      <%= f.label :password, "Criar Senha", class: "lp-modal-label" %>
+      <%= f.password_field :password, class: "lp-modal-input", placeholder: "Mínimo 6 caracteres", required: true %>
     </div>
  
-    <button type="submit" class="lp-modal-submit">
-      Criar Conta Grátis
-    </button>
+    <%= f.submit "Criar Conta Grátis", class: "lp-modal-submit" %>
 
     <div class="lp-modal-switch">
       Já possui conta? 
       <button type="button" data-action="click->auth-modal#showLogin">Entrar →</button>
     </div>
-  </form>
+  <% end %>
 </div>

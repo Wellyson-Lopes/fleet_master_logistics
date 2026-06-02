@@ -45,7 +45,11 @@ gem 'kamal', require: false
 gem 'thruster', require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+gem 'image_processing', '~> 1.2'
+
+gem 'cpf_cnpj'
+gem 'devise'
+gem 'devise_invitable'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -58,6 +62,7 @@ group :development, :test do
   gem 'standard', '>= 1.35.1', require: false
 
   # RSpec testing suite gems [INFRA-002]
+  gem 'letter_opener'
   gem 'rspec-rails'
 end
 

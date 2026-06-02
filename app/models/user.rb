@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
   has_one_attached :company_logo
 
-  before_validation :inherit_company_data, if: :is_invited?
+  before_validation :inherit_company_data, if: :invited?
   before_create :set_default_admin, if: :owner?
 
   validates :name, :company_name, presence: true, if: :owner?
@@ -15,7 +17,7 @@ class User < ApplicationRecord
     invited_by_id.nil?
   end
 
-  def is_invited?
+  def invited?
     invited_by_id.present?
   end
 

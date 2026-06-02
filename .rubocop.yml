@@ -33,5 +33,9 @@ Metrics/BlockLength:
 Naming/PredicatePrefix:
   Enabled: false
 
+Style/SymbolProc:
+  Exclude:
+    - 'config/routes.rb'
+
 
 

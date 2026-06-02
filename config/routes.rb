@@ -5,7 +5,9 @@ require 'sidekiq/web'
 Rails.application.routes.draw do
   root 'home#index'
 
-  devise_for :users
+  devise_for :users, controllers: {
+    invitations: 'users/invitations'
+  }
 
   resources :dashboard, only: [:index]
 

@@ -33,6 +33,10 @@ pt-BR:
         subject: "Senha alterada"
       invitation_instructions:
         subject: "Convite para a plataforma"
+        hello: "Olá %{email}!"
+        someone_invited_you: "Alguém convidou você para fazer parte do FleetMaster. Você pode aceitar o convite através do link abaixo:"
+        accept: "Aceitar convite"
+        ignore: "Se você não deseja aceitar o convite, por favor, ignore este e-mail.<br />Sua conta não será criada até que você acesse o link acima e defina sua senha."
     passwords:
       no_token: "Você só pode acessar esta página através do e-mail de redefinição de senha. Se você já está acessando pelo e-mail, verifique se a URL fornecida está completa."
       send_instructions: "Dentro de alguns minutos, você receberá um e-mail com instruções de como redefinir a sua senha."

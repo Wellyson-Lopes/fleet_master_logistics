@@ -9,8 +9,8 @@ class User < ApplicationRecord
   before_validation :inherit_company_data, if: :invited?
   before_create :set_default_admin, if: :owner?
 
-  validates :name, :company_name, presence: true, if: :owner?
-  validates :cnpj, uniqueness: true, allow_blank: true
+  validates :name, :company_name, :cnpj, presence: true, if: :owner?
+  validates :cnpj, uniqueness: true, if: -> { cnpj.present? }
   validate :cnpj_must_be_valid, if: -> { cnpj.present? }
 
   def owner?
@@ -38,9 +38,5 @@ class User < ApplicationRecord
 
     self.cnpj = invited_by.cnpj
     self.company_name = invited_by.company_name
-  end
-
-  def cnpj_present?
-    cnpj.present?
   end
 end

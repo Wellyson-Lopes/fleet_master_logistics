@@ -10,5 +10,8 @@ Rails.application.routes.draw do
   resources :dashboard, only: [:index]
 
   get 'up' => 'rails/health#show', :as => :rails_health_check
-  mount Sidekiq::Web => '/sidekiq'
+
+  authenticate :user, ->(u) { u.admin? } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
 end

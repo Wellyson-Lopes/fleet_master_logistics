@@ -71,6 +71,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_021237) do
     t.integer "invitations_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["cnpj"], name: "index_users_on_cnpj", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by"

@@ -39,7 +39,7 @@ WORKDIR /app
 
 # Copy only Gemfile and install gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle install --jobs 4 --retry 4 && gem install foreman
+RUN bundle install --jobs 4 --retry 4 && gem install foreman -v 0.90.0
 
 # Copy the rest of the application code
 COPY . .

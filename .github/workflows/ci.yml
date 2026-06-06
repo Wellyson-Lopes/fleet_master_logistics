@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+    branches: [ "**" ]
   push:
     branches: [ main ]
 
@@ -101,4 +102,3 @@ jobs:
           name: screenshots
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
-und: ignore

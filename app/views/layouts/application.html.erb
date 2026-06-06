@@ -10,28 +10,37 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%= stylesheet_link_tag "flowbite.min", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <% if user_signed_in? && !devise_controller? %>
+      <%= stylesheet_link_tag "system_design", "data-turbo-track": "reload" %>
+    <% else %>
+      <%= stylesheet_link_tag "landing_page", "data-turbo-track": "reload" %>
+    <% end %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen antialiased font-sans" data-controller="auth-modal">
-    <%= render "layouts/navbar" %>
-    <%= yield %>
+    <% if user_signed_in? && !devise_controller? %>
+      <div class="sys-dash-layout">
+        <%= render "layouts/sidebar" %>
+        <main class="sys-dash-main">
+          <%= yield %>
+        </main>
+      </div>
+    <% else %>
+      <%= render "layouts/navbar" %>
+      <%= yield %>
+    <% end %>
 
     <%# Modais de Autenticação Disponíveis globalmente para visitantes %>
     <% unless user_signed_in? %>
       <%= render "home/auth_modal" %>
     <% end %>
   </body>
-
-
 </html>

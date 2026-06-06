@@ -1,0 +1,72 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Gestão de Equipe</div>
+    <div class="sys-dash-subtitle">Gerencie colaboradores e convites da sua empresa.</div>
+  </div>
+</div>
+
+<div class="sys-grid sys-gap-4">
+  <!-- Formulário de Convite -->
+  <div class="sys-card sys-p-16 sys-mb-6">
+    <div class="sys-card-header sys-mb-12">
+      <div class="sys-card-title">Convidar Colaborador</div>
+    </div>
+    
+    <%= form_for(@invitation_user, url: user_invitation_path, html: { class: "sys-flex sys-flex-col md:sys-flex-row sys-gap-3" }) do |f| %>
+      <div class="sys-flex-1">
+        <%= f.email_field :email, placeholder: "E-mail do colaborador", 
+            class: "sys-input",
+            required: true %>
+      </div>
+      <div class="sys-w-full md:sys-w-auto">
+        <%= f.submit "Enviar Convite", 
+            class: "sys-btn sys-btn-primary sys-h-40 sys-px-6 sys-text-sm" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Lista de Usuários -->
+  <div class="sys-table-wrap">
+    <div class="sys-table-header">
+      <div class="sys-card-title">Membros da Equipe</div>
+    </div>
+    <table class="sys-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Função</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td class="sys-td-primary"><%= user.name || "Pendente" %></td>
+            <td><%= user.email %></td>
+            <td>
+              <span class="sys-badge <%= user.owner? ? 'sys-badge-blue' : 'sys-badge-gray' %>">
+                <%= user.owner? ? "Proprietário" : "Colaborador" %>
+              </span>
+            </td>
+            <td>
+              <% if user.invitation_accepted_at %>
+                <span class="sys-badge sys-badge-green">Ativo</span>
+              <% elsif user.invited? %>
+                <span class="sys-badge sys-badge-amber">Convite Pendente</span>
+              <% else %>
+                <span class="sys-badge sys-badge-green">Ativo</span>
+              <% end %>
+            </td>
+            <td class="sys-td-actions">
+              <% unless user == current_user %>
+                <button class="sys-btn sys-btn-ghost sys-btn-sm">Editar</button>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

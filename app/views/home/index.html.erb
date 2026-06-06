@@ -14,12 +14,13 @@
           Controle viagens, motoristas, veículos e entregas em tempo real. Para distribuidoras que precisam de mais do que uma planilha.
         </p>
         
-        <div class="lp-hero-ctas">
+        <div class="lp-hero-ctas lp-flex lp-gap-3 lp-flex-wrap">
           <button class="lp-hero-cta-primary" data-action="click->auth-modal#open" data-auth-type="register">Começar grátis — 14 dias</button>
           <a href="#features" class="lp-hero-cta-secondary">Ver demonstração →</a>
         </div>
         
-        <div class="lp-hero-stats">
+        <!-- MOCK DATA: Estatísticas do Hero (Vindas do HomeController) -->
+        <div class="lp-hero-stats lp-flex lp-items-center lp-gap-4">
           <div class="lp-hero-stat">
             <div class="lp-hero-stat-val">+2.400</div>
             <div class="lp-hero-stat-label">Viagens registradas</div>
@@ -38,6 +39,7 @@
       </div>
       
       <!-- HERO MOCKUP -->
+      <!-- MOCK DATA: Este mockup visual do dashboard usa dados do fetch_kpis e fetch_recent_trips do HomeController -->
       <div class="lp-hero-mockup">
         <div class="lp-screen">
           <div class="lp-screen-bar">
@@ -75,13 +77,13 @@
             <div class="lp-mock-chart-wrap">
               <div class="lp-mock-chart-title">Entregas por dia — maio 2026</div>
               <div class="lp-mock-chart">
-                <div class="lp-mock-bar lp-mock-bar-45"></div>
-                <div class="lp-mock-bar lp-mock-bar-60"></div>
-                <div class="lp-mock-bar lp-mock-bar-38"></div>
-                <div class="lp-mock-bar lp-mock-bar-72"></div>
-                <div class="lp-mock-bar lp-mock-bar-55"></div>
-                <div class="lp-mock-bar lp-mock-bar-80"></div>
-                <div class="lp-mock-bar lp-mock-bar-90"></div>
+                <div class="lp-mock-bar" style="height: 45%;"></div>
+                <div class="lp-mock-bar" style="height: 60%;"></div>
+                <div class="lp-mock-bar" style="height: 38%;"></div>
+                <div class="lp-mock-bar" style="height: 72%;"></div>
+                <div class="lp-mock-bar" style="height: 55%;"></div>
+                <div class="lp-mock-bar" style="height: 80%; opacity: 0.8;"></div>
+                <div class="lp-mock-bar" style="height: 90%; background: var(--teal); opacity: 0.7;"></div>
               </div>
             </div>
             
@@ -110,13 +112,13 @@
   </section>
 
   <!-- FEATURES PARTIAL -->
-  <%= render "features" %>
+  <%= render "home/features" %>
 
   <!-- SYSTEM AND MOBILE PARTIAL -->
-  <%= render "sistema" %>
+  <%= render "home/sistema" %>
 
   <!-- PRICING PARTIAL -->
-  <%= render "pricing" %>
+  <%= render "home/pricing" %>
 
   <!-- TESTIMONIALS -->
   <section class="lp-trust" id="depoimentos">
@@ -124,11 +126,12 @@
       <div class="lp-section-label">Depoimentos</div>
       <h2 class="lp-section-title">Quem já usa o FleetMaster</h2>
       
-      <div class="lp-testimonials">
-        <div class="lp-testimonial">
+      <!-- MOCK DATA: Depoimentos estáticos de clientes fictícios -->
+      <div class="lp-testimonials lp-flex lp-gap-4">
+        <div class="lp-testimonial lp-flex-1">
           <div class="lp-testi-stars">★★★★★</div>
           <p class="lp-testi-text">"Antes a gente controlava tudo em planilha. Agora o gestor vê em tempo real onde cada caminhão está. Economizamos horas por semana."</p>
-          <div class="lp-testi-author">
+          <div class="lp-testi-author lp-flex lp-items-center lp-gap-2">
             <div class="lp-testi-avatar lp-avatar-blue-teal">MF</div>
             <div>
               <div class="lp-testi-name">Marcos Ferreira</div>
@@ -137,10 +140,10 @@
           </div>
         </div>
         
-        <div class="lp-testimonial">
+        <div class="lp-testimonial lp-flex-1">
           <div class="lp-testi-stars">★★★★★</div>
           <p class="lp-testi-text">"O app para motorista é muito fácil. Eles registram a entrega com foto na hora. Nunca mais tivemos disputa sobre se entregou ou não."</p>
-          <div class="lp-testi-author">
+          <div class="lp-testi-author lp-flex lp-items-center lp-gap-2">
             <div class="lp-testi-avatar lp-avatar-amber-red">RS</div>
             <div>
               <div class="lp-testi-name">Renata Souza</div>
@@ -149,10 +152,10 @@
           </div>
         </div>
         
-        <div class="lp-testimonial">
+        <div class="lp-testimonial lp-flex-1">
           <div class="lp-testi-stars">★★★★★</div>
           <p class="lp-testi-text">"Os alertas de CNH me salvaram duas vezes. O sistema avisa 30 dias antes — antes, a gente descobria quando o motorista já estava irregular."</p>
-          <div class="lp-testi-author">
+          <div class="lp-testi-author lp-flex lp-items-center lp-gap-2">
             <div class="lp-testi-avatar lp-avatar-green-blue">JC</div>
             <div>
               <div class="lp-testi-name">João Carlos</div>
@@ -169,7 +172,7 @@
     <div class="lp-cta-bottom-inner">
       <h2>Sua frota merece mais<br>do que uma planilha</h2>
       <p>Comece hoje, sem cartão de crédito. Configure em menos de 3 minutos.</p>
-      <div class="lp-cta-bottom-btns">
+      <div class="lp-cta-bottom-btns lp-flex lp-justify-center lp-gap-3 lp-flex-wrap">
         <button class="lp-hero-cta-primary" data-action="click->auth-modal#open" data-auth-type="register">Criar conta grátis — 14 dias</button>
         <button class="lp-hero-cta-secondary" data-action="click->auth-modal#open" data-auth-type="login">Já tenho conta →</button>
       </div>
@@ -181,7 +184,7 @@
     <div class="lp-footer-inner">
       <div class="lp-footer-top">
         <div class="lp-footer-brand">
-          <div class="lp-logo lp-mb-0">
+          <div class="lp-logo">
             <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-14 w-auto" %>
           </div>
           <p>Plataforma de gestão de frotas para distribuidoras. Simples, rápido e confiável.</p>
@@ -207,7 +210,7 @@
           <a href="#">LGPD</a>
         </div>
       </div>
-      <div class="lp-footer-bottom">
+      <div class="lp-footer-bottom lp-flex lp-justify-between lp-items-center lp-flex-wrap lp-gap-3">
         <span>© 2026 FleetMaster. Todos os direitos reservados.</span>
         <span>Feito com ❤️ para distribuidoras brasileiras</span>
       </div>

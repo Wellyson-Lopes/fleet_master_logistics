@@ -3,6 +3,9 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  authenticated :user do
+    root to: 'dashboard#index', as: :authenticated_root
+  end
   root 'home#index'
 
   devise_for :users, controllers: {
@@ -10,6 +13,7 @@ Rails.application.routes.draw do
   }
 
   resources :dashboard, only: [:index]
+  resources :teams, only: [:index]
 
   get 'up' => 'rails/health#show', :as => :rails_health_check
 

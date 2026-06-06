@@ -21,6 +21,10 @@ class User < ApplicationRecord
     invited_by_id.present?
   end
 
+  def company_users
+    User.where(cnpj: cnpj)
+  end
+
   private
 
   def set_default_admin

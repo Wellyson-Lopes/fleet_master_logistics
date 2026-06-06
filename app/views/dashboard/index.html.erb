@@ -1,75 +1,140 @@
-<div class="p-8">
-  <div class="mb-4 inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider">
-    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse mr-2"></span>
-    Sessão Ativa: Autenticado como <%= current_user.owner? ? "Usuário Principal" : "Colaborador" %>
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Dashboard</div>
+    <div class="sys-dash-subtitle"><%= I18n.l(Date.today, format: :long) %> · Boa tarde, <%= current_user.name.split.first %></div>
   </div>
+  <div class="sys-flex sys-gap-2">
+    <button class="sys-btn sys-btn-ghost sys-btn-sm">Esta semana</button>
+    <button class="sys-btn sys-btn-primary sys-btn-sm">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="sys-w-13 sys-h-13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nova Viagem
+    </button>
+  </div>
+</div>
 
-  <div class="flex justify-between items-center mb-8">
-    <h1 class="text-2xl font-bold">Painel de Controle - <%= current_user.company_name %></h1>
-    <div class="flex items-center gap-4">
-      <% if current_user.company_logo.attached? %>
-        <%= image_tag current_user.company_logo, class: "h-12 w-12 rounded-full object-cover border-2 border-blue-500" %>
-      <% end %>
-      <div class="text-right">
-        <p class="font-semibold text-gray-800"><%= current_user.name %></p>
-        <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "text-xs text-red-600 hover:underline" %>
+<!-- Sessão Ativa Info -->
+<div class="sys-mb-6 sys-flex sys-flex-wrap sys-gap-2 sys-items-center">
+  <div class="sys-badge sys-badge-green">
+    <span class="sys-dot sys-bg-green-500 sys-animate-pulse"></span>
+    <%= current_user.company_name %> · <%= current_user.owner? ? "Administrador" : "Colaborador" %>
+  </div>
+  <div class="sys-badge sys-badge-blue">
+    CNPJ: <%= current_user.cnpj %>
+  </div>
+</div>
+
+<!-- KPIs -->
+<!-- MOCK DATA: Os valores abaixo são estáticos e devem ser substituídos por dados reais da empresa -->
+<div class="sys-kpis-row">
+  <div class="sys-kpi-card blue">
+    <div class="sys-kpi-icon blue"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg></div>
+    <div class="sys-kpi-value">8</div>
+    <div class="sys-kpi-label">Viagens Ativas</div>
+    <div class="sys-kpi-delta up"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" class="sys-w-9 sys-h-9"><polyline points="18 15 12 9 6 15"/></svg>+2</div>
+  </div>
+  <div class="sys-kpi-card teal">
+    <div class="sys-kpi-icon teal"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="sys-kpi-value">47</div>
+    <div class="sys-kpi-label">Entregas Esta Semana</div>
+    <div class="sys-kpi-delta up"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" class="sys-w-9 sys-h-9"><polyline points="18 15 12 9 6 15"/></svg>+12%</div>
+  </div>
+  <div class="sys-kpi-card amber">
+    <div class="sys-kpi-icon amber"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+    <div class="sys-kpi-value">3</div>
+    <div class="sys-kpi-label">Ocorrências Abertas</div>
+    <div class="sys-kpi-delta down"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" class="sys-w-9 sys-h-9"><polyline points="6 9 12 15 18 9"/></svg>Atenção</div>
+  </div>
+  <div class="sys-kpi-card green">
+    <div class="sys-kpi-icon green"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+    <div class="sys-kpi-value">12</div>
+    <div class="sys-kpi-label">Veículos na Frota</div>
+    <div class="sys-kpi-delta up"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" class="sys-w-9 sys-h-9"><polyline points="18 15 12 9 6 15"/></svg>9 livres</div>
+  </div>
+</div>
+
+<div class="sys-dash-content-grid">
+  <!-- Viagens recentes -->
+  <!-- MOCK DATA: Listagem estática de viagens -->
+  <div class="sys-card sys-p-16">
+    <div class="sys-card-header sys-mb-12">
+      <div class="sys-card-title">Viagens Recentes</div>
+      <button class="sys-btn sys-btn-ghost sys-btn-sm">Ver todas</button>
+    </div>
+    <div class="sys-flex sys-flex-col sys-gap-2">
+      <div class="sys-item-row">
+        <div class="sys-item-icon-box sys-bg-amber-light-10">
+          <svg fill="none" viewBox="0 0 24 24" stroke="#F59E0B" stroke-width="2" class="sys-w-16 sys-h-16"><rect x="1" y="3" width="15" height="13"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div class="sys-item-info">
+          <div class="sys-item-title">Carlos Silva · ABC-1234</div>
+          <div class="sys-item-subtitle">Construtora Nordeste · 240 sacos</div>
+        </div>
+        <span class="sys-badge sys-badge-amber">Em Rota</span>
+      </div>
+      <div class="sys-item-row-alt">
+        <div class="sys-item-icon-box sys-bg-red-light-10">
+          <svg fill="none" viewBox="0 0 24 24" stroke="#EF4444" stroke-width="2" class="sys-w-16 sys-h-16"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        </div>
+        <div class="sys-item-info">
+          <div class="sys-item-title">Pedro Alves · XYZ-5678</div>
+          <div class="sys-item-subtitle">Ocorrência: Pneu furado</div>
+        </div>
+        <span class="sys-badge sys-badge-red">Alerta</span>
+      </div>
+      <div class="sys-item-row">
+        <div class="sys-item-icon-box sys-bg-teal-light-10">
+          <svg fill="none" viewBox="0 0 24 24" stroke="#10B981" stroke-width="2" class="sys-w-16 sys-h-16"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="sys-item-info">
+          <div class="sys-item-title">Marcos Oliveira · DEF-9012</div>
+          <div class="sys-item-subtitle">210 km · Distribuição Centro</div>
+        </div>
+        <span class="sys-badge sys-badge-teal">Concluída</span>
       </div>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-      <h3 class="text-gray-500 text-sm font-medium">CNPJ da Empresa</h3>
-      <p class="text-xl font-bold mt-1 text-gray-900"><%= current_user.cnpj %></p>
+  <!-- Status da Frota -->
+  <!-- MOCK DATA: Indicadores de frota estáticos -->
+  <div class="sys-card sys-p-16">
+    <div class="sys-card-header sys-mb-12">
+      <div class="sys-card-title">Status da Frota</div>
     </div>
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-      <h3 class="text-gray-500 text-sm font-medium">Tipo de Acesso</h3>
-      <p class="text-xl font-bold mt-1 text-blue-600">
-        <%= current_user.owner? ? "Administrador (Dono)" : "Colaborador" %>
-      </p>
-    </div>
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-      <h3 class="text-gray-500 text-sm font-medium">Status da Conta</h3>
-      <p class="text-xl font-bold mt-1 text-green-600">Ativo</p>
-    </div>
-  </div>
-
-  <!-- Nova Seção: Gestão de Equipe -->
-  <% if current_user.admin? %>
-    <div class="mt-8 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-      <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-        <div>
-          <h2 class="text-xl font-bold text-gray-900">Gestão de Equipe</h2>
-          <p class="text-sm text-gray-500">Convide colaboradores para gerenciar a frota com você.</p>
+    <div class="sys-status-list">
+      <div>
+        <div class="sys-flex sys-justify-between sys-mb-1 sys-text-11">
+          <span class="sys-text-gray-600">Disponíveis</span>
+          <span class="sys-font-bold sys-text-green">9/12</span>
         </div>
+        <div class="sys-progress-bar"><div class="sys-progress-fill sys-bg-green sys-w-75"></div></div>
       </div>
-
-      <%= form_for(User.new, url: user_invitation_path, html: { class: "flex flex-col md:flex-row gap-3" }) do |f| %>
-        <div class="flex-1">
-          <%= f.email_field :email, placeholder: "E-mail do colaborador", 
-              class: "w-full h-[48px] px-4 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all",
-              required: true %>
+      <div>
+        <div class="sys-flex sys-justify-between sys-mb-1 sys-text-11">
+          <span class="sys-text-gray-600">Em Viagem</span>
+          <span class="sys-font-bold sys-text-amber">2/12</span>
         </div>
-        <div class="w-full md:w-auto">
-          <%= f.submit "Enviar Convite", 
-              class: "w-full h-[48px] px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-lg shadow-blue-500/20 transition-all cursor-pointer" %>
+        <div class="sys-progress-bar"><div class="sys-progress-fill sys-bg-amber sys-w-17"></div></div>
+      </div>
+      <div>
+        <div class="sys-flex sys-justify-between sys-mb-1 sys-text-11">
+          <span class="sys-text-gray-600">Manutenção</span>
+          <span class="sys-font-bold sys-text-red">1/12</span>
         </div>
-      <% end %>
-      
-      <div class="mt-6">
-        <p class="text-[11px] text-gray-400 uppercase font-bold tracking-wider mb-3">Dica</p>
-        <div class="flex items-start gap-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          O colaborador receberá um e-mail para definir a própria senha e terá acesso automático aos dados da sua empresa.
+        <div class="sys-progress-bar"><div class="sys-progress-fill sys-bg-red sys-w-8"></div></div>
+      </div>
+    </div>
+    <div class="sys-mt-6 sys-pt-12 sys-border-top">
+      <div class="sys-text-11 sys-font-bold sys-text-gray-500 sys-mb-2">Alertas de Vencimento</div>
+      <div class="sys-alert-list">
+        <div class="sys-flex sys-justify-between sys-text-11">
+          <span class="sys-text-gray-700">🚨 GHI-3456 · Seguro</span>
+          <span class="sys-text-red sys-font-bold">Vencido</span>
+        </div>
+        <div class="sys-flex sys-justify-between sys-text-11">
+          <span class="sys-text-gray-700">⚠️ ABC-1234 · Vistoria</span>
+          <span class="sys-text-amber sys-font-bold">8 dias</span>
         </div>
       </div>
     </div>
-  <% end %>
-
-  <div class="mt-12 bg-blue-50 border border-blue-100 p-8 rounded-2xl text-center">
-    <h2 class="text-xl font-bold text-blue-900 mb-2">Bem-vindo ao FleetMaster!</h2>
-    <p class="text-blue-700">Este é o seu novo centro de logística. Em breve você poderá gerenciar sua frota, motoristas e viagens aqui.</p>
   </div>
 </div>

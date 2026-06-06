@@ -28,7 +28,9 @@ services:
     ports:
       - "5433:5432"
     networks:
-      - fleetmaster_net
+      fleetmaster_net:
+        aliases:
+          - db
 
   web:
     build: .

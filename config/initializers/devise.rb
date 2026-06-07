@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'devise/jwt'
+
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
 # are not: uncommented lines are intended to protect your configuration from
@@ -246,6 +248,17 @@ Devise.setup do |config|
   # ==> Scopes configuration
   config.warden do |manager|
     manager.failure_app = CustomFailureApp
+  end
+
+  config.jwt do |jwt|
+    jwt.secret = Rails.application.credentials.jwt_secret_key || 'dummy_secret_for_migration_purposes_only'
+    jwt.dispatch_requests = [
+      ['POST', %r{^/api/v1/drivers/login$}]
+    ]
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/api/v1/drivers/logout$}]
+    ]
+    jwt.expiration_time = 1.day.to_i
   end
 
   # Turn scoped views on. Before rendering "sessions/new", it will first check for

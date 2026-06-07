@@ -50,6 +50,8 @@ gem 'image_processing', '~> 1.2'
 gem 'cpf_cnpj'
 gem 'devise'
 gem 'devise_invitable'
+gem 'devise-jwt'
+gem 'rack-cors'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

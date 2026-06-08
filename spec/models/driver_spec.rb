@@ -19,7 +19,7 @@ RSpec.describe Driver, type: :model do
     it 'is valid with valid attributes' do
       allow(CPF).to receive(:valid?).and_return(true)
       allow(CNPJ).to receive(:valid?).and_return(true)
-      
+
       driver = Driver.new(valid_attributes)
       expect(driver).to be_valid
     end

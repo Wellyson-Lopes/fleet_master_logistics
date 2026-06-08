@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_06_210429) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_07_230145) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
 
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.integer "status", default: 0, null: false
@@ -51,6 +52,43 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_06_210429) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "drivers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.string "name"
+    t.string "phone"
+    t.string "cpf"
+    t.string "cnh"
+    t.date "cnh_expiration"
+    t.string "cnpj", null: false
+    t.boolean "active", default: true
+    t.string "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.integer "invitation_limit"
+    t.string "invited_by_type"
+    t.bigint "invited_by_id"
+    t.integer "invitations_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cnh"], name: "index_drivers_on_cnh", unique: true
+    t.index ["cnpj"], name: "index_drivers_on_cnpj"
+    t.index ["cpf"], name: "index_drivers_on_cpf", unique: true
+    t.index ["email"], name: "index_drivers_on_email", unique: true
+    t.index ["invitation_token"], name: "index_drivers_on_invitation_token", unique: true
+    t.index ["invited_by_type", "invited_by_id"], name: "index_drivers_on_invited_by"
+    t.index ["reset_password_token"], name: "index_drivers_on_reset_password_token", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -71,12 +109,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_06_210429) do
     t.integer "invitations_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "jti"
     t.index ["cnpj"], name: "index_users_on_cnpj", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by"
-    t.index ["jti"], name: "index_users_on_jti"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

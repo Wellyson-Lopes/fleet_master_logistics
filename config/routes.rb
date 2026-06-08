@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     invitations: 'users/invitations'
   }
 
+  devise_for :drivers
+
   resources :dashboard, only: [:index]
   resources :teams, only: [:index]
 

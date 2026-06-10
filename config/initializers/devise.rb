@@ -251,9 +251,10 @@ Devise.setup do |config|
   end
 
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.jwt_secret_key || 'dummy_secret_for_migration_purposes_only'
+    jwt.secret = ENV.fetch('DEVISE_JWT_SECRET_KEY') { Rails.application.credentials.jwt_secret_key }
     jwt.dispatch_requests = [
-      ['POST', %r{^/api/v1/drivers/login$}]
+      ['POST', %r{^/api/v1/drivers/login$}],
+      ['POST', %r{^/api/v1/drivers/invitation/accept$}]
     ]
     jwt.revocation_requests = [
       ['DELETE', %r{^/api/v1/drivers/logout$}]

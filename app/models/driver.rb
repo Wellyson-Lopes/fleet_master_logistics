@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 # Representa um motorista no sistema FleetMaster.
-# Motoristas entram no sistema através de um fluxo de convite enviado por administradores.
+# Motoristas entram no sistema através de um fluxo de convite enviado por administradores
+# e utilizam prioritariamente o aplicativo móvel para sua operação logística.
 class Driver < ApplicationRecord
+  include TenantScoped
+
   # Configurações do Devise para Drivers:
   devise :invitable, :database_authenticatable, :recoverable,
-         :rememberable, :validatable, :trackable
+         :rememberable, :validatable, :trackable,
+         :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
 
   # Anexos
   has_one_attached :avatar
@@ -23,12 +27,18 @@ class Driver < ApplicationRecord
 
   private
 
+  # Valida se o CPF fornecido é válido utilizando a gem CPF_CNPJ.
+  #
+  # @return [void]
   def cpf_must_be_valid
     return if CPF.valid?(cpf)
 
     errors.add(:cpf, 'não é válido')
   end
 
+  # Valida se o CNPJ fornecido é válido utilizando a gem CPF_CNPJ.
+  #
+  # @return [void]
   def cnpj_must_be_valid
     return if CNPJ.valid?(cnpj)
 

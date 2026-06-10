@@ -9,7 +9,10 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins '*' # Em produção, substituir pelo domínio real do aplicativo
+    # origins '*' # Em desenvolvimento
+    # Em produção, você deve listar os domínios permitidos explicitamente
+    # origins 'app.fleetmaster.com.br', 'localhost:8081' (para React Native)
+    origins '*'
 
     resource '*',
              headers: :any,

@@ -1,0 +1,50 @@
+<div class="lp-wrap flex items-center justify-center min-h-[calc(100vh-64px)] py-12 px-4">
+  <div class="lp-modal !transform-none !static">
+    <div class="lp-modal-logo">
+      <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-12 w-auto" %>
+    </div>
+
+    <h3 class="lp-modal-title"><%= t "devise.invitations.edit.header" %></h3>
+    <p class="lp-modal-sub">Crie sua senha e complete seu perfil para começar.</p>
+
+    <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put }) do |f| %>
+      <%= render "drivers/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :invitation_token, readonly: true %>
+
+      <div class="lp-modal-group">
+        <%= f.label :name, "Nome Completo", class: "lp-modal-label" %>
+        <%= f.text_field :name, class: "lp-modal-input", placeholder: "Seu nome completo", required: true, autofocus: true %>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="lp-modal-group">
+          <%= f.label :cpf, "CPF", class: "lp-modal-label" %>
+          <%= f.text_field :cpf, class: "lp-modal-input", placeholder: "000.000.000-00", required: true %>
+        </div>
+        <div class="lp-modal-group">
+          <%= f.label :cnh, "CNH", class: "lp-modal-label" %>
+          <%= f.text_field :cnh, class: "lp-modal-input", placeholder: "Número da CNH", required: true %>
+        </div>
+      </div>
+
+      <div class="lp-modal-group">
+        <%= f.label :cnpj, "CNPJ da Empresa", class: "lp-modal-label" %>
+        <%= f.text_field :cnpj, class: "lp-modal-input", placeholder: "00.000.000/0001-00", required: true %>
+      </div>
+
+      <% if f.object.class.require_password_on_accepting %>
+        <div class="lp-modal-group">
+          <%= f.label :password, "Nova Senha", class: "lp-modal-label" %>
+          <%= f.password_field :password, class: "lp-modal-input", placeholder: "Mínimo 6 caracteres", required: true %>
+        </div>
+
+        <div class="lp-modal-group">
+          <%= f.label :password_confirmation, "Confirmar Senha", class: "lp-modal-label" %>
+          <%= f.password_field :password_confirmation, class: "lp-modal-input", placeholder: "Repita sua senha", required: true %>
+        </div>
+      <% end %>
+
+      <%= f.submit t("devise.invitations.edit.submit_button"), class: "lp-modal-submit" %>
+    <% end %>
+  </div>
+</div>

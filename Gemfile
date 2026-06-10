@@ -64,8 +64,10 @@ group :development, :test do
   gem 'standard', '>= 1.35.1', require: false
 
   # RSpec testing suite gems [INFRA-002]
+  gem 'factory_bot_rails'
   gem 'letter_opener'
   gem 'rspec-rails'
+  gem 'shoulda-matchers'
 end
 
 group :development do

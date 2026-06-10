@@ -1,0 +1,41 @@
+<div class="lp-wrap flex items-center justify-center min-h-[calc(100vh-64px)] py-12 px-4">
+  <div class="lp-modal !transform-none !static text-center">
+    <div class="lp-modal-logo justify-center">
+      <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-12 w-auto" %>
+    </div>
+
+    <div class="mb-6">
+      <div class="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h3 class="lp-modal-title">Tudo pronto!</h3>
+      <p class="lp-modal-sub">Sua conta foi ativada com sucesso.</p>
+    </div>
+
+    <div class="bg-gray-50 border border-gray-100 rounded-xl p-6 mb-8 text-left">
+      <h4 class="text-sm font-bold text-gray-800 mb-2">Próximos passos:</h4>
+      <ul class="text-xs text-gray-600 space-y-3">
+        <li class="flex items-start">
+          <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold mr-2 mt-0.5">1</span>
+          <span>Baixe o aplicativo <strong>FleetMaster Motorista</strong> na sua loja de aplicativos.</span>
+        </li>
+        <li class="flex items-start">
+          <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold mr-2 mt-0.5">2</span>
+          <span>Faça login utilizando seu e-mail e a senha que você acabou de criar.</span>
+        </li>
+        <li class="flex items-start">
+          <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold mr-2 mt-0.5">3</span>
+          <span>Acesse suas viagens e comece a operar!</span>
+        </li>
+      </ul>
+    </div>
+
+    <%= link_to "Voltar para o Início", root_path, class: "lp-modal-submit inline-block text-center no-underline" %>
+    
+    <p class="text-[11px] text-gray-400 mt-6">
+      O acesso ao painel web é restrito aos administradores da empresa.
+    </p>
+  </div>
+</div>

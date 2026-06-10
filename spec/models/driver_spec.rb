@@ -3,52 +3,38 @@
 require 'rails_helper'
 
 RSpec.describe Driver, type: :model do
-  let(:valid_attributes) do
-    {
-      name: 'João Silva',
-      email: 'joao@driver.com',
-      password: 'password123',
-      cnpj: '12345678000195',
-      cpf: '123.456.789-00',
-      cnh: '123456789',
-      cnh_expiration: 1.year.from_now
-    }
-  end
+  describe 'validações' do
+    subject { build(:driver) }
 
-  describe 'validations' do
-    it 'is valid with valid attributes' do
-      allow(CPF).to receive(:valid?).and_return(true)
-      allow(CNPJ).to receive(:valid?).and_return(true)
+    it { should validate_presence_of(:cnpj) }
+    it { should validate_uniqueness_of(:cpf).case_insensitive.allow_blank }
+    it { should validate_uniqueness_of(:cnh).case_insensitive.allow_blank }
 
-      driver = Driver.new(valid_attributes)
-      expect(driver).to be_valid
+    context 'quando o convite é aceito' do
+      before { allow(subject).to receive(:invitation_accepted_at?).and_return(true) }
+      it { should validate_presence_of(:name).on(:update) }
     end
 
-    it 'is invalid without a cnpj' do
-      driver = Driver.new(cnpj: nil)
-      driver.valid?
-      expect(driver.errors[:cnpj]).to include('não pode ficar em branco')
+    it 'valida o formato do CPF' do
+      subject.cpf = '123'
+      subject.valid?
+      expect(subject.errors[:cpf]).to include('não é válido')
     end
 
-    it 'is invalid with an invalid CPF' do
-      allow(CPF).to receive(:valid?).and_return(false)
-      driver = Driver.new(cpf: '123')
-      driver.valid?
-      expect(driver.errors[:cpf]).to include('não é válido')
-    end
-
-    it 'is invalid with an invalid CNPJ' do
-      allow(CNPJ).to receive(:valid?).and_return(false)
-      driver = Driver.new(cnpj: '123')
-      driver.valid?
-      expect(driver.errors[:cnpj]).to include('não é válido')
+    it 'valida o formato do CNPJ' do
+      subject.cnpj = '123'
+      subject.valid?
+      expect(subject.errors[:cnpj]).to include('não é válido')
     end
   end
 
-  describe 'associations' do
-    it 'can have an avatar' do
-      driver = Driver.new
-      expect(driver.avatar).to be_an_instance_of(ActiveStorage::Attached::One)
+  describe 'multi-tenancy' do
+    it 'inclui o concern TenantScoped' do
+      expect(Driver.ancestors).to include(TenantScoped)
+    end
+
+    it 'pertence a uma empresa (company)' do
+      expect(Driver.reflect_on_association(:company).macro).to eq(:belongs_to)
     end
   end
 end

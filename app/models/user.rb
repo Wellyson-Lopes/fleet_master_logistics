@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  include TenantScoped
+
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
@@ -22,7 +24,7 @@ class User < ApplicationRecord
   end
 
   def company_users
-    User.where(cnpj: cnpj)
+    company.users
   end
 
   private
@@ -40,6 +42,7 @@ class User < ApplicationRecord
   def inherit_company_data
     return unless invited_by
 
+    self.company = invited_by.company
     self.cnpj = invited_by.cnpj
     self.company_name = invited_by.company_name
   end

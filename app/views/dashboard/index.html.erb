@@ -1,7 +1,7 @@
 <div class="sys-dash-topbar">
   <div>
     <div class="sys-dash-title">Dashboard</div>
-    <div class="sys-dash-subtitle"><%= I18n.l(Date.today, format: :long) %> · Boa tarde, <%= current_user.name.split.first %></div>
+    <div class="sys-dash-subtitle"><%= I18n.l(Date.current, format: :long) %> · Boa tarde, <%= current_user.name.split.first %></div>
   </div>
   <div class="sys-flex sys-gap-2">
     <button class="sys-btn sys-btn-ghost sys-btn-sm">Esta semana</button>

@@ -19,7 +19,19 @@ module Api
         def create
           # Se já houver alguém logado (via cookie), desloga para garantir a geração de um novo JWT
           sign_out(current_driver) if current_driver
-          super
+
+          # Buscamos o motorista de forma unscoped para permitir o login inicial (multi-tenancy)
+          self.resource = Driver.unscoped.find_by(email: params[:driver][:email])
+
+          if resource && resource.valid_password?(params[:driver][:password])
+            sign_in(resource_name, resource)
+            yield resource if block_given?
+            respond_with(resource)
+          else
+            render json: {
+              status: { code: 401, message: 'E-mail ou senha inválidos.' }
+            }, status: :unauthorized
+          end
         end
 
         private

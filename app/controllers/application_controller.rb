@@ -16,6 +16,9 @@ class ApplicationController < ActionController::Base
   protected
 
   def set_current_tenant
+    # Não tentamos definir o tenant via autenticação se estivermos logando ou aceitando convite
+    return if login_or_invitation_path?
+
     if user_signed_in?
       Current.user = current_user
       Current.company = current_user.company
@@ -23,6 +26,11 @@ class ApplicationController < ActionController::Base
       Current.user = current_driver
       Current.company = current_driver.company
     end
+  end
+
+  def login_or_invitation_path?
+    # Verifica se a requisição atual é para login ou aceite de convite
+    request.path.include?('login') || request.path.include?('invitation/accept')
   end
 
   def configure_permitted_parameters

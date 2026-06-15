@@ -14,6 +14,7 @@ AllCops:
     - 'vendor/**/*'
     - 'bin/**/*'
     - 'node_modules/**/*'
+    - 'mobile/node_modules/**/*'
 
 Style/Documentation:
   Enabled: false

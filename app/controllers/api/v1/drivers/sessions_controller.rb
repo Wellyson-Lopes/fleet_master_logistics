@@ -17,24 +17,37 @@ module Api
         #
         # @return [void]
         def create
-          # Se já houver alguém logado (via cookie), desloga para garantir a geração de um novo JWT
           sign_out(current_driver) if current_driver
+          self.resource = find_driver
 
-          # Buscamos o motorista de forma unscoped para permitir o login inicial (multi-tenancy)
-          self.resource = Driver.unscoped.find_by(email: params[:driver][:email])
-
-          if resource && resource.valid_password?(params[:driver][:password])
-            sign_in(resource_name, resource)
-            yield resource if block_given?
-            respond_with(resource)
+          if resource&.valid_password?(driver_params[:password])
+            authenticate_and_respond
           else
-            render json: {
-              status: { code: 401, message: 'E-mail ou senha inválidos.' }
-            }, status: :unauthorized
+            render_unauthorized
           end
         end
 
         private
+
+        def driver_params
+          params.require(:driver).permit(:email, :password)
+        end
+
+        def find_driver
+          Driver.unscoped.find_by(email: driver_params[:email])
+        end
+
+        def authenticate_and_respond
+          sign_in(resource_name, resource)
+          yield resource if block_given?
+          respond_with(resource)
+        end
+
+        def render_unauthorized
+          render json: {
+            status: { code: 401, message: 'E-mail ou senha inválidos.' }
+          }, status: :unauthorized
+        end
 
         # Customiza a resposta JSON após a tentativa de login.
         #
@@ -49,9 +62,7 @@ module Api
               data: resource.as_json(only: %i[id email name cnpj cpf cnh active])
             }, status: :ok
           else
-            render json: {
-              status: { message: 'Erro ao fazer login. Verifique suas credenciais.' }
-            }, status: :unauthorized
+            render_unauthorized
           end
         end
 

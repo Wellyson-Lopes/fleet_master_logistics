@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>FleetMaster — App Mobile</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B1628;--navy2:#132036;--navy3:#1C2E4A;
+  --blue:#1A6CF6;--blue2:#3D85F7;--blue3:#EBF3FF;--blue4:#D6E7FE;
+  --teal:#0BBFA3;--teal2:#2ED4B8;--teal3:#E8FAF7;
+  --amber:#F59E0B;--amber3:#FEF3C7;
+  --red:#EF4444;--red2:#FFF5F5;--red3:#FEE2E2;
+  --green:#10B981;--green2:#ECFDF5;--green3:#D1FAE5;
+  --g50:#F8FAFC;--g100:#F1F5F9;--g200:#E2E8F0;--g300:#CBD5E1;
+  --g400:#94A3B8;--g500:#64748B;--g600:#475569;--g700:#334155;
+  --g900:#0F172A;
+  --font:'Inter',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+html{height:100%;overflow:hidden}
+body{
+  height:100%;font-family:var(--font);
+  background:#0a0f1a;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+
+/* ─── APP SHELL ─────────────────────────────────────────── */
+.app-shell{
+  flex:1;display:flex;flex-direction:column;
+  max-width:430px;width:100%;margin:0 auto;
+  background:var(--g50);
+  position:relative;overflow:hidden;
+  height:100dvh;
+}
+
+/* ─── STATUS BAR ────────────────────────────────────────── */
+.status-bar{
+  background:var(--navy);
+  padding:calc(var(--safe-top) + 8px) 20px 8px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-shrink:0;z-index:50;
+}
+.status-bar.light{background:var(--g50)}
+.sb-time{font-size:12px;font-weight:700;color:white;letter-spacing:.02em}
+.sb-time.dark{color:var(--g700)}
+.sb-icons{display:flex;gap:4px;align-items:center}
+.sb-icons svg{width:13px;height:13px;fill:rgba(255,255,255,.7);stroke:none}
+.sb-icons.dark svg{fill:var(--g500)}
+.sb-bat{font-size:10px;font-weight:600;color:rgba(255,255,255,.7);margin-left:2px}
+.sb-bat.dark{color:var(--g500)}
+
+/* ─── SCREENS ───────────────────────────────────────────── */
+.screen{
+  display:none;flex:1;flex-direction:column;overflow:hidden;
+  animation:screenIn .22s ease;
+}
+.screen.active{display:flex}
+@keyframes screenIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.screen-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.screen-scroll::-webkit-scrollbar{display:none}
+
+/* ─── BOTTOM TAB BAR ────────────────────────────────────── */
+.tab-bar{
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(20px);
+  border-top:1px solid var(--g100);
+  padding:6px 8px calc(var(--safe-bottom) + 6px);
+  display:flex;justify-content:space-around;align-items:center;
+  flex-shrink:0;z-index:40;
+}
+.tab-bar.dark{background:rgba(11,22,40,.98);border-top-color:rgba(255,255,255,.06)}
+.tb-item{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 10px;border-radius:14px;cursor:pointer;
+  position:relative;min-width:44px;
+  transition:background .15s;
+}
+.tb-item:active{background:rgba(26,108,246,.08);transform:scale(.95)}
+.tb-item svg{width:22px;height:22px;stroke:var(--g400);stroke-width:1.8;fill:none}
+.tb-item.active svg{stroke:var(--blue)}
+.tb-item.active.teal svg{stroke:var(--teal)}
+.tb-label{font-size:9px;font-weight:600;color:var(--g400);letter-spacing:.02em}
+.tb-item.active .tb-label{color:var(--blue)}
+.tb-item.active.teal .tb-label{color:var(--teal)}
+.tb-notif{
+  position:absolute;top:4px;right:8px;
+  width:7px;height:7px;background:var(--red);border-radius:50%;
+  border:2px solid white;
+}
+
+/* ─── COMMON COMPONENTS ─────────────────────────────────── */
+/* app header */
+.app-hdr{background:var(--navy);padding:12px 16px 14px;flex-shrink:0}
+.hdr-back{
+  display:flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:500;color:rgba(255,255,255,.5);
+  margin-bottom:4px;cursor:pointer;
+}
+.hdr-back svg{width:13px;height:13px;stroke:rgba(255,255,255,.5);stroke-width:2.5;fill:none}
+.hdr-title{font-size:16px;font-weight:700;color:white;letter-spacing:-.02em}
+.hdr-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
+.hdr-row{display:flex;align-items:center;justify-content:space-between}
+
+/* icon btn */
+.icon-btn{
+  width:32px;height:32px;background:rgba(255,255,255,.1);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.icon-btn:active{background:rgba(255,255,255,.2);transform:scale(.92)}
+.icon-btn svg{width:15px;height:15px;stroke:rgba(255,255,255,.7);stroke-width:2;fill:none}
+
+/* chip */
+.chip{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;
+  white-space:nowrap;
+}
+.c-blue{background:var(--blue3);color:var(--blue)}
+.c-teal{background:var(--teal3);color:#079d84}
+.c-amber{background:var(--amber3);color:#b45309}
+.c-red{background:var(--red3);color:#dc2626}
+.c-green{background:var(--green3);color:#059669}
+.c-gray{background:var(--g100);color:var(--g600)}
+
+/* live chip */
+.live-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(11,191,163,.15);border:1px solid rgba(11,191,163,.3);
+  color:var(--teal2);font-size:10px;font-weight:700;
+  padding:4px 10px;border-radius:99px;
+}
+.live-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
+
+/* card */
+.card{background:white;border-radius:16px;border:1px solid var(--g100);box-shadow:0 1px 4px rgba(15,23,42,.06)}
+
+/* section label */
+.sec-lbl{font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+
+/* progress */
+.prog-track{height:5px;background:var(--g100);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px}
+
+/* route dot */
+.r-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.r-line{width:1.5px;height:18px;background:var(--g200);margin:2px 4.75px}
+
+/* FAB */
+.fab{
+  position:absolute;bottom:80px;right:16px;
+  width:44px;height:44px;background:var(--blue);border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(26,108,246,.45);z-index:30;cursor:pointer;
+}
+.fab:active{transform:scale(.92)}
+.fab svg{width:20px;height:20px;stroke:white;stroke-width:2.5;fill:none}
+
+/* modal sheet */
+.modal-sheet{
+  position:absolute;bottom:0;left:0;right:0;
+  background:white;border-radius:20px 20px 0 0;
+  padding:14px 16px calc(var(--safe-bottom) + 16px);
+  box-shadow:0 -8px 40px rgba(15,23,42,.18);z-index:50;
+}
+.modal-handle{width:36px;height:3px;background:var(--g200);border-radius:99px;margin:0 auto 14px}
+.modal-backdrop{
+  position:absolute;inset:0;background:rgba(15,23,42,.45);z-index:49;
+}
+
+/* form elements */
+.f-label{font-size:10px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.f-inp{
+  width:100%;background:var(--g50);border:1.5px solid var(--g200);
+  border-radius:11px;padding:10px 13px;
+  font-size:12px;color:var(--g900);font-family:var(--font);
+  appearance:none;outline:none;
+}
+.f-inp:focus{border-color:var(--blue);background:var(--blue3)}
+.f-inp.error{border-color:var(--red);background:var(--red2)}
+.f-select{
+  width:100%;background:var(--g50);border:1.5px solid var(--g200);
+  border-radius:11px;padding:10px 13px;
+  font-size:12px;color:var(--g900);font-family:var(--font);
+  appearance:none;outline:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;padding-right:36px;
+}
+
+.btn{
+  border-radius:12px;padding:13px;
+  font-size:13px;font-weight:700;text-align:center;
+  border:none;cursor:pointer;font-family:var(--font);
+  -webkit-appearance:none;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--blue);color:white;box-shadow:0 4px 16px rgba(26,108,246,.35);width:100%}
+.btn-teal{background:var(--teal);color:white;box-shadow:0 4px 16px rgba(11,191,163,.3);width:100%}
+.btn-ghost{background:var(--g100);color:var(--g600);width:100%}
+
+/* photo upload */
+.photo-upload{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--g50);border:1.5px dashed var(--g200);
+  border-radius:12px;padding:14px;cursor:pointer;
+}
+.photo-upload:active{background:var(--blue3);border-color:var(--blue)}
+.photo-upload svg{width:18px;height:18px;stroke:var(--g400);stroke-width:1.8;fill:none}
+.photo-upload span{font-size:12px;font-weight:600;color:var(--g500)}
+
+/* divider */
+.hdiv{height:1px;background:var(--g100)}
+
+/* ─────────────────────────────────────────────────────── */
+/*   SCREENS                                               */
+/* ─────────────────────────────────────────────────────── */
+
+/* ── LOGIN ────────────────────────────────────────────── */
+#s-login{background:linear-gradient(160deg,var(--navy) 0%,#091322 100%)}
+.login-glow{
+  position:absolute;top:-80px;right:-80px;width:260px;height:260px;
+  background:radial-gradient(circle,rgba(26,108,246,.2) 0%,transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.login-wrap{flex:1;overflow-y:auto;padding:32px 20px 32px;display:flex;flex-direction:column;gap:0}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-icon{
+  width:56px;height:56px;background:var(--blue);border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 10px;box-shadow:0 10px 30px rgba(26,108,246,.4);
+}
+.login-icon svg{width:26px;height:26px;fill:white}
+.login-app-name{font-size:22px;font-weight:800;color:white;letter-spacing:-.03em}
+.login-app-sub{font-size:12px;color:rgba(255,255,255,.3);margin-top:3px}
+
+.login-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:22px;padding:22px;
+}
+.login-title{font-size:18px;font-weight:700;color:white;margin-bottom:3px}
+.login-sub{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:20px}
+
+.dk-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center}
+.dk-label a{color:var(--blue2);text-transform:none;letter-spacing:0;font-weight:600}
+.dk-inp{
+  width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:12px;padding:12px 14px;
+  font-size:13px;color:rgba(255,255,255,.85);
+  font-family:var(--font);outline:none;appearance:none;
+  margin-bottom:14px;
+}
+.dk-inp::placeholder{color:rgba(255,255,255,.25)}
+.dk-inp:focus{border-color:var(--blue);background:rgba(26,108,246,.1)}
+.btn-login{
+  width:100%;background:var(--blue);color:white;
+  border:none;border-radius:13px;padding:14px;
+  font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;
+  box-shadow:0 6px 20px rgba(26,108,246,.4);margin-top:4px;
+}
+.btn-login:active{transform:scale(.98)}
+.login-footer{text-align:center;font-size:12px;color:rgba(255,255,255,.3);padding-top:18px}
+.login-footer a{color:var(--blue2)}
+
+/* ── HOME ─────────────────────────────────────────────── */
+.home-hdr{background:var(--navy);padding:12px 16px 16px;flex-shrink:0}
+.home-greet{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:2px}
+.home-name{font-size:17px;font-weight:700;color:white;letter-spacing:-.02em}
+.notif-btn{
+  width:36px;height:36px;background:rgba(255,255,255,.09);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  position:relative;cursor:pointer;
+}
+.notif-btn:active{background:rgba(255,255,255,.18)}
+.notif-btn svg{width:18px;height:18px;stroke:rgba(255,255,255,.7);stroke-width:1.8;fill:none}
+.notif-badge{
+  position:absolute;top:-2px;right:-2px;
+  width:9px;height:9px;background:var(--red);border-radius:50%;
+  border:2px solid var(--navy);
+}
+.alert-banner{
+  display:flex;align-items:center;gap:9px;
+  background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.22);
+  border-radius:12px;padding:10px 12px;margin-top:10px;
+}
+.alert-banner svg{width:16px;height:16px;stroke:var(--amber);stroke-width:2;fill:none;flex-shrink:0}
+.alert-text{font-size:11px;color:#fbbf24;font-weight:500;flex:1;line-height:1.4}
+.alert-cta{font-size:10px;color:rgba(251,191,36,.7);font-weight:700;white-space:nowrap}
+
+/* hero card */
+.hero-card{
+  background:linear-gradient(135deg,var(--blue) 0%,#0f4fc8 100%);
+  border-radius:18px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;
+}
+.hero-card::after{
+  content:'';position:absolute;bottom:-40px;right:-40px;
+  width:120px;height:120px;background:rgba(255,255,255,.07);border-radius:50%;pointer-events:none;
+}
+.hero-label{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.hero-title{font-size:14px;font-weight:700;color:white;margin-bottom:2px}
+.hero-sub{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:12px}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.h-stat{background:rgba(255,255,255,.1);border-radius:11px;padding:8px 6px;text-align:center}
+.h-stat-val{font-size:16px;font-weight:800;color:white;letter-spacing:-.02em}
+.h-stat-lbl{font-size:9px;color:rgba(255,255,255,.5);margin-top:1px}
+
+/* kpi grid */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.kpi-card{
+  background:white;border:1px solid var(--g100);border-radius:14px;padding:12px;
+  box-shadow:0 1px 3px rgba(15,23,42,.05);
+}
+.kpi-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.kpi-icon svg{width:16px;height:16px;stroke-width:2;fill:none}
+.kpi-val{font-size:22px;font-weight:800;color:var(--g900);letter-spacing:-.04em;line-height:1}
+.kpi-lbl{font-size:10px;color:var(--g400);margin-top:3px}
+.kpi-delta{
+  display:inline-flex;align-items:center;
+  font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;margin-top:5px;
+}
+
+/* recent item */
+.r-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--g100)}
+.r-item:last-child{border-bottom:none}
+.r-item-icon{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.r-item-icon svg{width:17px;height:17px;stroke-width:1.8;fill:none}
+.r-trip-id{font-size:10px;color:var(--g400);font-family:var(--mono)}
+.r-trip-name{font-size:12px;font-weight:600;color:var(--g900)}
+.r-trip-info{font-size:10px;color:var(--g500);margin-top:1px}
+
+/* ── TRIPS LIST ──────────────────────────────────────── */
+.search-row{
+  display:flex;align-items:center;gap:10px;
+  background:white;border:1.5px solid var(--g200);
+  border-radius:13px;padding:10px 14px;margin:10px 14px 0;
+}
+.search-row svg{width:16px;height:16px;stroke:var(--g400);stroke-width:2;fill:none;flex-shrink:0}
+.search-row input{
+  flex:1;border:none;outline:none;font-size:13px;
+  font-family:var(--font);color:var(--g700);background:transparent;
+}
+.search-row input::placeholder{color:var(--g400)}
+
+.seg-tabs{
+  display:flex;background:var(--g100);border-radius:12px;
+  padding:4px;margin:10px 14px;flex-shrink:0;
+}
+.seg-tab{
+  flex:1;text-align:center;font-size:11px;font-weight:600;
+  padding:7px 4px;border-radius:9px;cursor:pointer;color:var(--g500);
+}
+.seg-tab.active{background:white;color:var(--g900);box-shadow:0 1px 4px rgba(15,23,42,.1)}
+
+.tl-item{
+  background:white;border-radius:14px;border:1px solid var(--g100);
+  margin:0 14px 8px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 1px 3px rgba(15,23,42,.04);cursor:pointer;
+}
+.tl-item:active{background:var(--g50);transform:scale(.98)}
+.tl-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tl-icon svg{width:18px;height:18px;stroke-width:1.8;fill:none}
+.tl-main{flex:1;min-width:0}
+.tl-id{font-size:10px;color:var(--g400);font-family:var(--mono)}
+.tl-dest{font-size:13px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-info{font-size:11px;color:var(--g500);margin-top:2px}
+.tl-right{text-align:right;flex-shrink:0}
+.tl-km{font-size:10px;color:var(--g400);margin-top:4px}
+
+/* ── TRIP DETAIL ──────────────────────────────────────── */
+.detail-scroll-pad{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.d-card{background:white;border:1px solid var(--g100);border-radius:16px;padding:14px;box-shadow:0 1px 4px rgba(15,23,42,.05)}
+.d-card-head{font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.d-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--g100)}
+.d-row:last-child{border-bottom:none}
+.d-k{font-size:12px;color:var(--g500)}
+.d-v{font-size:12px;font-weight:600;color:var(--g900)}
+.rp-addr{font-size:12px;font-weight:600;color:var(--g900)}
+.rp-city{font-size:11px;color:var(--g500)}
+.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 10px}
+.action-btn{
+  border-radius:14px;padding:13px 10px;text-align:center;
+  font-size:11px;font-weight:700;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  font-family:var(--font);
+}
+.action-btn:active{transform:scale(.95)}
+.action-btn svg{width:18px;height:18px;stroke-width:2;fill:none}
+.ab-blue{background:var(--blue3);color:var(--blue)}
+.ab-blue svg{stroke:var(--blue)}
+.ab-teal{background:var(--teal3);color:#079d84}
+.ab-teal svg{stroke:#079d84}
+.ab-amber{background:var(--amber3);color:#b45309}
+.ab-amber svg{stroke:#b45309}
+.ab-red{background:var(--red3);color:#dc2626}
+.ab-red svg{stroke:#dc2626}
+
+/* ── INCIDENTS ──────────────────────────────────────── */
+.inc-item{
+  background:white;border:1px solid var(--g100);border-radius:14px;
+  margin:0 14px 8px;padding:12px 14px;
+  display:flex;gap:11px;align-items:flex-start;
+  box-shadow:0 1px 3px rgba(15,23,42,.04);cursor:pointer;
+}
+.inc-item:active{background:var(--g50)}
+.inc-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.inc-icon svg{width:17px;height:17px;stroke-width:2;fill:none}
+.inc-type{font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em}
+.inc-title{font-size:12px;font-weight:600;color:var(--g900);margin:2px 0}
+.inc-sub{font-size:11px;color:var(--g500)}
+.photo-strip{display:flex;gap:5px;margin-top:7px}
+.p-thumb{
+  width:34px;height:30px;background:var(--g100);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;border:1px solid var(--g200);
+}
+.p-thumb svg{width:14px;height:14px;stroke:var(--g400);stroke-width:1.8;fill:none}
+
+/* ── FUEL ─────────────────────────────────────────── */
+.fuel-hero{
+  background:linear-gradient(140deg,var(--navy) 0%,#0d1f3c 100%);
+  padding:14px 16px;margin:12px 14px 0;border-radius:18px;position:relative;overflow:hidden;
+}
+.fuel-hero::before{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:90px;height:90px;background:rgba(26,108,246,.15);border-radius:50%;pointer-events:none;
+}
+.fh-lbl{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em}
+.fh-val{font-size:26px;font-weight:800;color:white;letter-spacing:-.04em}
+.fh-sub{font-size:11px;color:rgba(255,255,255,.35);margin-bottom:10px}
+.fuel-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fuel-mini{background:rgba(255,255,255,.08);border-radius:11px;padding:9px 11px}
+.fuel-mini-val{font-size:14px;font-weight:700;color:white}
+.fuel-mini-lbl{font-size:9px;color:rgba(255,255,255,.35);margin-top:2px}
+
+.fuel-item{
+  background:white;border:1px solid var(--g100);border-radius:13px;
+  margin:0 14px 8px;padding:11px 13px;
+  display:flex;align-items:center;gap:11px;cursor:pointer;
+}
+.fuel-item:active{background:var(--g50)}
+.fuel-icon-box{
+  width:34px;height:34px;border-radius:10px;background:var(--blue3);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.fuel-icon-box svg{width:16px;height:16px;stroke:var(--blue);stroke-width:2;fill:none}
+.fuel-plate{font-size:12px;font-weight:700;color:var(--g900);font-family:var(--mono)}
+.fuel-date{font-size:11px;color:var(--g400)}
+.fuel-litros{font-size:13px;font-weight:700;color:var(--g900)}
+.fuel-valor{font-size:10px;color:var(--g500);margin-top:2px}
+
+/* fuel form */
+.form-card{
+  background:white;border:1px solid var(--g100);border-radius:16px;
+  margin:12px 14px 0;padding:16px;
+}
+.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f-group{margin-bottom:12px}
+
+/* ── PROFILE ──────────────────────────────────────── */
+.prof-hdr{background:var(--navy);padding:20px 16px 22px;text-align:center;flex-shrink:0}
+.prof-av-wrap{position:relative;display:inline-block;margin-bottom:9px}
+.prof-av{
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:800;color:white;
+  border:3px solid rgba(255,255,255,.12);
+}
+.prof-plan{
+  position:absolute;bottom:-4px;right:-4px;
+  background:var(--amber);color:#000;
+  font-size:8px;font-weight:800;padding:2px 6px;
+  border-radius:99px;letter-spacing:.04em;border:2px solid var(--navy);
+}
+.prof-name{font-size:16px;font-weight:800;color:white;letter-spacing:-.02em}
+.prof-role{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
+.prof-company{font-size:11px;color:rgba(255,255,255,.55);margin-top:3px}
+
+.menu-item{
+  background:white;border:1px solid var(--g100);border-radius:13px;
+  margin:0 14px 7px;padding:12px 14px;
+  display:flex;align-items:center;gap:11px;cursor:pointer;
+}
+.menu-item:active{background:var(--g50)}
+.mi-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mi-icon svg{width:16px;height:16px;stroke-width:2;fill:none}
+.mi-lbl{font-size:13px;font-weight:600;color:var(--g900);flex:1}
+.mi-right{display:flex;align-items:center;gap:7px}
+.mi-arr svg{width:14px;height:14px;stroke:var(--g300);stroke-width:2;fill:none}
+.logout-btn{
+  margin:5px 14px;border-radius:13px;
+  background:var(--red2);border:1px solid var(--red3);
+  padding:13px;text-align:center;
+  font-size:13px;font-weight:700;color:#dc2626;cursor:pointer;
+}
+.logout-btn:active{background:var(--red3)}
+
+/* ─── DESKTOP: show as centered phone ───────────────── */
+@media(min-width:431px){
+  body{justify-content:center;align-items:center;background:#0a0f1a}
+  body::before{
+    content:'FleetMaster Mobile App';
+    position:fixed;top:20px;left:50%;transform:translateX(-50%);
+    font-family:var(--font);font-size:11px;font-weight:700;color:rgba(255,255,255,.25);
+    letter-spacing:.12em;text-transform:uppercase;z-index:100;white-space:nowrap;
+  }
+  .app-shell{
+    height:min(820px, 92dvh);
+    border-radius:40px;
+    box-shadow:
+      0 0 0 10px #1a2540,
+      0 0 0 11px rgba(255,255,255,.08),
+      0 40px 80px rgba(0,0,0,.7);
+    overflow:hidden;
+  }
+  .status-bar{padding:14px 20px 8px}
+
+  /* screen nav pill for desktop */
+  .screen-switcher{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    display:flex;gap:5px;background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:99px;padding:5px;z-index:200;
+    backdrop-filter:blur(20px);
+  }
+  .sw-pill{
+    font-size:10px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;
+    color:rgba(255,255,255,.45);border:1px solid transparent;white-space:nowrap;
+    transition:all .15s;
+  }
+  .sw-pill:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.08)}
+  .sw-pill.active{background:var(--blue);color:white;border-color:transparent}
+}
+@media(max-width:430px){
+  .screen-switcher{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar" id="status-bar">
+    <span class="sb-time" id="sb-time">9:41</span>
+    <div class="sb-icons">
+      <svg viewBox="0 0 24 24"><path d="M1 6l5 5 6-6 6 6 5-5"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M5 12.5a7 7 0 0114 0M1 9a11 11 0 0122 0M9 16a3 3 0 016 0"/></svg>
+      <span class="sb-bat">100%</span>
+    </div>
+  </div>
+
+  <!-- ═══ LOGIN ══════════════════════════════════════════ -->
+  <div class="screen active" id="s-login">
+    <div class="login-glow"></div>
+    <div class="login-wrap">
+      <div class="login-logo">
+        <div class="login-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path fill="rgba(255,255,255,.3)" d="M9 22V12h6v10"/></svg>
+        </div>
+        <div class="login-app-name">FleetMaster</div>
+        <div class="login-app-sub">Gestão de frotas inteligente</div>
+      </div>
+      <div class="login-card">
+        <div class="login-title">Bem-vindo de volta</div>
+        <div class="login-sub">Entre para gerenciar sua frota</div>
+        <div class="dk-label">E-mail</div>
+        <input class="dk-inp" type="email" placeholder="seu@empresa.com">
+        <div class="dk-label">Senha <a href="#">Esqueceu?</a></div>
+        <input class="dk-inp" type="password" placeholder="••••••••" value="senha123">
+        <button class="btn-login" onclick="go('home')">Entrar na plataforma →</button>
+      </div>
+      <div class="login-footer">Não tem conta? <a href="#">Criar conta grátis</a></div>
+    </div>
+  </div>
+
+  <!-- ═══ HOME ══════════════════════════════════════════ -->
+  <div class="screen" id="s-home">
+    <div class="home-hdr">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div class="home-greet">Bom dia,</div>
+          <div class="home-name">Carlos Silva</div>
+        </div>
+        <div class="notif-btn" onclick="go('incidents')">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <div class="notif-badge"></div>
+        </div>
+      </div>
+      <div class="alert-banner" onclick="go('vehicle')">
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="alert-text">Sua CNH vence em 12 dias — renove em breve</span>
+        <span class="alert-cta">Ver →</span>
+      </div>
+    </div>
+    <div class="screen-scroll">
+      <div style="padding:14px 14px 0">
+        <div class="hero-card" onclick="go('detail')">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div class="hero-label">Sua viagem ativa</div>
+              <div class="hero-title">ABC-1234 · Volvo FH 460</div>
+              <div class="hero-sub">Construtora Nordeste · 240 sacos</div>
+            </div>
+            <div class="live-chip"><div class="live-dot"></div>Rota</div>
+          </div>
+          <div class="hero-stats">
+            <div class="h-stat"><div class="h-stat-val">127</div><div class="h-stat-lbl">km</div></div>
+            <div class="h-stat"><div class="h-stat-val">2</div><div class="h-stat-lbl">entregas</div></div>
+            <div class="h-stat"><div class="h-stat-val">94%</div><div class="h-stat-lbl">prazo</div></div>
+          </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:#EBF3FF"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg></div>
+            <div class="kpi-val">3</div>
+            <div class="kpi-lbl">Minhas viagens hoje</div>
+            <div class="kpi-delta" style="background:#EBF3FF;color:var(--blue)">1 em rota</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:#ECFDF5"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="kpi-val">14</div>
+            <div class="kpi-lbl">Entregas/semana</div>
+            <div class="kpi-delta" style="background:#ECFDF5;color:#059669">↑ +3</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:#FFFBEB"><svg viewBox="0 0 24 24" style="stroke:var(--amber)"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+            <div class="kpi-val">1</div>
+            <div class="kpi-lbl">Minhas ocorrências</div>
+            <div class="kpi-delta" style="background:#FFFBEB;color:#b45309">aberta</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:#E8FAF7"><svg viewBox="0 0 24 24" style="stroke:var(--teal)"><path d="M3 22V8l9-6 9 6v14"/><path d="M9 22V12h6v10"/></svg></div>
+            <div class="kpi-val">3,7</div>
+            <div class="kpi-lbl">km/L este mês</div>
+            <div class="kpi-delta" style="background:#E8FAF7;color:#079d84">na média</div>
+          </div>
+        </div>
+        <div class="sec-lbl">Minhas viagens recentes</div>
+        <div class="card" style="overflow:hidden">
+          <div style="padding:2px 14px">
+            <div class="r-item" onclick="go('detail')">
+              <div class="r-item-icon" style="background:#EBF3FF"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7V8z"/></svg></div>
+              <div style="flex:1">
+                <div class="r-trip-id">#2026-087</div>
+                <div class="r-trip-name">Construtora Nordeste</div>
+                <div class="r-trip-info">ABC-1234 · 127 km</div>
+              </div>
+              <div class="chip c-blue">Em Rota</div>
+            </div>
+            <div class="r-item" onclick="go('incidents')">
+              <div class="r-item-icon" style="background:#FFF5F5"><svg viewBox="0 0 24 24" style="stroke:var(--red)"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+              <div style="flex:1">
+                <div class="r-trip-id">#2026-085</div>
+                <div class="r-trip-name">Obra Residencial Sul</div>
+                <div class="r-trip-info">ABC-1234 · 84 km</div>
+              </div>
+              <div class="chip c-red">Ocorrência</div>
+            </div>
+            <div class="r-item" style="opacity:.6">
+              <div class="r-item-icon" style="background:#ECFDF5"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div style="flex:1">
+                <div class="r-trip-id">#2026-082</div>
+                <div class="r-trip-name">Distribuidora ABC</div>
+                <div class="r-trip-info">ABC-1234 · 210 km</div>
+              </div>
+              <div class="chip c-teal">Concluída</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+    <div class="tab-bar" id="tab-home">
+      <div class="tb-item active" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="tb-label">Home</span></div>
+      <div class="tb-item" onclick="go('trips')"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg><span class="tb-label">Viagens</span></div>
+      <div class="tb-item" onclick="go('incidents')" style="position:relative"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><span class="tb-label">Alertas</span><div class="tb-notif"></div></div>
+      <div class="tb-item" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tb-label">Perfil</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ TRIPS ══════════════════════════════════════════ -->
+  <div class="screen" id="s-trips">
+    <div class="app-hdr">
+      <div class="hdr-row">
+        <div><div class="hdr-title">Minhas Viagens</div><div class="hdr-sub">Junho 2026 · 1 ativa</div></div>
+        <div style="display:flex;gap:8px">
+          <div class="icon-btn"><svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div>
+          <div class="icon-btn" onclick="go('detail')"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="search-row">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="Buscar por destino ou nº da viagem..." type="search">
+    </div>
+    <div class="seg-tabs">
+      <div class="seg-tab active">Ativas (1)</div>
+      <div class="seg-tab">Concluídas</div>
+      <div class="seg-tab">Todas</div>
+    </div>
+    <div class="screen-scroll" style="padding-top:4px">
+      <div class="tl-item" onclick="go('detail')">
+        <div class="tl-icon" style="background:#EBF3FF"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <div class="tl-main">
+          <div class="tl-id">#2026-087</div>
+          <div class="tl-dest">Construtora Nordeste</div>
+          <div class="tl-info">ABC-1234 · Volvo FH 460</div>
+        </div>
+        <div class="tl-right"><div class="chip c-blue">Em Rota</div><div class="tl-km">127 km</div></div>
+      </div>
+      <div class="tl-item" style="opacity:.85" onclick="go('detail')">
+        <div class="tl-icon" style="background:#FFFBEB"><svg viewBox="0 0 24 24" style="stroke:var(--amber)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="tl-main">
+          <div class="tl-id">#2026-088</div>
+          <div class="tl-dest">Porto Petroquímica</div>
+          <div class="tl-info">ABC-1234 · amanhã 06:00</div>
+        </div>
+        <div class="tl-right"><div class="chip c-amber">Agendada</div><div class="tl-km">320 km</div></div>
+      </div>
+      <div class="tl-item" style="border-color:var(--red3);opacity:.7">
+        <div class="tl-icon" style="background:#FFF5F5"><svg viewBox="0 0 24 24" style="stroke:var(--red)"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div class="tl-main">
+          <div class="tl-id">#2026-085</div>
+          <div class="tl-dest">Obra Residencial Sul</div>
+          <div class="tl-info">ABC-1234 · concluída com ocorrência</div>
+        </div>
+        <div class="tl-right"><div class="chip c-red">Ocorrência</div><div class="tl-km">84 km</div></div>
+      </div>
+      <div class="tl-item" style="opacity:.55">
+        <div class="tl-icon" style="background:#ECFDF5"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="tl-main">
+          <div class="tl-id">#2026-082</div>
+          <div class="tl-dest">Distribuidora ABC</div>
+          <div class="tl-info">ABC-1234 · entregue 08/06</div>
+        </div>
+        <div class="tl-right"><div class="chip c-teal">Concluída</div><div class="tl-km">210 km</div></div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+    <div class="tab-bar">
+      <div class="tb-item" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="tb-label">Home</span></div>
+      <div class="tb-item active" onclick="go('trips')"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg><span class="tb-label">Viagens</span></div>
+      <div class="tb-item" onclick="go('incidents')" style="position:relative"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><span class="tb-label">Alertas</span><div class="tb-notif"></div></div>
+      <div class="tb-item" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tb-label">Perfil</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ TRIP DETAIL ════════════════════════════════════ -->
+  <div class="screen" id="s-detail">
+    <div class="app-hdr">
+      <div class="hdr-back" onclick="go('trips')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Viagens</div>
+      <div class="hdr-row">
+        <div class="hdr-title">#2026-087</div>
+        <div class="live-chip"><div class="live-dot"></div>Em Rota</div>
+      </div>
+    </div>
+    <div class="screen-scroll">
+      <div class="detail-scroll-pad">
+        <div class="d-card">
+          <div class="d-card-head">Sua Viagem</div>
+          <div class="d-row"><span class="d-k">Meu veículo</span><span class="d-v" style="font-family:var(--mono)">ABC-1234</span></div>
+          <div class="d-row"><span class="d-k">Caminhão</span><span class="d-v">Volvo FH 460</span></div>
+          <div class="d-row"><span class="d-k">Carga</span><span class="d-v">240 sacos cimento</span></div>
+          <div class="d-row"><span class="d-k">Cliente</span><span class="d-v">Construtora Nordeste</span></div>
+        </div>
+        <div class="d-card">
+          <div class="d-card-head">Rota</div>
+          <div style="display:flex;flex-direction:column">
+            <div style="display:flex;gap:10px">
+              <div style="display:flex;flex-direction:column;align-items:center">
+                <div class="r-dot" style="background:var(--blue)"></div>
+                <div class="r-line"></div>
+              </div>
+              <div style="padding-bottom:10px">
+                <div class="rp-addr">Depósito Central</div>
+                <div class="rp-city">Recife — PE · Partida 07:15</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px">
+              <div><div class="r-dot" style="background:var(--teal)"></div></div>
+              <div>
+                <div class="rp-addr">Construtora Nordeste</div>
+                <div class="rp-city">Caruaru — PE · ETA 11:40</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-card">
+          <div class="d-card-head">Progresso da Viagem</div>
+          <div class="prog-row"><span style="font-size:12px;color:var(--g500)">127 km de 180 km</span><span style="font-size:12px;font-weight:700;color:var(--blue)">71%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:71%;background:var(--blue)"></div></div>
+        </div>
+      </div>
+      <div class="action-grid">
+        <div class="action-btn ab-teal">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirmar Entrega
+        </div>
+        <div class="action-btn ab-red" onclick="go('new-inc')">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+          Nova Ocorrência
+        </div>
+        <div class="action-btn ab-blue" onclick="go('fuel-form')">
+          <svg viewBox="0 0 24 24"><path d="M3 22V8l9-6 9 6v14"/><path d="M9 22V12h6v10"/></svg>
+          Abastecimento
+        </div>
+        <div class="action-btn ab-amber">
+          <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+          Checklist
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+    <div class="tab-bar">
+      <div class="tb-item" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="tb-label">Home</span></div>
+      <div class="tb-item active" onclick="go('trips')"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg><span class="tb-label">Viagens</span></div>
+      <div class="tb-item" onclick="go('incidents')" style="position:relative"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><span class="tb-label">Alertas</span><div class="tb-notif"></div></div>
+      <div class="tb-item" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tb-label">Perfil</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ INCIDENTS ═════════════════════════════════════ -->
+  <div class="screen" id="s-incidents">
+    <div class="app-hdr">
+      <div class="hdr-row">
+        <div><div class="hdr-title">Minhas Ocorrências</div><div class="hdr-sub">1 aberta · 2 resolvidas</div></div>
+        <div class="chip c-red" style="font-size:11px;padding:5px 12px">1</div>
+      </div>
+    </div>
+    <div class="screen-scroll" style="padding-top:10px;position:relative">
+      <div class="inc-item">
+        <div class="inc-icon" style="background:#FFF5F5"><svg viewBox="0 0 24 24" style="stroke:var(--red)"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="inc-type">Pneu / Mecânica</div>
+            <div class="chip c-red">Aberta</div>
+          </div>
+          <div class="inc-title">Pneu furado — BR-101 km 142</div>
+          <div class="inc-sub">ABC-1234 · Viagem #2026-085 · há 1h</div>
+          <div class="photo-strip">
+            <div class="p-thumb"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+            <div class="p-thumb"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+            <span style="font-size:10px;color:var(--g400);align-self:center;margin-left:3px">+1 foto</span>
+          </div>
+        </div>
+      </div>
+      <div class="inc-item" style="opacity:.6">
+        <div class="inc-icon" style="background:#ECFDF5"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="inc-type">Atraso</div>
+            <div class="chip c-teal">Resolvida</div>
+          </div>
+          <div class="inc-title">Trânsito — Av. Norte, Recife</div>
+          <div class="inc-sub">ABC-1234 · Viagem #2026-082 · 08/06</div>
+        </div>
+      </div>
+      <div class="inc-item" style="opacity:.6">
+        <div class="inc-icon" style="background:#ECFDF5"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="inc-type">Manutenção</div>
+            <div class="chip c-teal">Resolvida</div>
+          </div>
+          <div class="inc-title">Troca de óleo — concluída</div>
+          <div class="inc-sub">ABC-1234 · ontem</div>
+        </div>
+      </div>
+      <div class="fab" onclick="go('new-inc')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      <div style="height:80px"></div>
+    </div>
+    <div class="tab-bar">
+      <div class="tb-item" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="tb-label">Home</span></div>
+      <div class="tb-item" onclick="go('trips')"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg><span class="tb-label">Viagens</span></div>
+      <div class="tb-item active"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><span class="tb-label">Alertas</span></div>
+      <div class="tb-item" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tb-label">Perfil</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ NEW INCIDENT (bottom sheet) ═══════════════════ -->
+  <div class="screen" id="s-new-inc">
+    <div class="app-hdr">
+      <div class="hdr-title">Ocorrências</div>
+      <div class="hdr-sub">Lista</div>
+    </div>
+    <div style="flex:1;position:relative;overflow:hidden">
+      <div class="modal-backdrop" onclick="go('incidents')"></div>
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div style="font-size:16px;font-weight:700;color:var(--g900);margin-bottom:14px">Nova Ocorrência</div>
+        <div class="f-group">
+          <div class="f-label">Tipo</div>
+          <select class="f-select">
+            <option>Pneu / Mecânica</option>
+            <option>Atraso</option>
+            <option>Acidente</option>
+            <option>Manutenção</option>
+          </select>
+        </div>
+        <div class="f-group">
+          <div class="f-label">Descrição</div>
+          <textarea class="f-inp" rows="3" style="resize:none" placeholder="Descreva o que aconteceu...">Pneu dianteiro esquerdo furado na BR-101...</textarea>
+        </div>
+        <div class="f-group">
+          <div class="f-label">Foto</div>
+          <div class="photo-upload">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Tirar foto ou galeria</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost" onclick="go('incidents')">Cancelar</button>
+          <button class="btn btn-primary" onclick="go('incidents')">Registrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FUEL ═══════════════════════════════════════════ -->
+  <div class="screen" id="s-fuel">
+    <div class="app-hdr">
+      <div class="hdr-row">
+        <div><div class="hdr-title">Meu Combustível</div><div class="hdr-sub">Junho 2026 · ABC-1234</div></div>
+        <div class="icon-btn" onclick="go('fuel-form')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      </div>
+    </div>
+    <div class="screen-scroll">
+      <div class="fuel-hero">
+        <div class="fh-lbl">Total do mês</div>
+        <div class="fh-val">R$ 1.836</div>
+        <div class="fh-sub">340 litros · 2 registros</div>
+        <div class="fuel-mini-grid">
+          <div class="fuel-mini"><div class="fuel-mini-val">R$ 2,18</div><div class="fuel-mini-lbl">custo por km</div></div>
+          <div class="fuel-mini"><div class="fuel-mini-val">3,7 km/L</div><div class="fuel-mini-lbl">consumo médio</div></div>
+        </div>
+      </div>
+      <div style="padding:14px 14px 6px"><div class="sec-lbl">Histórico do veículo</div></div>
+      <div class="fuel-item" onclick="go('fuel-form')">
+        <div class="fuel-icon-box"><svg viewBox="0 0 24 24"><path d="M3 22V8l9-6 9 6v14"/><path d="M9 22V12h6v10"/></svg></div>
+        <div style="flex:1">
+          <div class="fuel-plate">ABC-1234</div>
+          <div class="fuel-date">Hoje · Posto Shell BR-101</div>
+        </div>
+        <div style="text-align:right"><div class="fuel-litros">180 L</div><div class="fuel-valor">R$ 972</div></div>
+      </div>
+      <div class="fuel-item">
+        <div class="fuel-icon-box"><svg viewBox="0 0 24 24"><path d="M3 22V8l9-6 9 6v14"/><path d="M9 22V12h6v10"/></svg></div>
+        <div style="flex:1">
+          <div class="fuel-plate">ABC-1234</div>
+          <div class="fuel-date">08/06 · Posto Petrobras</div>
+        </div>
+        <div style="text-align:right"><div class="fuel-litros">160 L</div><div class="fuel-valor">R$ 864</div></div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+    <div class="tab-bar">
+      <div class="tb-item" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="tb-label">Home</span></div>
+      <div class="tb-item" onclick="go('trips')"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg><span class="tb-label">Viagens</span></div>
+      <div class="tb-item active teal"><svg viewBox="0 0 24 24"><path d="M3 22V8l9-6 9 6v14"/><path d="M9 22V12h6v10"/></svg><span class="tb-label">Combustível</span></div>
+      <div class="tb-item" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tb-label">Perfil</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ FUEL FORM ══════════════════════════════════════ -->
+  <div class="screen" id="s-fuel-form">
+    <div class="app-hdr">
+      <div class="hdr-back" onclick="go('fuel')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Combustível</div>
+      <div class="hdr-title">Novo Abastecimento</div>
+    </div>
+    <div class="screen-scroll">
+      <div class="form-card">
+        <div class="sec-lbl" style="margin-bottom:14px">Dados do abastecimento</div>
+        <div class="f-group">
+          <div class="f-label">Veículo</div>
+          <div class="f-inp" style="display:flex;align-items:center;justify-content:space-between;color:var(--g700)">
+            <span>ABC-1234 · Volvo FH 460</span>
+            <span class="chip c-gray" style="font-size:9px">seu veículo</span>
+          </div>
+        </div>
+        <div class="inp-row">
+          <div class="f-group">
+            <div class="f-label">Litros</div>
+            <input class="f-inp" type="number" value="180" style="font-size:15px;font-weight:700">
+          </div>
+          <div class="f-group">
+            <div class="f-label">Valor (R$)</div>
+            <input class="f-inp" type="number" value="972.00">
+          </div>
+        </div>
+        <div class="f-group">
+          <div class="f-label">Posto / Local</div>
+          <input class="f-inp" type="text" value="Posto Shell BR-101, km 50">
+        </div>
+        <div class="f-group">
+          <div class="f-label">Hodômetro (km)</div>
+          <input class="f-inp" type="number" placeholder="48320">
+        </div>
+        <div class="f-group">
+          <div class="f-label">Comprovante</div>
+          <div class="photo-upload">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Foto do cupom fiscal</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn btn-ghost" onclick="go('fuel')">Cancelar</button>
+          <button class="btn btn-teal" onclick="go('fuel')">Salvar Registro</button>
+        </div>
+      </div>
+      <div style="height:20px"></div>
+    </div>
+    <div class="tab-bar">
+      <div class="tb-item" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="tb-label">Home</span></div>
+      <div class="tb-item" onclick="go('trips')"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg><span class="tb-label">Viagens</span></div>
+      <div class="tb-item active teal"><svg viewBox="0 0 24 24"><path d="M3 22V8l9-6 9 6v14"/><path d="M9 22V12h6v10"/></svg><span class="tb-label">Combustível</span></div>
+      <div class="tb-item" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tb-label">Perfil</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ MEU VEÍCULO ════════════════════════════════════ -->
+  <div class="screen" id="s-vehicle">
+    <div class="app-hdr">
+      <div class="hdr-row">
+        <div><div class="hdr-title">Meu Veículo</div><div class="hdr-sub">Atribuído a você</div></div>
+        <div class="chip c-blue" style="font-size:11px;padding:5px 12px">Em uso</div>
+      </div>
+    </div>
+    <div class="screen-scroll" style="padding-top:10px">
+      <div class="detail-scroll-pad" style="padding-top:0">
+        <div class="d-card">
+          <div class="d-card-head">Dados do Caminhão</div>
+          <div class="d-row"><span class="d-k">Placa</span><span class="d-v" style="font-family:var(--mono)">ABC-1234</span></div>
+          <div class="d-row"><span class="d-k">Modelo</span><span class="d-v">Volvo FH 460</span></div>
+          <div class="d-row"><span class="d-k">Ano</span><span class="d-v">2022</span></div>
+          <div class="d-row"><span class="d-k">Hodômetro atual</span><span class="d-v" style="font-family:var(--mono)">48.320 km</span></div>
+          <div class="d-row"><span class="d-k">Capacidade</span><span class="d-v">240 sacos / 24t</span></div>
+        </div>
+
+        <div class="d-card" style="border-color:var(--red3)">
+          <div class="d-card-head">Minha CNH</div>
+          <div class="d-row"><span class="d-k">Categoria</span><span class="d-v">AE</span></div>
+          <div class="d-row"><span class="d-k">Validade</span><span class="d-v" style="color:var(--red)">26/06/2026 — vence em 12 dias</span></div>
+          <div style="margin-top:10px">
+            <div class="photo-upload" onclick="go('vehicle')">
+              <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span>Enviar CNH atualizada</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-card">
+          <div class="d-card-head">Próxima Manutenção</div>
+          <div class="d-row"><span class="d-k">Tipo</span><span class="d-v">Troca de óleo + filtros</span></div>
+          <div class="d-row"><span class="d-k">Prevista para</span><span class="d-v">53.000 km</span></div>
+          <div class="prog-row" style="margin-top:8px"><span style="font-size:12px;color:var(--g500)">48.320 km de 53.000 km</span><span style="font-size:12px;font-weight:700;color:var(--teal)">91%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:91%;background:var(--teal)"></div></div>
+        </div>
+
+        <div class="d-card">
+          <div class="d-card-head">Checklist Diário</div>
+          <div class="d-row"><span class="d-k">Pneus e calibragem</span><span class="chip c-teal">OK</span></div>
+          <div class="d-row"><span class="d-k">Níveis de fluido</span><span class="chip c-teal">OK</span></div>
+          <div class="d-row"><span class="d-k">Luzes e sinalização</span><span class="chip c-teal">OK</span></div>
+          <div class="d-row"><span class="d-k">Documentação</span><span class="chip c-amber">Verificar CNH</span></div>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+    <div class="tab-bar">
+      <div class="tb-item" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="tb-label">Home</span></div>
+      <div class="tb-item" onclick="go('trips')"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg><span class="tb-label">Viagens</span></div>
+      <div class="tb-item" onclick="go('incidents')" style="position:relative"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><span class="tb-label">Alertas</span><div class="tb-notif"></div></div>
+      <div class="tb-item" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tb-label">Perfil</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ PROFILE ════════════════════════════════════════ -->
+  <div class="screen" id="s-profile">
+    <div class="prof-hdr">
+      <div class="prof-av-wrap">
+        <div class="prof-av">CS</div>
+        <div class="prof-plan">MOT</div>
+      </div>
+      <div class="prof-name">Carlos Silva</div>
+      <div class="prof-role">Motorista · CNH AE</div>
+      <div class="prof-company">Distribuidora Nordeste Ltda</div>
+    </div>
+    <div class="screen-scroll" style="padding-top:12px">
+      <div class="menu-item">
+        <div class="mi-icon" style="background:#EBF3FF"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <span class="mi-lbl">Meus dados</span>
+        <div class="mi-right"><div class="mi-arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      </div>
+      <div class="menu-item" onclick="go('vehicle')">
+        <div class="mi-icon" style="background:var(--g100)"><svg viewBox="0 0 24 24" style="stroke:var(--g600)"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <span class="mi-lbl">Meu veículo e CNH</span>
+        <div class="mi-right"><div class="chip c-red" style="font-size:9px">1 alerta</div><div class="mi-arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      </div>
+      <div class="menu-item">
+        <div class="mi-icon" style="background:#FFFBEB"><svg viewBox="0 0 24 24" style="stroke:var(--amber)"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+        <span class="mi-lbl">Notificações</span>
+        <div class="mi-right"><div class="chip c-blue" style="font-size:9px">2</div><div class="mi-arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      </div>
+      <div class="menu-item">
+        <div class="mi-icon" style="background:#E8FAF7"><svg viewBox="0 0 24 24" style="stroke:var(--teal)"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg></div>
+        <span class="mi-lbl">Histórico de viagens</span>
+        <div class="mi-right"><div class="mi-arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      </div>
+      <div class="menu-item">
+        <div class="mi-icon" style="background:var(--g100)"><svg viewBox="0 0 24 24" style="stroke:var(--g500)"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        <span class="mi-lbl">Segurança e senha</span>
+        <div class="mi-right"><div class="mi-arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      </div>
+      <div class="menu-item">
+        <div class="mi-icon" style="background:var(--g100)"><svg viewBox="0 0 24 24" style="stroke:var(--g500)"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <span class="mi-lbl">Ajuda e suporte</span>
+        <div class="mi-right"><div class="mi-arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+      </div>
+      <div class="logout-btn" onclick="go('login')">Sair da conta</div>
+      <div style="height:12px"></div>
+    </div>
+    <div class="tab-bar">
+      <div class="tb-item" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span class="tb-label">Home</span></div>
+      <div class="tb-item" onclick="go('trips')"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg><span class="tb-label">Viagens</span></div>
+      <div class="tb-item" onclick="go('incidents')" style="position:relative"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><span class="tb-label">Alertas</span><div class="tb-notif"></div></div>
+      <div class="tb-item active" onclick="go('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tb-label">Perfil</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Desktop screen switcher -->
+<div class="screen-switcher">
+  <div class="sw-pill active" onclick="go('login')">Login</div>
+  <div class="sw-pill" onclick="go('home')">Home</div>
+  <div class="sw-pill" onclick="go('trips')">Viagens</div>
+  <div class="sw-pill" onclick="go('detail')">Detalhe</div>
+  <div class="sw-pill" onclick="go('incidents')">Ocorrências</div>
+  <div class="sw-pill" onclick="go('new-inc')">Nova Ocorr.</div>
+  <div class="sw-pill" onclick="go('fuel')">Combustível</div>
+  <div class="sw-pill" onclick="go('fuel-form')">Abastec.</div>
+  <div class="sw-pill" onclick="go('vehicle')">Meu Veículo</div>
+  <div class="sw-pill" onclick="go('profile')">Perfil</div>
+</div>
+
+<script>
+function go(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('s-' + screen);
+  if (el) el.classList.add('active');
+
+  document.querySelectorAll('.sw-pill').forEach((p, i) => {
+    p.classList.toggle('active', p.textContent.toLowerCase().includes(screen.replace('-',' ').split(' ')[0]));
+  });
+  // sync pills by order
+  const order = ['login','home','trips','detail','incidents','new-inc','fuel','fuel-form','vehicle','profile'];
+  document.querySelectorAll('.sw-pill').forEach((p, i) => {
+    p.classList.toggle('active', order[i] === screen);
+  });
+
+  // scroll to top
+  const scrollEl = el && el.querySelector('.screen-scroll');
+  if (scrollEl) scrollEl.scrollTop = 0;
+
+  // update clock
+  const now = new Date();
+  const t = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  const sbTime = document.getElementById('sb-time');
+  if (sbTime) sbTime.textContent = t;
+}
+</script>
+
+<!-- ============================================================
+     FLEETMASTER — DESIGN SYSTEM REFERENCE
+     Seção legível por IA e humanos. Não faz parte do app.
+     Acessível via botão "Design System" na barra de navegação.
+     ============================================================ -->
+<style>
+/* ── DS page layout ── */
+.ds-page{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:#0a0f1a;overflow-y:auto;overflow-x:hidden;
+  font-family:'Inter',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.ds-page.open{display:block}
+.ds-topbar{
+  position:sticky;top:0;z-index:10;
+  background:rgba(10,15,26,.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ds-topbar-title{font-size:14px;font-weight:700;color:white;letter-spacing:-.01em}
+.ds-topbar-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+.ds-close{
+  width:34px;height:34px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.ds-close:active{background:rgba(255,255,255,.18)}
+.ds-close svg{width:16px;height:16px;stroke:rgba(255,255,255,.6);stroke-width:2;fill:none}
+.ds-body{padding:24px 20px 60px;max-width:800px;margin:0 auto}
+
+/* section */
+.ds-section{margin-bottom:40px}
+.ds-section-title{
+  font-size:10px;font-weight:700;color:rgba(255,255,255,.3);
+  text-transform:uppercase;letter-spacing:.12em;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding-bottom:10px;margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+}
+.ds-section-title::before{
+  content:'';width:3px;height:14px;background:var(--blue);
+  border-radius:2px;display:inline-block;
+}
+
+/* grid helpers */
+.ds-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ds-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.ds-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:500px){
+  .ds-grid-3,.ds-grid-4{grid-template-columns:1fr 1fr}
+  .ds-grid-2{grid-template-columns:1fr}
+}
+
+/* card base */
+.ds-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;padding:14px 16px;
+}
+.ds-card-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:10px;letter-spacing:-.005em}
+.ds-card-body{font-size:11px;color:rgba(255,255,255,.35);line-height:1.8}
+.ds-card-body code{
+  display:inline-block;background:rgba(26,108,246,.18);color:#93c5fd;
+  padding:1px 7px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:10px;
+  margin:1px 0;
+}
+.ds-card-body strong{color:rgba(255,255,255,.55);font-weight:600}
+
+/* ── Color swatches ── */
+.swatch-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.swatch-row:last-child{margin-bottom:0}
+.swatch{width:28px;height:28px;border-radius:8px;flex-shrink:0;border:1px solid rgba(255,255,255,.07)}
+.swatch-info{flex:1}
+.swatch-name{font-size:11px;font-weight:600;color:rgba(255,255,255,.65)}
+.swatch-hex{font-size:10px;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace}
+.swatch-use{font-size:9px;color:rgba(255,255,255,.22);margin-top:1px}
+
+/* ── Type specimens ── */
+.type-specimen{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06)}
+.type-specimen:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.ts-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.ts-meta{font-size:9px;color:rgba(255,255,255,.2);font-family:'JetBrains Mono',monospace;margin-top:3px}
+
+/* ── Component previews ── */
+.comp-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
+.comp-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}
+
+/* buttons preview */
+.prev-btn{
+  border-radius:12px;padding:11px 18px;
+  font-size:13px;font-weight:700;font-family:'Inter',sans-serif;
+  border:none;cursor:default;white-space:nowrap;
+}
+.prev-btn-sm{
+  border-radius:10px;padding:8px 14px;
+  font-size:11px;font-weight:700;font-family:'Inter',sans-serif;
+  border:none;cursor:default;
+}
+.pb-primary{background:#1A6CF6;color:white;box-shadow:0 4px 14px rgba(26,108,246,.35)}
+.pb-teal{background:#0BBFA3;color:white;box-shadow:0 4px 14px rgba(11,191,163,.3)}
+.pb-ghost{background:#F1F5F9;color:#475569}
+.pb-danger{background:#EF4444;color:white;box-shadow:0 4px 14px rgba(239,68,68,.3)}
+.pb-outline{background:transparent;color:rgba(255,255,255,.7);border:1.5px solid rgba(255,255,255,.2)!important}
+.pb-ghost-dark{background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.12)!important}
+
+/* action buttons */
+.prev-action{
+  border-radius:14px;padding:12px 10px;text-align:center;
+  font-size:11px;font-weight:700;border:none;cursor:default;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  font-family:'Inter',sans-serif;min-width:80px;
+}
+.prev-action svg{width:18px;height:18px;stroke-width:2;fill:none}
+
+/* chips preview */
+.chip-prev{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;
+}
+
+/* live chip */
+.live-prev{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(11,191,163,.15);border:1px solid rgba(11,191,163,.3);
+  color:#2ED4B8;font-size:11px;font-weight:700;
+  padding:4px 11px;border-radius:99px;
+}
+.lp-dot{width:6px;height:6px;background:#0BBFA3;border-radius:50%;animation:pulse 1.6s ease-in-out infinite}
+
+/* icon grid */
+.icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px}
+.icon-item{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:11px;padding:12px 8px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  text-align:center;
+}
+.icon-item svg{width:20px;height:20px;stroke:rgba(255,255,255,.55);stroke-width:1.8;fill:none}
+.icon-item span{font-size:8px;color:rgba(255,255,255,.25);font-family:'JetBrains Mono',monospace;line-height:1.3}
+
+/* input previews */
+.inp-preview{
+  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:12px;padding:11px 14px;
+  font-size:12px;color:rgba(255,255,255,.35);font-family:'Inter',sans-serif;
+  margin-bottom:8px;
+}
+.inp-preview.focused{border-color:#1A6CF6;background:rgba(26,108,246,.1);color:rgba(255,255,255,.8)}
+.inp-preview.error{border-color:#EF4444;background:rgba(239,68,68,.08);color:#f87171}
+.inp-preview.filled{color:rgba(255,255,255,.8)}
+
+/* progress */
+.prog-demo{height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:6px 0 10px}
+.prog-demo-fill{height:100%;border-radius:99px}
+
+/* spacing tokens */
+.space-demo{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.space-block{background:rgba(26,108,246,.3);border-radius:4px;height:16px}
+.space-label{font-size:10px;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+
+/* elevation */
+.elev-card{
+  border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:8px;
+}
+
+/* border radius */
+.radius-demo{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.rd-item{display:flex;flex-direction:column;align-items:center;gap:6px}
+.rd-box{width:44px;height:44px;background:rgba(26,108,246,.25);border:1px solid rgba(26,108,246,.4)}
+.rd-lbl{font-size:9px;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace;text-align:center}
+
+/* ds-toggle open btn */
+.ds-open-btn{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(16px);border-radius:99px;
+  padding:8px 18px;font-size:11px;font-weight:700;
+  color:rgba(255,255,255,.5);cursor:pointer;z-index:100;
+  display:flex;align-items:center;gap:7px;white-space:nowrap;
+  letter-spacing:.02em;
+}
+.ds-open-btn:hover{background:rgba(255,255,255,.14);color:rgba(255,255,255,.8)}
+.ds-open-btn:active{transform:translateX(-50%) scale(.96)}
+.ds-open-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
+@media(max-width:430px){.ds-open-btn{bottom:calc(var(--safe-bottom, 0px) + 70px)}}
+
+/* AI-readable metadata block */
+.ds-meta-block{
+  background:rgba(26,108,246,.07);border:1px solid rgba(26,108,246,.18);
+  border-radius:12px;padding:14px 16px;margin-bottom:24px;
+  font-size:11px;color:rgba(255,255,255,.4);line-height:1.9;
+}
+.ds-meta-block strong{color:rgba(255,255,255,.6)}
+.ds-meta-block code{
+  background:rgba(26,108,246,.18);color:#93c5fd;
+  padding:1px 7px;border-radius:5px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+}
+</style>
+
+<!-- DS trigger button (visible on desktop overlay) -->
+<button class="ds-open-btn" onclick="document.getElementById('ds-page').classList.add('open')">
+  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+  Design System
+</button>
+
+<!-- DS PAGE -->
+<div class="ds-page" id="ds-page">
+  <div class="ds-topbar">
+    <div>
+      <div class="ds-topbar-title">FleetMaster — Design System</div>
+      <div class="ds-topbar-sub">Referência para IA · v1.0 · React Native + NativeWind 4</div>
+    </div>
+    <div class="ds-close" onclick="document.getElementById('ds-page').classList.remove('open')">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+
+  <div class="ds-body">
+
+    <!-- ── META PARA IA ─────────────────────────────── -->
+    <div class="ds-meta-block">
+      <strong>Projeto:</strong> FleetMaster Logistics — App Mobile do Motorista (módulo separado do dashboard web de gestão).<br>
+      <strong>Escopo de dados:</strong> Todo o app é <strong>centrado no motorista autenticado</strong>. Não existem listas de "todos os motoristas", "toda a frota" ou "todas as viagens da empresa" — cada tela mostra apenas viagens, ocorrências, abastecimentos, veículo e documentos do usuário logado (autenticação via JWT).<br>
+      <strong>App Mobile:</strong> <code>React Native 0.74+</code> · <code>NativeWind 4.x</code> · <code>flowbite-react-native</code> · <code>React Navigation 6</code><br>
+      <strong>Fontes:</strong> <code>Inter</code> (UI principal) · <code>JetBrains Mono</code> (placas, IDs, código)<br>
+      <strong>Paleta base:</strong> Navy/Blue/Teal/Amber — fundo escuro nos headers, fundo claro nas telas de conteúdo.<br>
+      <strong>Público:</strong> Exclusivamente motoristas (acesso via convite, JWT). Gestores usam o dashboard web separado.<br>
+      <strong>Idioma:</strong> Português Brasil. Datas: DD/MM/AAAA. Moeda: R$ 0.000,00. Placa: AAA-0000.
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 1. CORES                                       -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="ds-section">
+      <div class="ds-section-title">1 · Tokens de Cor</div>
+      <div class="ds-grid-2">
+
+        <div class="ds-card">
+          <div class="ds-card-title">Marca Principal</div>
+          <div class="swatch-row"><div class="swatch" style="background:#0B1628"></div><div class="swatch-info"><div class="swatch-name">Navy 900</div><div class="swatch-hex">#0B1628 · <code>bg-[#0B1628]</code></div><div class="swatch-use">Headers, status bar, sidebars</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#132036"></div><div class="swatch-info"><div class="swatch-name">Navy 800</div><div class="swatch-hex">#132036 · <code>bg-[#132036]</code></div><div class="swatch-use">Cards dark, drawers</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#1C2E4A"></div><div class="swatch-info"><div class="swatch-name">Navy 700</div><div class="swatch-hex">#1C2E4A · <code>bg-[#1C2E4A]</code></div><div class="swatch-use">Inputs dark, hover states</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#1A6CF6"></div><div class="swatch-info"><div class="swatch-name">Blue 500 — primária</div><div class="swatch-hex">#1A6CF6 · <code>bg-blue-500</code></div><div class="swatch-use">CTAs, active tabs, links</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#3D85F7"></div><div class="swatch-info"><div class="swatch-name">Blue 400</div><div class="swatch-hex">#3D85F7 · <code>bg-blue-400</code></div><div class="swatch-use">Hover do primário</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#EBF3FF"></div><div class="swatch-info"><div class="swatch-name">Blue 50</div><div class="swatch-hex">#EBF3FF · <code>bg-blue-50</code></div><div class="swatch-use">Background chips blue, icon boxes</div></div></div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Semântica</div>
+          <div class="swatch-row"><div class="swatch" style="background:#0BBFA3"></div><div class="swatch-info"><div class="swatch-name">Teal 500 — sucesso/rota</div><div class="swatch-hex">#0BBFA3 · <code>bg-[#0BBFA3]</code></div><div class="swatch-use">Viagem concluída, live chip</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#E8FAF7"></div><div class="swatch-info"><div class="swatch-name">Teal 50</div><div class="swatch-hex">#E8FAF7 · <code>bg-[#E8FAF7]</code></div><div class="swatch-use">Background chips teal</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#F59E0B"></div><div class="swatch-info"><div class="swatch-name">Amber 500 — atenção</div><div class="swatch-hex">#F59E0B · <code>bg-amber-500</code></div><div class="swatch-use">CNH vencendo, agendado, plano PRO</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#FEF3C7"></div><div class="swatch-info"><div class="swatch-name">Amber 100</div><div class="swatch-hex">#FEF3C7 · <code>bg-amber-100</code></div><div class="swatch-use">Background chips amber</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#EF4444"></div><div class="swatch-info"><div class="swatch-name">Red 500 — erro/ocorrência</div><div class="swatch-hex">#EF4444 · <code>bg-red-500</code></div><div class="swatch-use">Alertas, ocorrências, CNH vencida</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#10B981"></div><div class="swatch-info"><div class="swatch-name">Green 500 — concluído</div><div class="swatch-hex">#10B981 · <code>bg-green-500</code></div><div class="swatch-use">Entrega ok, disponível</div></div></div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Neutros (Slate)</div>
+          <div class="swatch-row"><div class="swatch" style="background:#F8FAFC"></div><div class="swatch-info"><div class="swatch-name">Slate 50</div><div class="swatch-hex">#F8FAFC · <code>bg-slate-50</code></div><div class="swatch-use">Background geral das telas</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#F1F5F9"></div><div class="swatch-info"><div class="swatch-name">Slate 100</div><div class="swatch-hex">#F1F5F9 · <code>bg-slate-100</code></div><div class="swatch-use">Segmented control bg, btn ghost bg</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#E2E8F0"></div><div class="swatch-info"><div class="swatch-name">Slate 200</div><div class="swatch-hex">#E2E8F0 · <code>bg-slate-200</code></div><div class="swatch-use">Bordas de inputs, divisores</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#94A3B8"></div><div class="swatch-info"><div class="swatch-name">Slate 400</div><div class="swatch-hex">#94A3B8 · <code>text-slate-400</code></div><div class="swatch-use">Ícones inativos, tab bar</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#64748B"></div><div class="swatch-info"><div class="swatch-name">Slate 500</div><div class="swatch-hex">#64748B · <code>text-slate-500</code></div><div class="swatch-use">Labels secundários, meta-texto</div></div></div>
+          <div class="swatch-row"><div class="swatch" style="background:#0F172A"></div><div class="swatch-info"><div class="swatch-name">Slate 900</div><div class="swatch-hex">#0F172A · <code>text-slate-900</code></div><div class="swatch-use">Texto primário light mode</div></div></div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Gradientes</div>
+          <div class="ds-card-body">
+            <div style="height:40px;border-radius:10px;background:linear-gradient(135deg,#1A6CF6 0%,#0f4fc8 100%);margin-bottom:6px"></div>
+            <code>linear-gradient(135deg, #1A6CF6, #0f4fc8)</code><br>Hero cards de viagem, CTAs principais<br><br>
+            <div style="height:40px;border-radius:10px;background:linear-gradient(160deg,#0B1628 0%,#091322 100%);margin-bottom:6px;border:1px solid rgba(255,255,255,.08)"></div>
+            <code>linear-gradient(160deg, #0B1628, #091322)</code><br>Headers, tela de login<br><br>
+            <div style="height:40px;border-radius:10px;background:linear-gradient(135deg,#1A6CF6,#0BBFA3);margin-bottom:6px"></div>
+            <code>linear-gradient(135deg, #1A6CF6, #0BBFA3)</code><br>Avatares, badges de plano<br><br>
+            <div style="height:40px;border-radius:10px;background:linear-gradient(140deg,#0B1628 0%,#0d1f3c 100%);margin-bottom:6px;border:1px solid rgba(255,255,255,.08)"></div>
+            <code>linear-gradient(140deg, #0B1628, #0d1f3c)</code><br>Hero card Combustível
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 2. TIPOGRAFIA                                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="ds-section">
+      <div class="ds-section-title">2 · Tipografia</div>
+      <div class="ds-grid-2">
+        <div class="ds-card">
+          <div class="ds-card-title">Família Inter — UI Principal</div>
+
+          <div class="type-specimen">
+            <div class="ts-label">Display / Hero Value</div>
+            <div style="font-size:28px;font-weight:800;color:white;letter-spacing:-.04em;line-height:1">R$ 4.280</div>
+            <div class="ts-meta">28px · weight 800 · tracking -0.04em · <code>text-[28px] font-extrabold tracking-tighter</code></div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">Screen Title</div>
+            <div style="font-size:17px;font-weight:700;color:white;letter-spacing:-.02em">Viagens</div>
+            <div class="ts-meta">17px · weight 700 · tracking -0.02em · <code>text-[17px] font-bold</code></div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">Card Title / Name</div>
+            <div style="font-size:14px;font-weight:700;color:white;letter-spacing:-.015em">Construtora Nordeste</div>
+            <div class="ts-meta">14px · weight 700 · tracking -0.015em · <code>text-sm font-bold</code></div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">List Item / Body</div>
+            <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.8)">Pneu furado — BR-101 km 142</div>
+            <div class="ts-meta">13px · weight 600 · <code>text-[13px] font-semibold</code></div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">Secondary / Meta</div>
+            <div style="font-size:11px;font-weight:400;color:rgba(255,255,255,.4)">Carlos S. · ABC-1234 · há 1h</div>
+            <div class="ts-meta">11px · weight 400 · <code>text-xs text-slate-500</code></div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">Section Label / Caps</div>
+            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em">Viagens recentes</div>
+            <div class="ts-meta">10px · weight 700 · uppercase · tracking 0.1em · <code>text-[10px] font-bold uppercase tracking-widest</code></div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">Badge / Chip Label</div>
+            <div style="font-size:10px;font-weight:700;color:#1A6CF6">Em Rota</div>
+            <div class="ts-meta">10px · weight 700 · <code>text-[10px] font-bold</code></div>
+          </div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Família JetBrains Mono — Dados Técnicos</div>
+          <div class="ds-card-body" style="margin-bottom:14px">
+            Usada exclusivamente para: placas de veículos, IDs de viagem, hodômetros, código e valores técnicos onde a leitura caracter-a-caracter importa.
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">Placa do Veículo</div>
+            <div style="font-size:14px;font-weight:700;color:white;font-family:'JetBrains Mono',monospace;letter-spacing:.02em">ABC-1234</div>
+            <div class="ts-meta">14px · weight 700 · mono · <code>font-mono font-bold text-sm</code></div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">ID da Viagem</div>
+            <div style="font-size:11px;font-weight:400;color:rgba(255,255,255,.4);font-family:'JetBrains Mono',monospace">#2026-087</div>
+            <div class="ts-meta">11px · weight 400 · mono · <code>font-mono text-xs text-slate-400</code></div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">Hodômetro / KM</div>
+            <div style="font-size:12px;font-weight:500;color:rgba(255,255,255,.6);font-family:'JetBrains Mono',monospace">48.320 km</div>
+            <div class="ts-meta">12px · weight 500 · mono · <code>font-mono text-[12px]</code></div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="ts-label">Código / Metadado</div>
+            <div style="font-size:10px;font-weight:400;color:rgba(255,255,255,.25);font-family:'JetBrains Mono',monospace">CNH AE · Vence 15/03/2027</div>
+            <div class="ts-meta">10px · weight 400 · mono · <code>font-mono text-[10px]</code></div>
+          </div>
+
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07)">
+            <div class="ds-card-title">Regras Gerais</div>
+            <div class="ds-card-body">
+              • Nunca usar peso abaixo de <strong>400</strong> no app<br>
+              • Títulos de tela: sempre <strong>700</strong> no mínimo<br>
+              • Botões: sempre <strong>700</strong><br>
+              • Labels de seção: sempre <strong>700 + uppercase</strong><br>
+              • Valores monetários (KPI): <strong>800</strong><br>
+              • Textos em fundo navy: opacidade <code>rgba(255,255,255, X)</code><br>
+              • Hierarquia: 100% → 80% → 55% → 40% → 25%<br>
+              • Anti-aliasing: <code>-webkit-font-smoothing: antialiased</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 3. BOTÕES                                      -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="ds-section">
+      <div class="ds-section-title">3 · Botões</div>
+      <div class="ds-grid-2">
+
+        <div class="ds-card">
+          <div class="ds-card-title">Botões Primários (full-width)</div>
+          <div class="ds-card-body" style="margin-bottom:12px">
+            Usados para a ação principal de uma tela. Nunca dois primários lado a lado.
+          </div>
+          <button class="prev-btn pb-primary" style="width:100%;margin-bottom:8px">Entrar na plataforma →</button>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>bg-blue-500 · rounded-xl · py-3 · font-bold · shadow-blue</code></div>
+          <button class="prev-btn pb-teal" style="width:100%;margin-bottom:8px">Salvar Registro</button>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>bg-[#0BBFA3] · rounded-xl · py-3 · shadow-teal</code></div>
+          <button class="prev-btn pb-danger" style="width:100%">Confirmar Exclusão</button>
+          <div class="ds-card-body"><code>bg-red-500 · rounded-xl · py-3 · shadow-red — apenas destruição</code></div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Botões Secundários e Ghost</div>
+          <button class="prev-btn pb-ghost" style="width:100%;margin-bottom:8px">Cancelar</button>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>bg-slate-100 · text-slate-600 · rounded-xl — contexto light</code></div>
+          <button class="prev-btn pb-ghost-dark" style="width:100%;margin-bottom:8px">Ver detalhes</button>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>bg-white/7 · border-white/12 · rounded-xl — contexto dark</code></div>
+          <button class="prev-btn pb-outline" style="width:100%;margin-bottom:8px">Criar conta grátis</button>
+          <div class="ds-card-body" style="margin-bottom:16px"><code>bg-transparent · border-white/20 · rounded-xl — contexto dark</code></div>
+
+          <div class="ds-card-title">Par Cancelar + Confirmar</div>
+          <div style="display:flex;gap:8px">
+            <button class="prev-btn pb-ghost" style="flex:1">Cancelar</button>
+            <button class="prev-btn pb-primary" style="flex:1">Confirmar</button>
+          </div>
+          <div class="ds-card-body" style="margin-top:8px">Dupla padrão em modals e forms. Ghost à esquerda, primário à direita.</div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Action Buttons (grade 2×2)</div>
+          <div class="ds-card-body" style="margin-bottom:12px">
+            Usados na tela de Detalhe da Viagem. Sempre em grade 2 colunas, ícone + label, bordas arredondadas xl.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="prev-action" style="background:#E8FAF7;color:#079d84">
+              <svg viewBox="0 0 24 24" style="stroke:#079d84"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirmar Entrega
+            </div>
+            <div class="prev-action" style="background:#FEE2E2;color:#dc2626">
+              <svg viewBox="0 0 24 24" style="stroke:#dc2626"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              Nova Ocorrência
+            </div>
+            <div class="prev-action" style="background:#EBF3FF;color:#1A6CF6">
+              <svg viewBox="0 0 24 24" style="stroke:#1A6CF6"><path d="M3 22V8l9-6 9 6v14"/></svg>
+              Abastecimento
+            </div>
+            <div class="prev-action" style="background:#FEF3C7;color:#b45309">
+              <svg viewBox="0 0 24 24" style="stroke:#b45309"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+              Checklist
+            </div>
+          </div>
+          <div class="ds-card-body" style="margin-top:10px">Cores: teal=entrega · red=perigo · blue=ação · amber=tarefa</div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Icon Buttons e FAB</div>
+          <div class="comp-label">Icon Buttons (header)</div>
+          <div class="comp-row">
+            <div style="width:34px;height:34px;background:rgba(255,255,255,.1);border-radius:10px;display:flex;align-items:center;justify-content:center">
+              <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:rgba(255,255,255,.7);stroke-width:2;fill:none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div style="width:34px;height:34px;background:rgba(255,255,255,.1);border-radius:10px;display:flex;align-items:center;justify-content:center">
+              <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:rgba(255,255,255,.7);stroke-width:2;fill:none"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            </div>
+            <div style="width:34px;height:34px;background:rgba(255,255,255,.1);border-radius:10px;display:flex;align-items:center;justify-content:center">
+              <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:rgba(255,255,255,.7);stroke-width:2;fill:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+          </div>
+          <div class="ds-card-body" style="margin-bottom:14px">34×34px · <code>rounded-[10px]</code> · <code>bg-white/10</code> · <code>active:bg-white/20</code></div>
+          <div class="comp-label">FAB (Floating Action Button)</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;background:#1A6CF6;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(26,108,246,.45)">
+              <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:white;stroke-width:2.5;fill:none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div class="ds-card-body">44×44px · <code>rounded-2xl</code> · <code>bg-blue-500</code><br>Posição: <code>absolute bottom-20 right-4</code><br>Uso: tela Ocorrências → nova ocorrência</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 4. CHIPS & BADGES                             -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="ds-section">
+      <div class="ds-section-title">4 · Chips, Badges e Status</div>
+      <div class="ds-grid-2">
+        <div class="ds-card">
+          <div class="ds-card-title">Chips de Status de Viagem</div>
+          <div class="comp-row" style="margin-bottom:10px">
+            <div class="chip-prev" style="background:#EBF3FF;color:#1A6CF6">Em Rota</div>
+            <div class="chip-prev" style="background:#E8FAF7;color:#079d84">Concluída</div>
+            <div class="chip-prev" style="background:#FEF3C7;color:#b45309">Agendada</div>
+            <div class="chip-prev" style="background:#FEE2E2;color:#dc2626">Ocorrência</div>
+            <div class="chip-prev" style="background:#D1FAE5;color:#059669">Disponível</div>
+            <div class="chip-prev" style="background:#F1F5F9;color:#475569">Inativa</div>
+          </div>
+          <div class="ds-card-body">
+            Estrutura: <code>rounded-full px-[9px] py-[3px] text-[10px] font-bold</code><br>
+            Cada cor corresponde a um estado semântico. Nunca usar cor fora do estado.<br><br>
+            • <strong>Blue</strong> = em rota / ativo<br>
+            • <strong>Teal</strong> = concluído / disponível<br>
+            • <strong>Amber</strong> = pendente / atenção<br>
+            • <strong>Red</strong> = erro / ocorrência / vencido<br>
+            • <strong>Green</strong> = confirmado / OK<br>
+            • <strong>Gray</strong> = neutro / inativo
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-title">Live Chip (Animado)</div>
+          <div class="comp-row" style="margin-bottom:12px">
+            <div class="live-prev"><div class="lp-dot"></div>Em Rota</div>
+            <div class="live-prev" style="background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.3);color:#fbbf24"><div class="lp-dot" style="background:#F59E0B"></div>Alerta</div>
+          </div>
+          <div class="ds-card-body" style="margin-bottom:16px">
+            Usado quando há uma entidade atualmente em movimento/ativa. O ponto pulsa com <code>@keyframes pulse</code>.<br>
+            <code>bg-teal/15 · border-teal/30 · rounded-full · text-[10px] font-bold</code>
+          </div>
+
+          <div class="ds-card-title">Notif Badge (sobre ícones)</div>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px">
+            <div style="position:relative;width:36px;height:36px;background:rgba(255,255,255,.1);border-radius:12px;display:flex;align-items:center;justify-content:center">
+              <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:rgba(255,255,255,.7);stroke-width:1.8;fill:none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+              <div style="position:absolute;top:-2px;right:-2px;width:9px;height:9px;background:#EF4444;border-radius:50%;border:2px solid #132036"></div>
+            </div>
+            <div class="ds-card-body">9×9px · <code>bg-red-500</code> · borda 2px da cor do bg pai</div>
+          </div>
+
+          <div class="ds-card-title">Contagem em chip</div>
+          <div class="comp-row">
+            <div class="chip-prev" style="background:#FEE2E2;color:#dc2626;font-size:13px;padding:5px 14px">3</div>
+            <div class="chip-prev" style="background:#EBF3FF;color:#1A6CF6;font-size:11px">10 users</div>
+            <div class="chip-prev" style="background:#FEE2E2;color:#dc2626;font-size:11px">1 alerta</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 5. ÍCONES                                      -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="ds-section">
+      <div class="ds-section-title">5 · Ícones</div>
+      <div class="ds-card" style="margin-bottom:12px">
+        <div class="ds-card-title">Biblioteca e Estilo</div>
+        <div class="ds-card-body">
+          Biblioteca: <strong>Feather Icons</strong> via <code>@expo/vector-icons/Feather</code> no React Native.<br>
+          Estilo: <strong>outline/stroke only</strong> — nunca fill sólido nos ícones de UI.<br>
+          Stroke width padrão: <code>1.8</code> para ícones 20–24px · <code>2.0</code> para ícones 14–18px · <code>2.5</code> em FABs.<br>
+          Tamanhos usados: <code>14px</code> (meta), <code>16px</code> (icon-btn header), <code>18px</code> (notif, tab bar), <code>20px</code> (FAB), <code>22px</code> (tab bar ativo).
+        </div>
+      </div>
+      <div class="icon-grid">
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span>home<br>Home</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276"/></svg><span>map<br>Viagens</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>alert-triangle<br>Alerta</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>user<br>Perfil</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>truck<br>Caminhão</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M3 22V8l9-6 9 6v14"/><path d="M9 22V12h6v10"/></svg><span>home-2<br>Combustível</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span>bell<br>Notificação</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span>check<br>Confirmar</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>plus<br>Adicionar</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg><span>chevron-left<br>Voltar</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg><span>chevron-right<br>Menu item</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>search<br>Buscar</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><span>filter<br>Filtrar</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>lock<br>Segurança</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg><span>camera<br>Foto</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg><span>clipboard<br>Checklist</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>clock<br>Agendado</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>monitor<br>Plano</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>x<br>Fechar</span></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>image<br>Foto anexo</span></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 6. INPUTS & FORMULÁRIOS                        -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="ds-section">
+      <div class="ds-section-title">6 · Inputs e Formulários</div>
+      <div class="ds-grid-2">
+        <div class="ds-card">
+          <div class="ds-card-title">Estados dos Inputs</div>
+          <div class="comp-label">Default (vazio)</div>
+          <div class="inp-preview">Destino, placa, motorista...</div>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>bg-slate-50 · border-slate-200 · rounded-[11px] · text-slate-400</code></div>
+
+          <div class="comp-label">Focused</div>
+          <div class="inp-preview focused">ABC-1234 · Volvo FH 460</div>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>border-blue-500 · bg-blue-50 · text-slate-900</code></div>
+
+          <div class="comp-label">Filled</div>
+          <div class="inp-preview filled">Posto Shell BR-101, km 50</div>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>border-slate-200 · bg-slate-50 · text-slate-900</code></div>
+
+          <div class="comp-label">Error</div>
+          <div class="inp-preview error">Campo obrigatório</div>
+          <div class="ds-card-body"><code>border-red-500 · bg-red-50 · text-red-400</code></div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Estrutura do Campo</div>
+          <div class="ds-card-body" style="margin-bottom:14px">
+            Todo campo tem: <strong>Label</strong> acima + <strong>Input</strong>.<br>
+            Label: <code>10px font-bold uppercase tracking-widest text-slate-500</code><br>
+            Input: <code>w-full rounded-[11px] px-[13px] py-[10px] text-[12px]</code><br>
+            Margem entre label e input: <code>mb-[5px]</code><br>
+            Margem entre campos: <code>mb-[12px]</code>
+          </div>
+
+          <div class="ds-card-title">Select Dropdown</div>
+          <div class="ds-card-body" style="margin-bottom:10px">
+            Mesmo estilo do input. Ícone <code>chevron-down</code> em <code>right-3</code>, cor slate-400.<br>
+            <code>appearance-none · bg-[url(chevron)] bg-no-repeat bg-right-center</code>
+          </div>
+
+          <div class="ds-card-title">Photo Upload</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,.04);border:1.5px dashed rgba(255,255,255,.15);border-radius:12px;padding:14px;margin-bottom:8px">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:rgba(255,255,255,.4);stroke-width:1.8;fill:none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span style="font-size:12px;font-weight:600;color:rgba(255,255,255,.4)">Tirar foto ou galeria</span>
+          </div>
+          <div class="ds-card-body"><code>border-dashed border-slate-200 · rounded-xl · active:bg-blue-50 active:border-blue-500</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 7. CARDS & LAYOUT                             -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="ds-section">
+      <div class="ds-section-title">7 · Cards, Espaçamento e Elevação</div>
+      <div class="ds-grid-2">
+        <div class="ds-card">
+          <div class="ds-card-title">Border Radius</div>
+          <div class="radius-demo">
+            <div class="rd-item"><div class="rd-box" style="border-radius:8px"></div><div class="rd-lbl">8px<br>rounded-lg<br>icon boxes sm</div></div>
+            <div class="rd-item"><div class="rd-box" style="border-radius:10px"></div><div class="rd-lbl">10px<br>rounded-[10px]<br>inputs</div></div>
+            <div class="rd-item"><div class="rd-box" style="border-radius:12px"></div><div class="rd-lbl">12px<br>rounded-xl<br>botões</div></div>
+            <div class="rd-item"><div class="rd-box" style="border-radius:14px"></div><div class="rd-lbl">14px<br>rounded-[14px]<br>cards list</div></div>
+            <div class="rd-item"><div class="rd-box" style="border-radius:16px"></div><div class="rd-lbl">16px<br>rounded-2xl<br>cards form</div></div>
+            <div class="rd-item"><div class="rd-box" style="border-radius:18px"></div><div class="rd-lbl">18px<br>rounded-[18px]<br>hero cards</div></div>
+            <div class="rd-item"><div class="rd-box" style="border-radius:20px"></div><div class="rd-lbl">20px<br>rounded-[20px]<br>modal sheet</div></div>
+            <div class="rd-item"><div class="rd-box" style="border-radius:99px;height:20px"></div><div class="rd-lbl">99px<br>rounded-full<br>chips, pills</div></div>
+          </div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Espaçamento (múltiplos de 4)</div>
+          <div class="space-demo"><div class="space-block" style="width:4px"></div><div class="space-label">4px · gap-1 · itens inline</div></div>
+          <div class="space-demo"><div class="space-block" style="width:8px"></div><div class="space-label">8px · gap-2 · chips, tags</div></div>
+          <div class="space-demo"><div class="space-block" style="width:10px"></div><div class="space-label">10px · gap-[10px] · grids kpi</div></div>
+          <div class="space-demo"><div class="space-block" style="width:12px"></div><div class="space-label">12px · gap-3 · itens de lista</div></div>
+          <div class="space-demo"><div class="space-block" style="width:14px"></div><div class="space-label">14px · px-[14px] · padding card</div></div>
+          <div class="space-demo"><div class="space-block" style="width:16px"></div><div class="space-label">16px · p-4 · padding tela</div></div>
+          <div class="space-demo"><div class="space-block" style="width:20px"></div><div class="space-label">20px · p-5 · header padding</div></div>
+          <div class="space-demo"><div class="space-block" style="width:24px"></div><div class="space-label">24px · p-6 · sections</div></div>
+          <div style="margin-top:12px" class="ds-card-body">
+            Padding horizontal das telas: <code>px-[14px]</code><br>
+            Padding dos cards: <code>p-[14px]</code> a <code>p-4</code><br>
+            Gap entre cards: <code>gap-2</code> (<code>8px</code>)<br>
+            Touch target mínimo: <code>44×44px</code> (Apple HIG)
+          </div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Elevação / Sombras</div>
+          <div class="elev-card" style="background:white;box-shadow:0 1px 3px rgba(15,23,42,.06);border:1px solid #F1F5F9;color:#334155">
+            shadow-sm — Cards de lista
+          </div>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>shadow: 0 1px 3px rgba(15,23,42,.06)</code></div>
+          <div class="elev-card" style="background:white;box-shadow:0 1px 4px rgba(15,23,42,.08);border:1px solid #E2E8F0;color:#334155">
+            shadow-md — Cards de detalhe
+          </div>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>shadow: 0 1px 4px rgba(15,23,42,.08)</code></div>
+          <div class="elev-card" style="background:#1A6CF6;box-shadow:0 4px 14px rgba(26,108,246,.35);color:white">
+            shadow-blue — Botão primário
+          </div>
+          <div class="ds-card-body" style="margin-bottom:10px"><code>shadow: 0 4px 14px rgba(26,108,246,.35)</code></div>
+          <div class="elev-card" style="background:rgba(255,255,255,.96);box-shadow:0 -1px 0 0 #F1F5F9;color:#334155">
+            Tab bar / Modal sheet
+          </div>
+          <div class="ds-card-body"><code>backdrop-blur-xl · bg-white/97 · border-t-slate-100</code></div>
+        </div>
+
+        <div class="ds-card">
+          <div class="ds-card-title">Progress Bar</div>
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:11px;color:rgba(255,255,255,.4)">Progresso da rota</span>
+              <span style="font-size:11px;font-weight:700;color:#3D85F7">71%</span>
+            </div>
+            <div class="prog-demo"><div class="prog-demo-fill" style="width:71%;background:#1A6CF6"></div></div>
+            <div class="ds-card-body"><code>h-[5px] · bg-slate-100 · rounded-full · overflow-hidden</code></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:11px;color:rgba(255,255,255,.4)">Uso do plano</span>
+              <span style="font-size:11px;font-weight:700;color:#2ED4B8">45%</span>
+            </div>
+            <div class="prog-demo"><div class="prog-demo-fill" style="width:45%;background:#0BBFA3"></div></div>
+          </div>
+
+          <div style="margin-top:20px" class="ds-card-title">Bottom Sheet / Modal</div>
+          <div class="ds-card-body">
+            Ativado via FAB ou ação contextual. Sobe por cima do conteúdo.<br><br>
+            • Handle: <code>36×3px · bg-slate-200 · rounded-full · mx-auto mb-[14px]</code><br>
+            • <code>rounded-t-[20px]</code><br>
+            • <code>pb-safe-area-bottom</code> (respeita home indicator)<br>
+            • Backdrop: <code>bg-slate-900/45</code>, toque fecha o modal
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 8. NAVEGAÇÃO                                   -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="ds-section">
+      <div class="ds-section-title">8 · Navegação e Estrutura</div>
+      <div class="ds-grid-2">
+        <div class="ds-card">
+          <div class="ds-card-title">Bottom Tab Bar</div>
+          <div class="ds-card-body">
+            <strong>Tabs do app (motorista):</strong><br>
+            Home · Viagens · Alertas · Perfil<br>
+            (variação na tela Combustível: a 3ª tab pode virar "Combustível" ao invés de "Alertas", dependendo do fluxo ativo)<br><br>
+            <strong>Especificações:</strong><br>
+            • Height: <code>~60px + safe-area-bottom</code><br>
+            • Background: <code>bg-white/97 backdrop-blur-xl</code><br>
+            • Borda top: <code>border-t-slate-100</code><br>
+            • Ícone ativo: <code>stroke-blue-500</code><br>
+            • Ícone inativo: <code>stroke-slate-400</code><br>
+            • Label: <code>9px font-semibold</code><br>
+            • Touch area: <code>min-w-[44px]</code><br>
+            • Notif badge: <code>9×9px bg-red-500</code> no canto superior direito do ícone
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-title">App Header (telas internas)</div>
+          <div class="ds-card-body">
+            Background: <code>bg-[#0B1628]</code> (navy)<br>
+            Padding: <code>pt-3 px-4 pb-[14px]</code><br><br>
+            <strong>Com "voltar":</strong><br>
+            • Link "← NomeTela" em <code>11px text-white/50</code> acima do título<br>
+            • Título em <code>16px font-bold text-white</code><br>
+            • Subtítulo em <code>11px text-white/40</code><br><br>
+            <strong>Com ações à direita:</strong><br>
+            • Icon buttons <code>34×34px bg-white/10 rounded-[10px]</code><br>
+            • Máximo 2 ícones no canto direito<br><br>
+            <strong>Segmented Control:</strong><br>
+            • <code>bg-slate-100 · rounded-xl · p-1</code><br>
+            • Tab ativo: <code>bg-white rounded-[9px] shadow-sm</code><br>
+            • Margem: <code>mx-[14px] my-[10px]</code>
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-title">Padrão de Telas</div>
+          <div class="ds-card-body">
+            Toda tela segue a estrutura vertical:<br><br>
+            <code>StatusBar</code> (fixo, navy)<br>
+            <code>AppHeader</code> (fixo, navy)<br>
+            <code>SearchBar?</code> (opcional, sticky)<br>
+            <code>SegmentedTabs?</code> (opcional)<br>
+            <code>ScrollView</code> (flex:1, overflow)<br>
+            <code>TabBar</code> (fixo, bottom)<br><br>
+            Scroll acontece apenas no <code>ScrollView</code>. Header e tab bar nunca scrollam. <code>KeyboardAvoidingView</code> envolve forms.
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-title">Fluxo de Navegação</div>
+          <div class="ds-card-body">
+            <strong>Stack (React Navigation):</strong><br>
+            Login → Home<br>
+            Home → TripDetail<br>
+            Trips → TripDetail<br>
+            TripDetail → NewIncident (modal)<br>
+            TripDetail → FuelForm (push)<br>
+            Incidents → NewIncident (modal)<br>
+            Profile → MyVehicle (CNH, checklist)<br>
+            Home (alerta CNH) → MyVehicle<br><br>
+            <strong>Bottom Tabs:</strong><br>
+            Home · Trips · Alerts · Profile<br><br>
+            <strong>Regras:</strong><br>
+            • Login não tem tab bar<br>
+            • Modais (bottom sheet) não têm tab bar<br>
+            • Todas as queries de API são filtradas por <code>driverId</code> do JWT — nunca há endpoint "listar todos"<br>
+            • Gesture de swipe-back sempre habilitado<br>
+            • Transição padrão: slide horizontal (iOS) / fade (Android)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 9. STACK TÉCNICA                              -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="ds-section">
+      <div class="ds-section-title">9 · Stack Técnica</div>
+      <div class="ds-grid-3">
+        <div class="ds-card">
+          <div class="ds-card-title">Core</div>
+          <div class="ds-card-body">
+            <code>React Native 0.74+</code><br>iOS e Android nativos<br><br>
+            <code>NativeWind 4.x</code><br>Classes Tailwind compiladas<br><br>
+            <code>flowbite-react-native</code><br>Componentes UI prontos<br><br>
+            <code>TypeScript</code><br>Tipagem estrita
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-title">Navegação e Estado</div>
+          <div class="ds-card-body">
+            <code>React Navigation 6</code><br>Stack + BottomTabs<br><br>
+            <code>react-query</code><br>Cache e fetching<br><br>
+            <code>axios</code><br>HTTP client<br><br>
+            <code>AsyncStorage</code><br>Persistência offline
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-title">Recursos Nativos</div>
+          <div class="ds-card-body">
+            <code>expo-camera</code><br>Fotos de ocorrência<br><br>
+            <code>@expo/vector-icons</code><br>Feather icons<br><br>
+            <code>Firebase Auth (JWT)</code><br>Autenticação motoristas<br><br>
+            <code>FCM</code><br>Push notifications
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ds-body -->
+</div><!-- /ds-page -->
+
+</body>
+</html>

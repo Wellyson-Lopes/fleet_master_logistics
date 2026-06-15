@@ -18,17 +18,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     async function loadStorageData() {
-      const token = await storage.getToken();
+      const storedToken = await storage.getToken();
+      const storedUser = await storage.getUser();
 
-      if (token) {
-        try {
-          // Valida o token buscando o perfil atual
-          const profile = await authService.getProfile();
-          setUser(profile);
-        } catch (error) {
-          // Em produção, falhas de rede ou token expirado apenas limpam o estado
-          await storage.removeToken();
-        }
+      if (storedToken && storedUser) {
+        setUser(storedUser);
       }
       setLoading(false);
     }
@@ -38,14 +32,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   async function signIn(email: string, password: string) {
     try {
-      const { user, token } = await authService.login(email, password);
+      const { user: userData, token } = await authService.login(email, password);
       
-      if (token) {
+      if (token && userData) {
         await storage.saveToken(token);
-        setUser(user);
+        await storage.saveUser(userData);
+        setUser(userData);
+      } else {
+        throw new Error('Falha na resposta da autenticação.');
       }
     } catch (error: any) {
-      // Repassa o erro para o componente tratar (ex: LoginScreen) sem expor no console
       throw error;
     }
   }
@@ -53,8 +49,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   async function signOut() {
     try {
       await authService.logout();
+    } catch (error) {
+      console.log('Erro ao deslogar na API, mas prosseguindo com limpeza local.');
     } finally {
-      await storage.removeToken();
+      await storage.clear();
       setUser(null);
     }
   }

@@ -1,89 +1,25 @@
 import React, { useState } from 'react';
 import { StatusBar, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from 'react-native';
-import styled, { useTheme } from 'styled-components/native';
-import { ScreenTitle, MetaText } from '../components/styled/Typography';
+import { useTheme } from 'styled-components/native';
 import { PrimaryButton, ButtonText } from '../components/styled/Button';
 import { StyledInput, InputLabel } from '../components/styled/Input';
-import { DarkCard } from '../components/styled/Card';
+import { 
+  ScreenContainer, 
+  BackgroundGlow, 
+  ScrollContent, 
+  LogoContainer, 
+  LoginBrandTitle,
+  LoginBrandSub,
+  InputGroup, 
+  ButtonSpacer,
+  ScreenFooter,
+  CopyrightText
+} from '../components/styled/Layout';
+import { LoginFormCard, LoginTitle, LoginSub } from '../components/styled/Card';
 import { useAuth } from '../context/AuthContext';
 
 // Importando a logo como componente SVG
 import LogoSvg from '../../assets/images/logo.svg';
-
-const Container = styled.View`
-  flex: 1;
-  background-color: ${({ theme }) => theme.colors.navy[900]};
-`;
-
-const BackgroundGlow = styled.View`
-  position: absolute;
-  top: -80px;
-  right: -80px;
-  width: 260px;
-  height: 260px;
-  background-color: ${({ theme }) => theme.colors.brand.glow};
-  border-radius: 130px;
-`;
-
-const ScrollContent = styled.ScrollView.attrs({
-  contentContainerStyle: {
-    flexGrow: 1,
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 40,
-    justifyContent: 'center',
-  },
-})``;
-
-const LogoContainer = styled.View`
-  align-items: center;
-  margin-bottom: 40px;
-`;
-
-const BrandName = styled(ScreenTitle)`
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -1px;
-  margin-top: 12px;
-`;
-
-const AppSubTitle = styled(MetaText)`
-  margin-top: 4px;
-  color: ${({ theme }) => theme.colors.text.subtle30};
-`;
-
-const LoginCard = styled(DarkCard)`
-  padding: 24px;
-`;
-
-const LoginTitle = styled(ScreenTitle)`
-  font-size: 18px;
-  margin-bottom: 4px;
-`;
-
-const LoginSub = styled(MetaText)`
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.text.subtle35};
-  margin-bottom: 24px;
-`;
-
-const InputGroup = styled.View`
-  margin-bottom: 20px;
-`;
-
-const SubmitButton = styled(PrimaryButton)`
-  margin-top: 8px;
-`;
-
-const LoginFooter = styled.View`
-  margin-top: 24px;
-  align-items: center;
-`;
-
-const CopyrightText = styled(MetaText)`
-  color: ${({ theme }) => theme.colors.text.subtle20};
-  font-size: 10px;
-`;
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -113,7 +49,7 @@ export const LoginScreen = () => {
   };
 
   return (
-    <Container>
+    <ScreenContainer>
       <StatusBar 
         barStyle="light-content" 
         backgroundColor={theme.colors.navy[900]} 
@@ -127,11 +63,11 @@ export const LoginScreen = () => {
         <ScrollContent showsVerticalScrollIndicator={false}>
           <LogoContainer>
             <LogoSvg width={100} height={100} />
-            <BrandName>FleetMaster</BrandName>
-            <AppSubTitle>Módulo do Motorista v1.0</AppSubTitle>
+            <LoginBrandTitle>FleetMaster</LoginBrandTitle>
+            <LoginBrandSub>Módulo do Motorista v1.0</LoginBrandSub>
           </LogoContainer>
 
-          <LoginCard>
+          <LoginFormCard>
             <LoginTitle>Acesse sua conta</LoginTitle>
             <LoginSub>Informe suas credenciais para continuar</LoginSub>
 
@@ -147,6 +83,7 @@ export const LoginScreen = () => {
                 autoCapitalize="none"
                 keyboardType="email-address"
                 editable={!loading}
+                accessibilityLabel="Campo de e-mail ou usuário"
               />
             </InputGroup>
 
@@ -161,30 +98,35 @@ export const LoginScreen = () => {
                 isFocused={isPassFocused}
                 secureTextEntry
                 editable={!loading}
+                accessibilityLabel="Campo de senha"
               />
             </InputGroup>
 
-            <SubmitButton 
-              fullWidth 
-              onPress={handleLogin}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color={theme.colors.white} />
-              ) : (
-                <ButtonText>Entrar na plataforma →</ButtonText>
-              )}
-            </SubmitButton>
-          </LoginCard>
+            <ButtonSpacer>
+              <PrimaryButton 
+                fullWidth 
+                onPress={handleLogin}
+                disabled={loading}
+                accessibilityLabel="Botão para entrar na plataforma"
+                accessibilityRole="button"
+              >
+                {loading ? (
+                  <ActivityIndicator color={theme.colors.white} />
+                ) : (
+                  <ButtonText>Entrar na plataforma →</ButtonText>
+                )}
+              </PrimaryButton>
+            </ButtonSpacer>
+          </LoginFormCard>
 
-          <LoginFooter>
+          <ScreenFooter>
             <CopyrightText>
               © 2026 FleetMaster Logistics · Todos os direitos reservados
             </CopyrightText>
-          </LoginFooter>
+          </ScreenFooter>
         </ScrollContent>
       </KeyboardAvoidingView>
-    </Container>
+    </ScreenContainer>
   );
 };
 

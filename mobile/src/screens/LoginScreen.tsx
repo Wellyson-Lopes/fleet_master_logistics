@@ -24,8 +24,6 @@ import LogoSvg from '../../assets/images/logo.svg';
 export const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isEmailFocused, setIsEmailFocused] = useState(false);
-  const [isPassFocused, setIsPassFocused] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { signIn } = useAuth();
@@ -77,9 +75,6 @@ export const LoginScreen = () => {
                 placeholder="ex: motorista@fleetmaster.com"
                 value={email}
                 onChangeText={setEmail}
-                onFocus={() => setIsEmailFocused(true)}
-                onBlur={() => setIsEmailFocused(false)}
-                isFocused={isEmailFocused}
                 autoCapitalize="none"
                 keyboardType="email-address"
                 editable={!loading}
@@ -93,9 +88,6 @@ export const LoginScreen = () => {
                 placeholder="••••••••"
                 value={password}
                 onChangeText={setPassword}
-                onFocus={() => setIsPassFocused(true)}
-                onBlur={() => setIsPassFocused(false)}
-                isFocused={isPassFocused}
                 secureTextEntry
                 editable={!loading}
                 accessibilityLabel="Campo de senha"

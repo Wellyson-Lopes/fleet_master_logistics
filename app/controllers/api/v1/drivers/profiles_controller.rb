@@ -63,7 +63,7 @@ module Api
         #
         # @return [ActionController::Parameters]
         def driver_params
-          params.require(:driver).permit(:name, :cpf, :cnpj, :cnh, :avatar)
+          params.require(:driver).permit(:name, :cpf, :cnpj, :cnh)
         end
       end
     end

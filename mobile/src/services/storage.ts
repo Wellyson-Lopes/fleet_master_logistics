@@ -33,7 +33,7 @@ export const removeToken = async () => {
  * Persiste os dados do usuário (serializados em JSON) de forma segura.
  * @param user Objeto de dados do motorista
  */
-export const saveUser = async (user: any) => {
+export const saveUser = async (user: Record<string, unknown>) => {
   await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
 };
 

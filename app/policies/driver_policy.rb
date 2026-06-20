@@ -50,7 +50,7 @@ class DriverPolicy < ApplicationPolicy
 
   # Escopo para listagens de motoristas.
   # Admins veem motoristas da empresa; motoristas não veem ninguém.
-  class Scope < Scope
+  class Scope < ApplicationPolicy::Scope
     # Resolve o escopo retornando motoristas da empresa do usuário.
     # Motoristas sem acesso a index não devem usar este scope.
     #

@@ -51,7 +51,7 @@ class UserPolicy < ApplicationPolicy
 
   # Escopo para listagens de usuários.
   # Retorna apenas usuários da empresa do usuário logado.
-  class Scope < Scope
+  class Scope < ApplicationPolicy::Scope
     # Resolve o escopo retornando usuários da empresa do usuário.
     #
     # @return [ActiveRecord::Relation] Usuários da empresa

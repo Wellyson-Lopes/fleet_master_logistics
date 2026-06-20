@@ -94,4 +94,21 @@ class ApplicationPolicy
 
     user.id == record.id
   end
+
+  # Escopo base para listagens.
+  # Filtra registros por company_id do usuário logado.
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      scope.none
+    end
+
+    private
+
+    attr_reader :user, :scope
+  end
 end

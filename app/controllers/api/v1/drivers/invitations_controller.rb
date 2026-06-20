@@ -33,7 +33,6 @@ module Api
         #
         # @return [void]
         def render_success(resource)
-          sign_in(:driver, resource)
           render json: {
             status: { code: 200, message: 'Cadastro finalizado com sucesso!' },
             data: resource.as_json(only: %i[id email name cnpj cpf cnh active])

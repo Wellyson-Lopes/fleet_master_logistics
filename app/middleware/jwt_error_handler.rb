@@ -19,7 +19,6 @@ class JwtErrorHandler
     @app.call(env)
   rescue JWT::DecodeError, JWT::VerificationError, JWT::Base64DecodeError => e
     Rails.logger.error "JWT Error: #{e.message}"
-    puts "JWT Error Detected: #{e.message}"
     [
       401,
       { 'Content-Type' => 'application/json' },

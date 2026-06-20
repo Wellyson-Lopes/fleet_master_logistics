@@ -34,7 +34,7 @@ module Api
         end
 
         def find_driver
-          Driver.unscoped.find_by(email: driver_params[:email])
+          Driver.find_by(email: driver_params[:email])
         end
 
         def authenticate_and_respond

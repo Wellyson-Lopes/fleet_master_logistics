@@ -46,10 +46,12 @@ export const authService = {
       driver: { email, password },
     });
 
-    // Axios normaliza headers para lowercase em alguns adaptadores, 
-    // verificamos ambas as possibilidades para robustez.
     const headers = response.headers;
     const token = headers['authorization'] || headers['Authorization'];
+
+    if (!token) {
+      throw new Error('Token não encontrado na resposta da API.');
+    }
 
     return {
       user: response.data.data,

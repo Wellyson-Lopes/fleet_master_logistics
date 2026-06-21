@@ -26,7 +26,7 @@ RSpec.describe UserPolicy do
 
     context 'quando o usuário não tem empresa' do
       it 'não permite listar usuários' do
-        user_without_company = build(:user, company: nil)
+        user_without_company = User.new(email: 'no@company.com', cnpj: nil, company: nil)
         policy = described_class.new(user_without_company, User)
         expect(policy.index?).to be false
       end

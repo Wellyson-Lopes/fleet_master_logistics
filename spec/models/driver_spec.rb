@@ -50,7 +50,12 @@ RSpec.describe Driver, type: :model do
       company_a = create(:company)
       company_b = create(:company)
       driver_a = create(:driver, company: company_a, cnpj: company_a.cnpj)
-      Driver.unscoped.create!(company: company_b, cnpj: company_b.cnpj, email: "other_#{SecureRandom.hex(4)}@test.com", password: 'senha123', cpf: CPF.generate, cnh: '99999999', name: 'Outro Motorista')
+      Driver.unscoped.create!(
+        company: company_b, cnpj: company_b.cnpj,
+        email: "other_#{SecureRandom.hex(4)}@test.com",
+        password: 'senha123', cpf: CPF.generate,
+        cnh: '99999999', name: 'Outro Motorista'
+      )
 
       allow(Current).to receive(:company).and_return(company_a)
       expect(Driver.all).to include(driver_a)

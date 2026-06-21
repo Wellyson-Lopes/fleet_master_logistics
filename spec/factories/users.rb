@@ -8,10 +8,15 @@ FactoryBot.define do
     name { "Usuário #{SecureRandom.hex(2)}" }
     cnpj { company.cnpj }
     company_name { company.name }
-    admin { false }
+
+    after(:create) do |user|
+      user.update_column(:admin, false) if user.admin? && !user.invited?
+    end
 
     trait :admin do
-      admin { true }
+      after(:create) do |user|
+        user.update_column(:admin, true)
+      end
     end
   end
 end

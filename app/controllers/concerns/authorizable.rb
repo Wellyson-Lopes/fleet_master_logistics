@@ -37,7 +37,6 @@ module Authorizable
     current_policy = policy
     return unless current_policy
 
-    record = load_record_for_authorization
     return if current_policy.send("#{action_name}?")
 
     handle_unauthorized

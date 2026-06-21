@@ -12,7 +12,7 @@ class User < ApplicationRecord
   before_create :set_default_admin, if: :owner?
 
   validates :name, :company_name, :cnpj, presence: true, if: :owner?
-  validates :cnpj, uniqueness: true, if: -> { cnpj.present? }
+  validates :cnpj, uniqueness: { scope: :company_id }, if: -> { cnpj.present? }
   validate :cnpj_must_be_valid, if: -> { cnpj.present? }
 
   def owner?

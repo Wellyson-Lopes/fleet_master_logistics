@@ -128,7 +128,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_08_033734) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "company_id"
-    t.index ["cnpj"], name: "index_users_on_cnpj", unique: true
+    t.index ["cnpj"], name: "index_users_on_cnpj"
     t.index ["company_id"], name: "index_users_on_company_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true

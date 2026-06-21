@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe UserPolicy do
   let!(:company) { create(:company) }
   let!(:other_company) { create(:company) }
-  let!(:admin) { create(:user, company: company, cnpj: company.cnpj, admin: true) }
+  let!(:admin) { create(:user, :admin, company: company, cnpj: company.cnpj) }
   let!(:user) { create(:user, company: company, cnpj: company.cnpj) }
   let!(:other_user) { create(:user, company: other_company, cnpj: other_company.cnpj) }
 

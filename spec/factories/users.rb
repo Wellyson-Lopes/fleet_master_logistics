@@ -8,11 +8,17 @@ FactoryBot.define do
     name { "Usuário #{SecureRandom.hex(2)}" }
     cnpj { company.cnpj }
     company_name { company.name }
-    admin { false }
 
-    after(:create) { |u| u.update_column(:admin, false) }
+    transient do
+      skip_set_admin { false }
+    end
+
+    after(:create) do |user, evaluator|
+      user.update_column(:admin, false) unless evaluator.skip_set_admin
+    end
 
     trait :admin do
+      skip_set_admin { true }
       after(:create) { |u| u.update_column(:admin, true) }
     end
   end

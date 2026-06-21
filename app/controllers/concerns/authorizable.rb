@@ -19,21 +19,26 @@ module Authorizable
   # @return [ApplicationPolicy] A policy para o controller e registro
   def policy(record = nil)
     record ||= load_record_for_policy
-    policy_class = "#{controller_name.classify}Policy".constantize
-    policy_class.new(current_resource, record)
+    policy_class_name = "#{controller_name.classify}Policy"
+    return nil unless policy_class_name.safe_constantize
+
+    policy_class_name.constantize.new(current_resource, record)
   end
 
   # Verifica se a ação atual é permitida pela policy.
   # Redireciona ou retorna 403 se não autorizado.
-  # Pula autorização se não houver usuário logado (deixa Devise lidar com isso).
+  # Pula autorização se não houver usuário logado ou policy não existe.
   #
   # @return [void]
   def authorize_action!
     return if skip_authorization?
     return unless current_resource
 
+    current_policy = policy
+    return unless current_policy
+
     record = load_record_for_authorization
-    return if policy(record).send("#{action_name}?")
+    return if current_policy.send("#{action_name}?")
 
     handle_unauthorized
   end

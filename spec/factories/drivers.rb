@@ -7,7 +7,7 @@ FactoryBot.define do
     password { 'senha123' }
     cnpj { company.cnpj }
     cpf { CPF.generate }
-    cnh { '12345678' }
+    cnh { SecureRandom.random_number(10**10).to_s }
     name { 'João da Silva' }
   end
 end

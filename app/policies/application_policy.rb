@@ -81,6 +81,7 @@ class ApplicationPolicy
   # @return [Boolean]
   def same_company?
     return false unless record.respond_to?(:company_id)
+    return false if user.company_id.blank?
 
     user.respond_to?(:company_id) && user.company_id == record.company_id
   end

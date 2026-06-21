@@ -7,7 +7,7 @@ module Authorizable
   extend ActiveSupport::Concern
 
   included do
-    helper_method :policy
+    helper_method :policy, :policy_scope
     before_action :authorize_action!
   end
 
@@ -88,5 +88,14 @@ module Authorizable
       format.html { redirect_to root_path, alert: 'Acesso não autorizado.' }
       format.json { render json: { status: { code: 403, message: 'Acesso não autorizado.' } }, status: :forbidden }
     end
+  end
+
+  # Retorna o escopo autorizado para um dado model.
+  #
+  # @param scope [Class] O modelo base (ex: User)
+  # @return [ActiveRecord::Relation] Escopo filtrado
+  def policy_scope(scope)
+    policy_class_name = "#{scope.to_s.classify}Policy::Scope"
+    policy_class_name.constantize.new(current_resource, scope).resolve
   end
 end

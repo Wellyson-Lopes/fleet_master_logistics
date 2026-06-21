@@ -4,7 +4,7 @@ class TeamsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @users = UserPolicy::Scope.new(current_user, User).resolve
+    @users = policy_scope(User)
     @invitation_user = User.new
   end
 end

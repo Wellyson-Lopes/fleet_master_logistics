@@ -3,11 +3,11 @@
 FactoryBot.define do
   factory :driver do
     association :company
-    email { 'motorista@exemplo.com' }
+    email { "motorista_#{SecureRandom.hex(4)}@exemplo.com" }
     password { 'senha123' }
-    cnpj { association(:company).cnpj }
+    cnpj { company.cnpj }
     cpf { CPF.generate }
-    cnh { '12345678' }
+    cnh { SecureRandom.random_number(10**10).to_s }
     name { 'João da Silva' }
   end
 end

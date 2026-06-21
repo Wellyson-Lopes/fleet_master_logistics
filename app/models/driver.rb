@@ -14,6 +14,9 @@ class Driver < ApplicationRecord
   # Anexos
   has_one_attached :avatar
 
+  # Herda dados da empresa do usuário que enviou o convite
+  before_validation :inherit_company_data, if: :invitation_token?
+
   # Validações de presença (Nome é obrigatório apenas quando a conta está ativa/aceita)
   validates :name, presence: true, on: :update, if: :invitation_accepted_at?
   validates :cnpj, presence: true
@@ -24,6 +27,9 @@ class Driver < ApplicationRecord
   # Validações de formato
   validate :cpf_must_be_valid, if: -> { cpf.present? }
   validate :cnpj_must_be_valid, if: -> { cnpj.present? }
+
+  # Valida que o CNPJ do motorista seja o mesmo da empresa vinculada
+  validate :cnpj_matches_company, if: -> { company.present? && cnpj.present? }
 
   private
 
@@ -43,5 +49,26 @@ class Driver < ApplicationRecord
     return if CNPJ.valid?(cnpj)
 
     errors.add(:cnpj, 'não é válido')
+  end
+
+  # Valida se o CNPJ do motorista corresponde ao CNPJ da empresa vinculada.
+  # Garante integridade dos dados no isolamento multi-tenant.
+  #
+  # @return [void]
+  def cnpj_matches_company
+    return if cnpj == company.cnpj
+
+    errors.add(:cnpj, 'não corresponde ao CNPJ da empresa')
+  end
+
+  # Herda company_id e cnpj do usuário que enviou o convite.
+  # Garante que o motorista seja sempre vinculado à empresa correta.
+  #
+  # @return [void]
+  def inherit_company_data
+    return unless invited_by
+
+    self.company = invited_by.company
+    self.cnpj = invited_by.cnpj
   end
 end

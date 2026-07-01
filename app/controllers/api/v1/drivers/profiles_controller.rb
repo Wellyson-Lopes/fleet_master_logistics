@@ -46,10 +46,8 @@ module Api
         end
 
         def render_error(message, errors)
-          render json: {
-            status: { code: 422, message: message },
-            errors: errors
-          }, status: :unprocessable_entity
+          render json: ApiErrorFormatter.format(:unprocessable_entity, message, errors),
+                 status: :unprocessable_entity
         end
 
         # Serializa os dados do motorista atual para JSON.

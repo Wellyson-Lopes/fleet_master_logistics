@@ -86,7 +86,10 @@ module Authorizable
   def handle_unauthorized
     respond_to do |format|
       format.html { redirect_to root_path, alert: 'Acesso não autorizado.' }
-      format.json { render json: { status: { code: 403, message: 'Acesso não autorizado.' } }, status: :forbidden }
+      format.json do
+        render json: ApiErrorFormatter.format(:forbidden, 'Acesso não autorizado.'),
+               status: :forbidden
+      end
     end
   end
 

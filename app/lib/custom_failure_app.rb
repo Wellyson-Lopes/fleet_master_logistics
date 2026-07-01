@@ -31,8 +31,6 @@ class CustomFailureApp < Devise::FailureApp
   def json_error_response
     self.status = 401
     self.content_type = 'application/json'
-    self.response_body = {
-      status: { code: 401, message: 'Não autorizado. Verifique suas credenciais ou token.' }
-    }.to_json
+    self.response_body = ApiErrorFormatter.format(401, 'Não autorizado. Verifique suas credenciais ou token.').to_json
   end
 end

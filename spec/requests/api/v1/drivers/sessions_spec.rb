@@ -31,9 +31,12 @@ RSpec.describe 'Api::V1::Drivers::Sessions', type: :request do
       expect(response.headers['Authorization']).to start_with('Bearer ')
     end
 
-    it 'retorna não autorizado para credenciais inválidas' do
+    it 'retorna não autorizado para credenciais inválidas no formato padrão' do
       post url, params: { driver: { email: driver.email, password: 'wrong' } }, as: :json
       expect(response).to have_http_status(:unauthorized)
+      expect(json_response['status']['code']).to eq(401)
+      expect(json_response['status']['message']).to eq('E-mail ou senha inválidos.')
+      expect(json_response['errors']).to eq({})
     end
   end
 

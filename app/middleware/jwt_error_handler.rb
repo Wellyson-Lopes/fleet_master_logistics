@@ -22,7 +22,7 @@ class JwtErrorHandler
     [
       401,
       { 'Content-Type' => 'application/json' },
-      [{ status: { code: 401, message: "Token inválido ou expirado: #{e.message}" } }.to_json]
+      [ApiErrorFormatter.format(401, 'Token inválido ou expirado.').to_json]
     ]
   end
 end

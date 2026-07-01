@@ -65,8 +65,19 @@ RSpec.describe 'Driver API Smoke Test', type: :request do
     expect(response).to have_http_status(:unauthorized)
   end
 
-  it 'bloqueia acesso a rotas protegidas sem token' do
+  it 'bloqueia acesso a rotas protegidas sem token no formato padronizado' do
     get '/api/v1/drivers/profile', as: :json
     expect(response).to have_http_status(:unauthorized)
+    expect(json['status']['code']).to eq(401)
+    expect(json['status']['message']).to eq('Não autorizado. Verifique suas credenciais ou token.')
+    expect(json['errors']).to eq({})
+  end
+
+  it 'retorna erro padronizado para token JWT inválido' do
+    get '/api/v1/drivers/profile', headers: { 'Authorization' => 'Bearer token_invalido' }, as: :json
+    expect(response).to have_http_status(:unauthorized)
+    expect(json['status']['code']).to eq(401)
+    expect(json['status']['message']).to be_present
+    expect(json['errors']).to eq({})
   end
 end

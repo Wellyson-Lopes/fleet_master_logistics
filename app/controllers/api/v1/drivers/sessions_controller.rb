@@ -44,9 +44,8 @@ module Api
         end
 
         def render_unauthorized
-          render json: {
-            status: { code: 401, message: 'E-mail ou senha inválidos.' }
-          }, status: :unauthorized
+          render json: ApiErrorFormatter.format(:unauthorized, 'E-mail ou senha inválidos.'),
+                 status: :unauthorized
         end
 
         # Customiza a resposta JSON após a tentativa de login.

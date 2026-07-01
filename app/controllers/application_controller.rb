@@ -8,9 +8,9 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   rescue_from JWT::DecodeError, JWT::VerificationError, JWT::Base64DecodeError do |e|
-    render json: {
-      status: { code: 401, message: "Token inválido ou expirado: #{e.message}" }
-    }, status: :unauthorized
+    Rails.logger.warn("Erro de decodificação JWT: #{e.message}")
+    render json: ApiErrorFormatter.format(:unauthorized, 'Token inválido ou expirado.'),
+           status: :unauthorized
   end
 
   protected

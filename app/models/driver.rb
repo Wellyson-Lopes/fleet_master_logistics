@@ -14,6 +14,10 @@ class Driver < ApplicationRecord
   # Anexos
   has_one_attached :avatar
 
+  # Atribuição de veículos (relação many-to-many com datas)
+  has_many :vehicle_assignments, dependent: :destroy
+  has_many :vehicles, through: :vehicle_assignments
+
   # Herda dados da empresa do usuário que enviou o convite
   before_validation :inherit_company_data, if: :invitation_token?
 

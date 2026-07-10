@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_21_161519) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_09_223039) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -135,8 +135,41 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_21_161519) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "vehicle_assignments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "vehicle_id", null: false
+    t.uuid "driver_id", null: false
+    t.datetime "assigned_at", null: false
+    t.datetime "unassigned_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["driver_id"], name: "index_vehicle_assignments_on_driver_id"
+    t.index ["vehicle_id", "driver_id", "assigned_at"], name: "idx_vehicle_assignments_on_vehicle_driver_assigned"
+    t.index ["vehicle_id"], name: "index_vehicle_assignments_on_vehicle_id"
+  end
+
+  create_table "vehicles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "type", null: false
+    t.string "plate", null: false
+    t.string "brand"
+    t.string "model"
+    t.integer "year"
+    t.integer "load_capacity_kg"
+    t.integer "current_mileage_km"
+    t.string "status", default: "active"
+    t.string "chassis"
+    t.string "renavam"
+    t.uuid "company_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_vehicles_on_company_id"
+    t.index ["plate"], name: "index_vehicles_on_plate", unique: true
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "drivers", "companies"
   add_foreign_key "users", "companies"
+  add_foreign_key "vehicle_assignments", "drivers"
+  add_foreign_key "vehicle_assignments", "vehicles"
+  add_foreign_key "vehicles", "companies"
 end

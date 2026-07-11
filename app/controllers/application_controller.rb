@@ -37,8 +37,7 @@ class ApplicationController < ActionController::Base
   end
 
   def login_or_invitation_path?
-    request.path == '/api/v1/drivers/login' ||
-      request.path == '/api/v1/drivers/invitation/accept'
+    %w[/api/v1/drivers/login /api/v1/drivers/invitation/accept].include?(request.path)
   end
 
   def configure_permitted_parameters

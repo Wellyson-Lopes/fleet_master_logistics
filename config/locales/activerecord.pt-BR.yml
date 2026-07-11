@@ -25,8 +25,14 @@ pt-BR:
         too_short: "é muito curto (mínimo: %{count} caracteres)"
         invalid: "não é válido"
         confirmation: "não coincide com a confirmação"
+        inclusion: "não está incluído(a) na lista"
+        greater_than: "deve ser maior que %{count}"
+        greater_than_or_equal_to: "deve ser maior ou igual a %{count}"
   errors:
     messages:
       taken: "já está em uso"
       blank: "não pode ficar em branco"
       invalid: "não é válido"
+      inclusion: "não está incluído(a) na lista"
+      greater_than: "deve ser maior que %{count}"
+      greater_than_or_equal_to: "deve ser maior ou igual a %{count}"

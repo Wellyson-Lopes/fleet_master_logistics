@@ -34,7 +34,13 @@ if [ "$RAILS_ENV" = "development" ]; then
   echo '--> Preparing database'
   bundle exec rails db:prepare
   echo '--> Building Tailwind CSS'
+  mkdir -p app/assets/builds
   bundle exec rails tailwindcss:build
+  if [ ! -s app/assets/builds/tailwind.css ]; then
+    echo 'ERROR: tailwindcss:build falhou — arquivo vazio ou ausente'
+    exit 1
+  fi
+  echo '--> Tailwind CSS built successfully'
 fi
 
 if [ "$RAILS_ENV" != "development" ]; then

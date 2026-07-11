@@ -7,6 +7,7 @@ Este arquivo define as diretrizes de comportamento e engenharia para o Gemini CL
 ## 🧠 Princípios Core (Andrej Karpathy Skills)
 
 ### 1. Pesquisa Antes de Codar (Think Before Coding)
+- **Verificação de Skills:** Antes de executar qualquer comando ou iniciar uma tarefa, você DEVE ler as descrições de todas as skills disponíveis para identificar a mais adequada ao contexto.
 - **Diagnóstico Profundo:** Antes de realizar qualquer alteração, investigue a causa raiz. Utilize `grep_search` e `read_file` para entender o fluxo de dados e as dependências.
 - **Declaração de Suposições:** Antes de mudanças complexas, resuma seu entendimento e estratégia. Se houver ambiguidade, use `ask_user`.
 - **Análise de Impacto:** Avalie como a mudança afeta o isolamento multi-tenant e as permissões do Pundit.

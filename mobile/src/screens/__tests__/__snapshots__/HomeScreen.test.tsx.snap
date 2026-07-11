@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HomeScreen deve renderizar corretamente com email quando nome for nulo 1`] = `null`;
+
+exports[`HomeScreen deve renderizar corretamente com nome do motorista 1`] = `null`;

@@ -12,8 +12,27 @@ Rails.application.routes.draw do
     invitations: 'users/invitations'
   }
 
+  devise_for :drivers, skip: [:sessions], controllers: {
+    invitations: 'drivers/invitations'
+  }
+
+  namespace :api do
+    namespace :v1 do
+      devise_scope :driver do
+        post 'drivers/login', to: 'drivers/sessions#create'
+        delete 'drivers/logout', to: 'drivers/sessions#destroy'
+        post 'drivers/invitation/accept', to: 'drivers/invitations#accept'
+        resource :profile, only: %i[show update], module: :drivers, controller: 'profiles', path: 'drivers/profile'
+      end
+    end
+  end
+
   resources :dashboard, only: [:index]
   resources :teams, only: [:index]
+
+  namespace :drivers do
+    get 'welcome', to: 'welcome#index'
+  end
 
   get 'up' => 'rails/health#show', :as => :rails_health_check
 

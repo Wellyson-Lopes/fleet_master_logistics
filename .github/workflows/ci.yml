@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+    branches: [ "**" ]
   push:
     branches: [ main ]
 
@@ -91,7 +92,7 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           REDIS_URL: redis://localhost:6379/0
         run: |
-          bin/rails db:test:prepare
+          bin/rails db:prepare
           bundle exec rspec
 
       - name: Keep screenshots from failed system tests
@@ -101,4 +102,3 @@ jobs:
           name: screenshots
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
-und: ignore

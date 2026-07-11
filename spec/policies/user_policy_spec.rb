@@ -131,6 +131,10 @@ RSpec.describe UserPolicy do
   end
 
   describe UserPolicy::Scope do
+    before do
+      allow(Current).to receive(:company).and_return(company)
+    end
+
     context 'quando o usuário é admin' do
       it 'retorna usuários da empresa' do
         scope = UserPolicy::Scope.new(admin, User).resolve

@@ -46,8 +46,8 @@ module Api
         #
         # @return [void]
         def render_error(resource)
-          render json: ApiErrorFormatter.format(:unprocessable_entity, 'Erro ao processar convite.', resource.errors),
-                 status: :unprocessable_entity
+          render json: ApiErrorFormatter.format(:unprocessable_content, 'Erro ao processar convite.', resource.errors),
+                 status: :unprocessable_content
         end
 
         # Parâmetros permitidos para aceite de convite.

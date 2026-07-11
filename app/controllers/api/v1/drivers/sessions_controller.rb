@@ -74,8 +74,7 @@ module Api
           # Logout com JWT é processado pela estratégia de revogação.
           # Aqui apenas garantimos a resposta JSON.
           render json: {
-            status: 200,
-            message: 'Logout realizado com sucesso ou sessão encerrada.'
+            status: { code: 200, message: 'Logout realizado com sucesso ou sessão encerrada.' }
           }, status: :ok
         end
       end

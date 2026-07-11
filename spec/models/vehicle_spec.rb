@@ -71,9 +71,15 @@ RSpec.describe Vehicle, type: :model do
   end
 
   describe 'scopes' do
+    let(:company) { create(:company) }
+
+    before do
+      allow(Current).to receive(:company).and_return(company)
+    end
+
     it '.by_type filtra por tipo' do
-      create(:vehicle, type: 'caminhão')
-      create(:vehicle, type: 'trator')
+      create(:vehicle, type: 'caminhão', company: company)
+      create(:vehicle, type: 'trator', company: company)
 
       result = Vehicle.by_type('caminhão')
       expect(result.count).to eq(1)
@@ -81,8 +87,8 @@ RSpec.describe Vehicle, type: :model do
     end
 
     it '.active retorna apenas veículos ativos' do
-      active = create(:vehicle, status: 'active')
-      create(:vehicle, status: 'maintenance')
+      active = create(:vehicle, status: 'active', company: company)
+      create(:vehicle, status: 'maintenance', company: company)
 
       expect(Vehicle.active).to include(active)
       expect(Vehicle.active.count).to eq(1)

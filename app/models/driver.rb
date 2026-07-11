@@ -26,7 +26,7 @@ class Driver < ApplicationRecord
   validates :cnpj, presence: true
 
   # Unicidade de documentos
-  validates :cpf, :cnh, uniqueness: true, allow_blank: true
+  validates :cpf, :cnh, uniqueness: { case_sensitive: false }, allow_blank: true
 
   # Validações de formato
   validate :cpf_must_be_valid, if: -> { cpf.present? }

@@ -31,6 +31,10 @@ RSpec.describe VehicleAssignment, type: :model do
     let(:vehicle) { create(:vehicle, company: company) }
     let(:driver) { create(:driver, company: company, cnpj: company.cnpj) }
 
+    before do
+      allow(Current).to receive(:company).and_return(company)
+    end
+
     it '.current retorna atribuições sem data de desatribuição' do
       current = create(:vehicle_assignment, vehicle: vehicle, driver: driver, assigned_at: 1.day.ago,
                                             unassigned_at: nil)
@@ -50,8 +54,13 @@ RSpec.describe VehicleAssignment, type: :model do
   end
 
   describe 'associação entre Driver e Vehicle' do
+    let(:company) { create(:company) }
+
+    before do
+      allow(Current).to receive(:company).and_return(company)
+    end
+
     it 'permite acessar veículos de um motorista através de vehicle_assignments' do
-      company = create(:company)
       vehicle = create(:vehicle, company: company)
       driver = create(:driver, company: company, cnpj: company.cnpj)
       create(:vehicle_assignment, vehicle: vehicle, driver: driver)
@@ -61,7 +70,6 @@ RSpec.describe VehicleAssignment, type: :model do
     end
 
     it 'permite acessar motoristas de um veículo através de vehicle_assignments' do
-      company = create(:company)
       vehicle = create(:vehicle, company: company)
       driver = create(:driver, company: company, cnpj: company.cnpj)
       create(:vehicle_assignment, vehicle: vehicle, driver: driver)

@@ -7,6 +7,7 @@ module Api
       # Permite a visualização e atualização de dados profissionais.
       class ProfilesController < ApplicationController
         before_action :authenticate_driver!
+        skip_before_action :authorize_action!
         respond_to :json
 
         # Retorna os dados do perfil do motorista autenticado.
@@ -46,8 +47,8 @@ module Api
         end
 
         def render_error(message, errors)
-          render json: ApiErrorFormatter.format(:unprocessable_entity, message, errors),
-                 status: :unprocessable_entity
+          render json: ApiErrorFormatter.format(:unprocessable_content, message, errors),
+                 status: :unprocessable_content
         end
 
         # Serializa os dados do motorista atual para JSON.

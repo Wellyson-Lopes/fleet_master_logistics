@@ -75,5 +75,13 @@ As instruções contidas no arquivo `GEMINI.md` na raiz do projeto têm precedê
 - **Nunca codifique sem pesquisar:** Use `grep_search` e `read_file` para entender o código existente.
 - **Validação:** Toda alteração de código deve ser acompanhada de testes ou verificação manual via comandos do projeto.
 
+## 🛡️ Autorização (Authorizable)
+
+O concern `Authorizable` é incluído no `ApplicationController` e aplica `before_action :authorize_action!` em **todos** os controllers que herdam dele. O comportamento é seguro por padrão:
+- Se não existir `*Policy` correspondente ao controller (`safe_constantize`), a autorização é **skipada**.
+- Se não houver usuário/driver logado (`current_resource`), a autorização é **skipada**.
+- **Controllers que deliberadamente não participam do sistema de policies** (ex: `ProfilesController`) devem declarar `skip_before_action :authorize_action!` explicitamente.
+- **Controllers de autenticação** que herdam de `DeviseController` ou `Devise::SessionsController` (ex: `SessionsController`, `InvitationsController`) **não** herdam de `ApplicationController` e portanto **não** são afetados.
+
 ---
 *Este arquivo deve ser mantido atualizado conforme novas ferramentas e fluxos de trabalho forem integrados ao FleetMaster Logistics.*

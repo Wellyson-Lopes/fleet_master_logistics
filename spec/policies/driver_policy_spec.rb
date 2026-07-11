@@ -140,6 +140,10 @@ RSpec.describe DriverPolicy do
   end
 
   describe DriverPolicy::Scope do
+    before do
+      allow(Current).to receive(:company).and_return(company)
+    end
+
     context 'quando o usuário é admin' do
       it 'retorna motoristas da empresa' do
         scope = DriverPolicy::Scope.new(admin, Driver).resolve

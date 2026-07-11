@@ -5,6 +5,7 @@ pt-BR:
       driver: "Motorista"
     attributes:
       user:
+        company: "Empresa"
         name: "Nome"
         email: "E-mail"
         password: "Senha"

@@ -26,6 +26,9 @@ const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({ children }) 
   </ThemeProvider>
 );
 
+// TODO: Snapshot renderiza null devido a incompatibilidade react-test-renderer 19 + RN 0.81.
+// Migrar para @testing-library/react-native compatível com React 19.
+// Acompanhar: https://github.com/facebook/react/issues e https://github.com/expo/jest-expo/issues
 describe('HomeScreen', () => {
   it('deve renderizar corretamente com nome do motorista', () => {
     (useAuth as jest.Mock).mockReturnValue({

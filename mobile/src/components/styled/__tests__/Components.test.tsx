@@ -14,7 +14,11 @@ const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-describe('Snapshots dos Componentes do Design System', () => {
+// TODO: Atualizar react-test-renderer ou migrar para @testing-library/react-native
+// compatível com React 19. Atualmente toJSON() retorna null para todos os componentes
+// devido a incompatibilidade entre react-test-renderer 19 e React Native 0.81.
+// Acompanhar: https://github.com/facebook/react/issues e https://github.com/expo/jest-expo/issues
+describe('Componentes do Design System', () => {
   it('deve renderizar ScreenTitle corretamente', () => {
     const tree = renderer.create(
       <AllTheProviders>

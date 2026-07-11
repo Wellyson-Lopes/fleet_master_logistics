@@ -50,7 +50,7 @@ RSpec.describe 'Api::V1::Drivers::Sessions', type: :request do
 
       delete url, headers: { 'Authorization' => token }, as: :json
       expect(response).to have_http_status(:ok)
-      expect(json_response['message']).to eq('Logout realizado com sucesso ou sessão encerrada.')
+      expect(json_response['status']['message']).to eq('Logout realizado com sucesso ou sessão encerrada.')
     end
   end
 

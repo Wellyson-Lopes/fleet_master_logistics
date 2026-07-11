@@ -35,7 +35,7 @@ RSpec.describe 'Api::V1::Drivers::Invitations', type: :request do
 
     it 'retorna erros para token inválido no formato padrão' do
       post url, params: { driver: { invitation_token: 'invalid' } }, as: :json
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['status']['code']).to eq(422)
       expect(json_response['status']['message']).to eq('Erro ao processar convite.')
       expect(json_response['errors']).to be_a(Hash)

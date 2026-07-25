@@ -22,6 +22,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Rails app lives here
 WORKDIR /app
 
+ENV BUNDLE_PATH="/usr/local/bundle"
+
 # Copy only Gemfile and install gems
 COPY Gemfile Gemfile.lock ./
 RUN bundle install --jobs 5 --retry 5

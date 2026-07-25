@@ -42,7 +42,9 @@ services:
     volumes:
       - .:/app
       - bundle_data:/usr/local/bundle
+      - assets_builds:/app/assets/builds
     ports:
+
       - "3000:3000"
     depends_on:
       - db
@@ -97,6 +99,8 @@ volumes:
   postgres_data:
   redis_data:
   bundle_data:
+  assets_builds:
+
 
 networks:
   fleetmaster_net:

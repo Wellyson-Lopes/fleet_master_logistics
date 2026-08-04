@@ -32,7 +32,7 @@ gem 'solid_queue'
 
 # Background processing and key-value store support
 gem 'connection_pool', '< 3.0'
-gem 'redis', '~> 5.0'
+gem 'redis', '~> 6.0'
 gem 'sidekiq', '~> 7.2'
 
 # Reduces boot times through caching; required in config/boot.rb

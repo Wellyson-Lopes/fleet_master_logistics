@@ -1,0 +1,61 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Editar Motorista</div>
+    <div class="sys-dash-subtitle"><%= @driver.name.presence || @driver.email %></div>
+  </div>
+  <div>
+    <%= link_to "← Voltar para Perfil", driver_path(@driver), class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <%= form_with(model: @driver, local: true, class: "space-y-4") do |f| %>
+    <% if @driver.errors.any? %>
+      <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+        <strong class="font-bold">Corrija os erros abaixo:</strong>
+        <ul class="list-disc list-inside mt-1">
+          <% @driver.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :name, "Nome Completo", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :name, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :phone, "Telefone / WhatsApp", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :phone, placeholder: "(81) 99999-9999", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :cpf, "CPF", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :cpf, placeholder: "000.000.000-00", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-mono focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :cnh, "Número da CNH", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :cnh, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-mono focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :cnh_expiration, "Validade da CNH", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.date_field :cnh_expiration, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div class="pt-4 flex justify-between items-center">
+      <%= button_to "Excluir Motorista", driver_path(@driver), method: :delete, data: { confirm: "Tem certeza que deseja excluir o motorista #{@driver.name}?" }, class: "text-xs font-semibold text-red-600 hover:text-red-800" %>
+      <div class="space-x-3">
+        <%= link_to "Cancelar", driver_path(@driver), class: "px-5 py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-800" %>
+        <%= f.submit "Salvar Alterações", class: "px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition" %>
+      </div>
+    </div>
+  <% end %>
+</div>

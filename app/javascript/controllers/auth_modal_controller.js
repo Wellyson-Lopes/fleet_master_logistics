@@ -1,23 +1,36 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["overlay", "loginSection", "registerSection"]
+  static targets = ["overlay", "loginSection", "registerSection", "selectedPlanInput", "billingCycleInput", "selectedPlanBadge"]
 
   open(event) {
     const type = event.currentTarget.dataset.authType
-    
+    const plan = event.currentTarget.dataset.plan
+    const cycle = event.currentTarget.dataset.billingCycle
+
+    if (plan && this.hasSelectedPlanInputTarget) {
+      this.selectedPlanInputTarget.value = plan
+    }
+    if (cycle && this.hasBillingCycleInputTarget) {
+      this.billingCycleInputTarget.value = cycle
+    }
+    if (plan && this.hasSelectedPlanBadgeTarget) {
+      this.selectedPlanBadgeTarget.textContent = `Plano selecionado: ${plan.toUpperCase()}`
+      this.selectedPlanBadgeTarget.classList.remove("hidden")
+    }
+
     // Mostra o overlay e a caixa com transição
     this.overlayTarget.classList.add("open")
-    
+
     // Bloqueia scroll do body
     document.body.style.overflow = "hidden"
-    
+
     this.switchView(type)
   }
 
   close() {
     this.overlayTarget.classList.remove("open")
-    
+
     // Libera scroll do body
     document.body.style.overflow = ""
   }
@@ -53,7 +66,7 @@ export default class extends Controller {
     const toast = document.createElement("div")
     toast.id = "auth-toast"
     toast.className = "fixed bottom-5 right-5 z-[100] flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white rounded-2xl shadow-xl dark:text-gray-400 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 transition-all duration-300 transform translate-y-10 opacity-0"
-    
+
     toast.innerHTML = `
       <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -63,7 +76,7 @@ export default class extends Controller {
       </div>
       <div class="text-sm font-semibold text-gray-900 dark:text-white">${message}</div>
     `
-    
+
     document.body.appendChild(toast)
 
     setTimeout(() => {

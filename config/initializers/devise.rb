@@ -251,7 +251,7 @@ Devise.setup do |config|
   end
 
   config.jwt do |jwt|
-    jwt.secret = ENV.fetch('DEVISE_JWT_SECRET_KEY') { Rails.application.credentials.jwt_secret_key }
+    jwt.secret = ENV['DEVISE_JWT_SECRET_KEY'].presence || Rails.application.credentials.jwt_secret_key.presence || Rails.application.secret_key_base
     jwt.dispatch_requests = [
       ['POST', %r{^/api/v1/drivers/login$}],
       ['POST', %r{^/api/v1/drivers/invitation/accept$}]

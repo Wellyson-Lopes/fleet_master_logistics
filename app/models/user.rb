@@ -8,6 +8,8 @@ class User < ApplicationRecord
 
   has_one_attached :company_logo
 
+  attr_accessor :selected_plan, :billing_cycle
+
   before_validation :inherit_company_data, if: :invited?
   before_validation :build_company_for_owner, on: :create, if: :owner?
   before_create :set_default_admin, if: :owner?
@@ -48,12 +50,21 @@ class User < ApplicationRecord
   end
 
   # Cria a Company automaticamente durante o cadastro do owner (sign-up).
-  # Usa os dados de company_name e cnpj fornecidos no formulário de registro.
+  # Usa os dados de company_name e cnpj fornecidos no formulário de registro,
+  # associando também o plano e o ciclo de cobrança selecionados na venda.
   #
   # @return [void]
   def build_company_for_owner
     return if company.present? || company_name.blank? || cnpj.blank?
 
-    self.company = Company.new(name: company_name, cnpj: cnpj)
+    plan_to_set = selected_plan.presence || 'starter'
+    cycle_to_set = billing_cycle.presence || 'monthly'
+
+    self.company = Company.new(
+      name: company_name,
+      cnpj: cnpj,
+      plan: plan_to_set,
+      billing_cycle: cycle_to_set
+    )
   end
 end

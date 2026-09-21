@@ -1,5 +1,5 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import { HomeScreen } from '../HomeScreen';
 import { ThemeProvider } from 'styled-components/native';
 import { theme } from '../../theme/colors';
@@ -8,6 +8,18 @@ import { useAuth } from '../../context/AuthContext';
 // Mock do useAuth
 jest.mock('../../context/AuthContext', () => ({
   useAuth: jest.fn(),
+}));
+
+// Mock da API
+jest.mock('../../api/client', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn().mockResolvedValue({ data: {} }),
+    post: jest.fn().mockResolvedValue({ data: {} }),
+    interceptors: {
+      request: { use: jest.fn() },
+    },
+  },
 }));
 
 // Mock do expo-linear-gradient
@@ -36,11 +48,14 @@ describe('HomeScreen', () => {
       signOut: jest.fn(),
     });
 
-    const tree = renderer.create(
-      <AllTheProviders>
-        <HomeScreen />
-      </AllTheProviders>
-    ).toJSON();
+    let tree: any;
+    act(() => {
+      tree = renderer.create(
+        <AllTheProviders>
+          <HomeScreen />
+        </AllTheProviders>
+      ).toJSON();
+    });
     
     expect(tree).toMatchSnapshot();
   });
@@ -51,11 +66,14 @@ describe('HomeScreen', () => {
       signOut: jest.fn(),
     });
 
-    const tree = renderer.create(
-      <AllTheProviders>
-        <HomeScreen />
-      </AllTheProviders>
-    ).toJSON();
+    let tree: any;
+    act(() => {
+      tree = renderer.create(
+        <AllTheProviders>
+          <HomeScreen />
+        </AllTheProviders>
+      ).toJSON();
+    });
     
     expect(tree).toMatchSnapshot();
   });

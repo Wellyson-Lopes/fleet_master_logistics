@@ -12,6 +12,7 @@ class Vehicle < ApplicationRecord
 
   has_many :vehicle_assignments, dependent: :destroy
   has_many :drivers, through: :vehicle_assignments
+  has_many :trips, dependent: :destroy
 
   # Validações
   validates :type, presence: true
@@ -28,4 +29,18 @@ class Vehicle < ApplicationRecord
   # Scopes
   scope :by_type, ->(type) { where(type: type) if type.present? }
   scope :active, -> { where(status: 'active') }
+
+  # Retorna a atribuição atualmente ativa (sem data de término).
+  #
+  # @return [VehicleAssignment, nil]
+  def current_assignment
+    vehicle_assignments.where(unassigned_at: nil).order(assigned_at: :desc).first
+  end
+
+  # Retorna o motorista atualmente alocado no veículo.
+  #
+  # @return [Driver, nil]
+  def current_driver
+    current_assignment&.driver
+  end
 end

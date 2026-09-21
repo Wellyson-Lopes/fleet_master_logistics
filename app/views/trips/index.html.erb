@@ -1,0 +1,139 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Viagens & Cargas Logísticas</div>
+    <div class="sys-dash-subtitle">Acompanhe rotas, materiais transportados, capacidade dos caminhões e valores de frete</div>
+  </div>
+  <div>
+    <%= link_to new_trip_path, class: "sys-btn sys-btn-primary sys-btn-sm" do %>
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="sys-w-13 sys-h-13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nova Viagem
+    <% end %>
+  </div>
+</div>
+
+<!-- KPIs Rápidos da Operação -->
+<div class="sys-kpis-row sys-mb-6">
+  <div class="sys-kpi-card blue">
+    <div class="sys-kpi-icon blue">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </div>
+    <div class="sys-kpi-value"><%= number_to_currency(@total_freight_value, unit: "R$ ", separator: ",", delimiter: ".") %></div>
+    <div class="sys-kpi-label">Faturamento Total em Fretes</div>
+    <div class="sys-kpi-delta up">Valor acumulado</div>
+  </div>
+
+  <div class="sys-kpi-card teal">
+    <div class="sys-kpi-icon teal">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+    </div>
+    <div class="sys-kpi-value"><%= number_with_delimiter(@total_cargo_weight_ton) %> ton</div>
+    <div class="sys-kpi-label">Carga Total Transportada</div>
+    <div class="sys-kpi-delta up">Volume logístico</div>
+  </div>
+
+  <div class="sys-kpi-card amber">
+    <div class="sys-kpi-icon amber">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+    </div>
+    <div class="sys-kpi-value"><%= @in_transit_count %></div>
+    <div class="sys-kpi-label">Caminhões em Rota Agora</div>
+    <div class="sys-kpi-delta <%= @in_transit_count > 0 ? 'up' : 'down' %>"><%= @in_transit_count > 0 ? 'Em trânsito' : 'Sem rotas ativas' %></div>
+  </div>
+
+  <div class="sys-kpi-card green">
+    <div class="sys-kpi-icon green">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="sys-kpi-value"><%= @trips.count %></div>
+    <div class="sys-kpi-label">Total de Viagens</div>
+    <div class="sys-kpi-delta up"><%= @trips.where(status: 'delivered').count %> concluídas</div>
+  </div>
+</div>
+
+<!-- Filtros e Busca -->
+<div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+  <%= form_with(url: trips_path, method: :get, local: true, class: "w-full flex flex-col md:flex-row gap-3 items-center") do |f| %>
+    <div class="flex-1 w-full">
+      <%= f.text_field :query, value: params[:query], placeholder: "Buscar por rota, cliente, material, placa ou motorista...", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+    <div class="w-full md:w-auto flex gap-2">
+      <%= f.select :status, [["Todos os Status", ""], ["Agendada", "scheduled"], ["Em Trânsito", "in_transit"], ["Entregue", "delivered"], ["Atrasada", "delayed"], ["Cancelada", "canceled"]], { selected: params[:status] }, class: "p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white" %>
+      <%= f.submit "Filtrar", class: "px-4 py-2.5 bg-gray-800 hover:bg-gray-900 text-white rounded-xl text-sm font-semibold transition" %>
+      <% if params[:query].present? || params[:status].present? %>
+        <%= link_to "Limpar", trips_path, class: "px-3 py-2.5 text-xs text-gray-500 hover:text-gray-700 font-semibold" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<!-- Listagem de Viagens -->
+<div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+  <% if @trips.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-sm">
+        <thead>
+          <tr class="bg-gray-50 border-b border-gray-200 text-xs font-bold text-gray-600 uppercase">
+            <th class="py-3 px-4">Código / Rota</th>
+            <th class="py-3 px-4">Cliente Destinatário</th>
+            <th class="py-3 px-4">Material / Carga</th>
+            <th class="py-3 px-4">Ocupação / Caminhão</th>
+            <th class="py-3 px-4">Motorista</th>
+            <th class="py-3 px-4">Valor do Frete</th>
+            <th class="py-3 px-4">Status da Rota</th>
+            <th class="py-3 px-4 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% @trips.each do |trip| %>
+            <tr class="hover:bg-gray-50/80 transition">
+              <td class="py-3.5 px-4 font-bold text-gray-900">
+                <span class="text-blue-600 font-mono text-xs block"><%= trip.code %></span>
+                <div class="font-semibold text-gray-800"><%= trip.origin %> → <%= trip.destination %></div>
+              </td>
+              <td class="py-3.5 px-4 font-medium text-gray-700">
+                <%= trip.client_name %>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-medium text-gray-800"><%= trip.cargo_description %></div>
+                <div class="text-xs text-gray-500"><%= number_with_delimiter(trip.cargo_weight_kg) %> kg</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-xs font-bold text-gray-700"><%= trip.vehicle.plate %></span>
+                  <span class="text-xs text-gray-500">(<%= trip.capacity_occupancy_percentage %>%)</span>
+                </div>
+                <div class="w-24 bg-gray-200 rounded-full h-1.5 mt-1">
+                  <div class="h-1.5 rounded-full <%= trip.overweight? ? 'bg-red-500' : 'bg-blue-600' %>" style="width: <%= [trip.capacity_occupancy_percentage, 100].min %>%;"></div>
+                </div>
+              </td>
+              <td class="py-3.5 px-4 text-gray-700">
+                <%= trip.driver.name %>
+              </td>
+              <td class="py-3.5 px-4 font-bold text-green-700">
+                <%= number_to_currency(trip.freight_value, unit: "R$ ", separator: ",", delimiter: ".") %>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold <%= trip.status_badge_class %>">
+                  <%= trip.status_human %>
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right space-x-2">
+                <%= link_to "Ver Detalhes", trip_path(trip), class: "text-xs font-semibold text-blue-600 hover:text-blue-800" %>
+                <%= link_to "Editar", edit_trip_path(trip), class: "text-xs font-semibold text-gray-600 hover:text-gray-900" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="p-12 text-center">
+      <div class="w-16 h-16 mx-auto bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4">
+        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+      </div>
+      <h3 class="text-base font-bold text-gray-900">Nenhuma viagem encontrada</h3>
+      <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">Cadastre sua primeira rota de entrega para controlar caminhões, cargas, fretes e status em tempo real.</p>
+      <%= link_to "Criar Nova Viagem", new_trip_path, class: "mt-4 inline-block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-sm transition" %>
+    </div>
+  <% end %>
+</div>

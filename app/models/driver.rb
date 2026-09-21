@@ -17,6 +17,10 @@ class Driver < ApplicationRecord
   # Atribuição de veículos (relação many-to-many com datas)
   has_many :vehicle_assignments, dependent: :destroy
   has_many :vehicles, through: :vehicle_assignments
+  has_many :trips, dependent: :destroy
+
+  # Scopes
+  scope :active, -> { where(active: true) }
 
   # Herda dados da empresa do usuário que enviou o convite
   before_validation :inherit_company_data, if: :invitation_token?
@@ -34,6 +38,34 @@ class Driver < ApplicationRecord
 
   # Valida que o CNPJ do motorista seja o mesmo da empresa vinculada
   validate :cnpj_matches_company, if: -> { company.present? && cnpj.present? }
+
+  # Retorna a atribuição de veículo atualmente ativa.
+  #
+  # @return [VehicleAssignment, nil]
+  def current_assignment
+    vehicle_assignments.where(unassigned_at: nil).order(assigned_at: :desc).first
+  end
+
+  # Retorna o veículo atualmente alocado para o motorista.
+  #
+  # @return [Vehicle, nil]
+  def current_vehicle
+    current_assignment&.vehicle
+  end
+
+  # Verifica se a CNH está vencida.
+  #
+  # @return [Boolean]
+  def cnh_expired?
+    cnh_expiration.present? && cnh_expiration < Date.current
+  end
+
+  # Verifica se a CNH vai vencer nos próximos 30 dias.
+  #
+  # @return [Boolean]
+  def cnh_expiring_soon?
+    cnh_expiration.present? && cnh_expiration >= Date.current && cnh_expiration <= 30.days.from_now.to_date
+  end
 
   private
 

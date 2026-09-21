@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_09_223039) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_11_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -57,6 +57,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_09_223039) do
     t.string "cnpj"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "plan", default: "starter", null: false
+    t.string "billing_cycle", default: "monthly", null: false
+    t.string "subscription_status", default: "trialing", null: false
+    t.datetime "trial_ends_at"
     t.index ["cnpj"], name: "index_companies_on_cnpj", unique: true
   end
 
@@ -105,6 +109,32 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_09_223039) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["jti"], name: "index_jwt_denylists_on_jti"
+  end
+
+  create_table "trips", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "company_id", null: false
+    t.uuid "vehicle_id", null: false
+    t.uuid "driver_id", null: false
+    t.string "code", null: false
+    t.string "origin", null: false
+    t.string "destination", null: false
+    t.string "client_name", null: false
+    t.string "cargo_description", null: false
+    t.integer "cargo_weight_kg", default: 0, null: false
+    t.decimal "freight_value", precision: 10, scale: 2, default: "0.0", null: false
+    t.integer "distance_km"
+    t.string "status", default: "scheduled", null: false
+    t.datetime "started_at"
+    t.datetime "delivered_at"
+    t.datetime "estimated_delivery_at"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "code"], name: "index_trips_on_company_id_and_code", unique: true
+    t.index ["company_id"], name: "index_trips_on_company_id"
+    t.index ["driver_id"], name: "index_trips_on_driver_id"
+    t.index ["status"], name: "index_trips_on_status"
+    t.index ["vehicle_id"], name: "index_trips_on_vehicle_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -168,6 +198,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_09_223039) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "drivers", "companies"
+  add_foreign_key "trips", "companies"
+  add_foreign_key "trips", "drivers"
+  add_foreign_key "trips", "vehicles"
   add_foreign_key "users", "companies"
   add_foreign_key "vehicle_assignments", "drivers"
   add_foreign_key "vehicle_assignments", "vehicles"

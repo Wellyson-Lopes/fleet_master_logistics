@@ -2,8 +2,15 @@
   <div class='w-full max-w-[500px] bg-white rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-gray-100 p-8 md:p-10'>
     <h3 class='text-[24px] font-bold text-gray-900 text-center mb-2'>Crie sua conta</h3>
     <p class='text-[14px] text-gray-500 text-center mb-8 leading-relaxed'>Experimente o FleetMaster gratuitamente por 14 dias.</p>
+    <% if params[:plan].present? %>
+      <div class="text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg mb-4 text-center border border-blue-200">
+        Plano selecionado: <%= params[:plan].upcase %>
+      </div>
+    <% end %>
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
       <%= render 'users/shared/error_messages', resource: resource %>
+      <%= f.hidden_field :selected_plan, value: params[:plan] || "starter" %>
+      <%= f.hidden_field :billing_cycle, value: params[:billing_cycle] || "monthly" %>
       <div class='space-y-4'>
         <div>
           <%= f.label :name, 'Nome Completo', class: 'block text-[13px] font-semibold text-gray-700 mb-1.5 ml-1' %>

@@ -1,5 +1,5 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 import { ThemeProvider } from 'styled-components/native';
 import { theme } from '../../../theme/colors';
 import { PrimaryButton } from '../Button';
@@ -20,31 +20,40 @@ const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
 // Acompanhar: https://github.com/facebook/react/issues e https://github.com/expo/jest-expo/issues
 describe('Componentes do Design System', () => {
   it('deve renderizar ScreenTitle corretamente', () => {
-    const tree = renderer.create(
-      <AllTheProviders>
-        <ScreenTitle>Título Teste</ScreenTitle>
-      </AllTheProviders>
-    ).toJSON();
+    let tree: any;
+    act(() => {
+      tree = renderer.create(
+        <AllTheProviders>
+          <ScreenTitle>Título Teste</ScreenTitle>
+        </AllTheProviders>
+      ).toJSON();
+    });
     expect(tree).toMatchSnapshot();
   });
 
   it('deve renderizar PrimaryButton corretamente', () => {
-    const tree = renderer.create(
-      <AllTheProviders>
-        <PrimaryButton>
-          <ScreenTitle>Botão</ScreenTitle>
-        </PrimaryButton>
-      </AllTheProviders>
-    ).toJSON();
+    let tree: any;
+    act(() => {
+      tree = renderer.create(
+        <AllTheProviders>
+          <PrimaryButton>
+            <ScreenTitle>Botão</ScreenTitle>
+          </PrimaryButton>
+        </AllTheProviders>
+      ).toJSON();
+    });
     expect(tree).toMatchSnapshot();
   });
 
   it('deve renderizar StyledCard corretamente', () => {
-    const tree = renderer.create(
-      <AllTheProviders>
-        <StyledCard />
-      </AllTheProviders>
-    ).toJSON();
+    let tree: any;
+    act(() => {
+      tree = renderer.create(
+        <AllTheProviders>
+          <StyledCard />
+        </AllTheProviders>
+      ).toJSON();
+    });
     expect(tree).toMatchSnapshot();
   });
 });

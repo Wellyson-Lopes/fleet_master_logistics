@@ -9,15 +9,18 @@ FactoryBot.define do
     cnpj { company.cnpj }
     company_name { company.name }
 
+    admin { false }
+
     transient do
       skip_set_admin { false }
     end
 
     after(:create) do |user, evaluator|
-      user.update_column(:admin, false) unless evaluator.skip_set_admin
+      user.update_column(:admin, evaluator.admin) unless evaluator.skip_set_admin
     end
 
     trait :admin do
+      admin { true }
       skip_set_admin { true }
       after(:create) { |u| u.update_column(:admin, true) }
     end

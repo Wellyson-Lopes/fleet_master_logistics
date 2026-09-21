@@ -1,4 +1,4 @@
-<!-- Formulário de Cadastro (Integrado com Devise) -->
+<!-- Formulário de Cadastro (Integrado com Devise + Planos) -->
 <div id="register-section" data-auth-modal-target="registerSection" class="hidden">
   <div class="lp-modal-logo">
     <%= image_tag "logo-full.svg", alt: "FleetMaster Logo", class: "h-12 w-auto" %>
@@ -6,9 +6,16 @@
 
   <h3 class="lp-modal-title">Crie sua conta</h3>
   <p class="lp-modal-sub">Experimente o FleetMaster gratuitamente por 14 dias.</p>
+  
+  <div data-auth-modal-target="selectedPlanBadge" class="hidden text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg mb-4 text-center border border-blue-200">
+    Plano selecionado: STARTER
+  </div>
 
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
     <%= render "users/shared/error_messages", resource: resource %>
+
+    <%= f.hidden_field :selected_plan, value: "starter", data: { auth_modal_target: "selectedPlanInput" } %>
+    <%= f.hidden_field :billing_cycle, value: "monthly", data: { auth_modal_target: "billingCycleInput" } %>
 
     <div class="lp-modal-group">
       <%= f.label :name, "Nome Completo", class: "lp-modal-label" %>

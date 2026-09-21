@@ -30,11 +30,13 @@
       <div class="sys-dash-layout">
         <%= render "layouts/sidebar" %>
         <main class="sys-dash-main">
+          <%= render "layouts/flash" %>
           <%= yield %>
         </main>
       </div>
     <% else %>
       <%= render "layouts/navbar" %>
+      <%= render "layouts/flash" %>
       <%= yield %>
     <% end %>
 

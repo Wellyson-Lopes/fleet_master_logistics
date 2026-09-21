@@ -41,7 +41,7 @@ class ApplicationController < ActionController::Base
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: %i[name cnpj company_name company_logo])
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[name cnpj company_name company_logo selected_plan billing_cycle])
     devise_parameter_sanitizer.permit(:account_update, keys: %i[name cnpj company_name company_logo])
     devise_parameter_sanitizer.permit(:invite, keys: %i[name cnpj])
     devise_parameter_sanitizer.permit(:accept_invitation, keys: %i[name cpf cnh cnpj])

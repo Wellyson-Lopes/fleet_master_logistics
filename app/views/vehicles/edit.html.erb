@@ -1,0 +1,78 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Editar Veículo: <%= @vehicle.plate %></div>
+    <div class="sys-dash-subtitle">Atualize os dados e status do veículo</div>
+  </div>
+  <div>
+    <%= link_to "← Voltar para Detalhes", vehicle_path(@vehicle), class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <%= form_with(model: @vehicle, local: true, class: "space-y-4") do |f| %>
+    <% if @vehicle.errors.any? %>
+      <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+        <strong class="font-bold">Corrija os erros abaixo:</strong>
+        <ul class="list-disc list-inside mt-1">
+          <% @vehicle.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :plate, "Placa do Veículo *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :plate, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-mono uppercase focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+
+      <div>
+        <%= f.label :type, "Tipo de Veículo *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.select :type, [["Caminhão Truck", "Caminhão Truck"], ["Caminhão Toco", "Caminhão Toco"], ["Carreta Semirreboque", "Carreta Semirreboque"], ["VUC / Utilitário", "VUC"], ["Trator / Máquina", "Trator"]], {}, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <%= f.label :brand, "Marca", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :brand, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :model, "Modelo", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :model, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :year, "Ano de Fabricação", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.number_field :year, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <%= f.label :load_capacity_kg, "Capacidade (kg)", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.number_field :load_capacity_kg, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :current_mileage_km, "Quilometragem (km)", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.number_field :current_mileage_km, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :status, "Status Operacional", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.select :status, [["Ativo / Disponível", "active"], ["Em Manutenção", "maintenance"], ["Inativo", "inactive"]], {}, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div class="pt-4 flex justify-between items-center">
+      <%= button_to "Excluir Veículo", vehicle_path(@vehicle), method: :delete, data: { confirm: "Tem certeza que deseja excluir o veículo #{@vehicle.plate}?" }, class: "text-xs font-semibold text-red-600 hover:text-red-800" %>
+      <div class="space-x-3">
+        <%= link_to "Cancelar", vehicle_path(@vehicle), class: "px-5 py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-800" %>
+        <%= f.submit "Atualizar Veículo", class: "px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition" %>
+      </div>
+    </div>
+  <% end %>
+</div>

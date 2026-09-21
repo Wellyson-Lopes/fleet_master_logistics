@@ -1,0 +1,99 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Nova Viagem & Entrega</div>
+    <div class="sys-dash-subtitle">Cadastre uma nova rota logística, materiais a transportar e valor de frete</div>
+  </div>
+  <div>
+    <%= link_to "← Voltar para Viagens", trips_path, class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="max-w-3xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm">
+  <%= form_with(model: @trip, local: true, class: "space-y-4") do |f| %>
+    <% if @trip.errors.any? %>
+      <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+        <strong class="font-bold">Corrija os seguintes campos:</strong>
+        <ul class="list-disc list-inside mt-1">
+          <% @trip.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :vehicle_id, "Caminhão / Veículo *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.collection_select :vehicle_id, @vehicles, :id, ->(v) { "#{v.plate} - #{v.brand} #{v.model} (Capacidade: #{v.load_capacity_kg} kg)" }, { prompt: "Selecione o caminhão..." }, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+
+      <div>
+        <%= f.label :driver_id, "Motorista Designado *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.collection_select :driver_id, @drivers, :id, :name, { prompt: "Selecione o motorista..." }, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :origin, "Origem (Ponto de Saída) *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :origin, placeholder: "Ex: São Paulo - SP (CD Lapa)", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+
+      <div>
+        <%= f.label :destination, "Destino (Ponto de Entrega) *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :destination, placeholder: "Ex: Curitiba - PR", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :client_name, "Cliente / Destinatário *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :client_name, placeholder: "Ex: Construtora Horizonte S.A.", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+
+      <div>
+        <%= f.label :cargo_description, "Material / Carga Transportada *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :cargo_description, placeholder: "Ex: 400 Sacos de Cimento e Brita", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <%= f.label :cargo_weight_kg, "Peso da Carga (kg) *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.number_field :cargo_weight_kg, placeholder: "Ex: 18500", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+
+      <div>
+        <%= f.label :freight_value, "Valor do Frete (R$) *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.number_field :freight_value, step: "0.01", placeholder: "Ex: 4800.00", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+      </div>
+
+      <div>
+        <%= f.label :distance_km, "Distância Prevista (km)", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.number_field :distance_km, placeholder: "Ex: 420", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :status, "Status da Rota", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.select :status, [["Agendada", "scheduled"], ["Em Trânsito / Em Rota", "in_transit"], ["Entregue", "delivered"], ["Atrasada", "delayed"]], {}, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :estimated_delivery_at, "Previsão de Entrega", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.datetime_local_field :estimated_delivery_at, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :notes, "Instruções e Observações da Entrega", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_area :notes, rows: 3, placeholder: "Ex: Entregar na portaria de carga 2. Exigir assinatura do responsável Sr. Marcos.", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div class="pt-4 flex justify-end space-x-3">
+      <%= link_to "Cancelar", trips_path, class: "px-5 py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-800" %>
+      <%= f.submit "Cadastrar Viagem", class: "px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition" %>
+    </div>
+  <% end %>
+</div>

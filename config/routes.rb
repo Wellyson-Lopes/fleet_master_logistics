@@ -23,12 +23,36 @@ Rails.application.routes.draw do
         delete 'drivers/logout', to: 'drivers/sessions#destroy'
         post 'drivers/invitation/accept', to: 'drivers/invitations#accept'
         resource :profile, only: %i[show update], module: :drivers, controller: 'profiles', path: 'drivers/profile'
+        get 'drivers/home_data', to: 'drivers/home_data#show'
+        resources :trips, only: %i[index show], module: :drivers, controller: 'trips', path: 'drivers/trips' do
+          member do
+            patch :update_status
+          end
+        end
       end
     end
   end
 
   resources :dashboard, only: [:index]
   resources :teams, only: [:index]
+  resources :reports, only: [:index]
+  get 'subscriptions', to: 'subscriptions#index', as: :subscriptions
+  resource :subscription, only: %i[show update]
+
+  resources :trips do
+    member do
+      patch :update_status
+    end
+  end
+
+  resources :vehicles do
+    member do
+      post :assign_driver
+      delete :unassign_driver
+    end
+  end
+
+  resources :drivers
 
   namespace :drivers do
     get 'welcome', to: 'welcome#index'

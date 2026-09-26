@@ -10,6 +10,22 @@ jest.mock('../../context/AuthContext', () => ({
   useAuth: jest.fn(),
 }));
 
+// Mock do useHomeData
+jest.mock('../../hooks/useHomeData', () => ({
+  useHomeData: jest.fn(() => ({
+    userName: 'Motorista Teste',
+    activeTrip: null,
+    alerts: [],
+    recentTrips: [],
+    kpis: [
+      { id: 'trips', label: 'Viagens Hoje', value: '0', delta: '0%' },
+      { id: 'deliveries', label: 'Entregas', value: '0', delta: '0' },
+      { id: 'incidents', label: 'Ocorrências', value: '0', delta: 'em dia' },
+      { id: 'efficiency', label: 'Eficiência', value: '100%', delta: '100%' },
+    ],
+  })),
+}));
+
 // Mock da API
 jest.mock('../../api/client', () => ({
   __esModule: true,

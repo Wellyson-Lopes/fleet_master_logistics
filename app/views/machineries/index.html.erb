@@ -1,0 +1,77 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Catálogo de Máquinas & Equipamentos</div>
+    <div class="sys-dash-subtitle">Máquinas pesadas disponíveis para locação por hora ou diária</div>
+  </div>
+  <div class="flex items-center gap-2">
+    <%= link_to machinery_rentals_path, class: "sys-btn sys-btn-ghost sys-btn-sm" do %>
+      Ver Contratos de Aluguel
+    <% end %>
+    <%= link_to new_machinery_path, class: "sys-btn sys-btn-primary sys-btn-sm" do %>
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="sys-w-13 sys-h-13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nova Máquina
+    <% end %>
+  </div>
+</div>
+
+<div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm mb-6 flex flex-wrap gap-3 items-center justify-between">
+  <div class="flex flex-wrap gap-2">
+    <%= link_to "Todas", machineries_path, class: "px-3 py-1.5 rounded-xl text-xs font-bold #{params[:status].blank? ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+    <%= link_to "Disponíveis", machineries_path(status: 'available'), class: "px-3 py-1.5 rounded-xl text-xs font-bold #{params[:status] == 'available' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+    <%= link_to "Alugadas", machineries_path(status: 'rented'), class: "px-3 py-1.5 rounded-xl text-xs font-bold #{params[:status] == 'rented' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+    <%= link_to "Em Manutenção", machineries_path(status: 'maintenance'), class: "px-3 py-1.5 rounded-xl text-xs font-bold #{params[:status] == 'maintenance' ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+  </div>
+  <div>
+    <%= link_to "+ Novo Aluguel de Máquina", new_machinery_rental_path, class: "px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-sm transition" %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <% if @machineries.any? %>
+    <% @machineries.each do |m| %>
+      <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <span class="text-xs font-bold text-gray-400 uppercase tracking-wide"><%= m.category %></span>
+              <h4 class="text-base font-extrabold text-gray-900 mt-0.5"><%= m.name %></h4>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold <%= m.status_badge_class %>">
+              <%= m.status_human %>
+            </span>
+          </div>
+
+          <div class="text-xs text-gray-600 space-y-1 mb-4 bg-gray-50 p-3 rounded-xl">
+            <div><strong class="text-gray-700">Marca/Modelo:</strong> <%= "#{m.brand} #{m.model}".strip.presence || '-' %> (<%= m.year.presence || '-' %>)</div>
+            <div><strong class="text-gray-700">Nº Série / Chassi:</strong> <span class="font-mono"><%= m.serial_number.presence || '-' %></span></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 border-t border-gray-100 pt-3 text-xs mb-4">
+            <div>
+              <span class="text-gray-500 block">Valor Hora</span>
+              <span class="font-bold text-gray-900 text-sm"><%= number_to_currency(m.hourly_rate, unit: 'R$ ') %></span>
+            </div>
+            <div>
+              <span class="text-gray-500 block">Valor Diária</span>
+              <span class="font-extrabold text-blue-700 text-sm"><%= number_to_currency(m.daily_rate, unit: 'R$ ') %></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+          <%= link_to "Ver Detalhes", machinery_path(m), class: "text-xs font-bold text-gray-600 hover:text-gray-900" %>
+          <% if m.available? %>
+            <%= link_to "Alugar Agora", new_machinery_rental_path(machinery_id: m.id), class: "px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition" %>
+          <% else %>
+            <span class="text-xs text-gray-400">Em operação</span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="col-span-full p-8 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+      <p class="text-sm font-semibold text-gray-700">Nenhuma máquina cadastrada ainda.</p>
+      <%= link_to "Cadastrar Primeira Máquina", new_machinery_path, class: "mt-3 inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl transition" %>
+    </div>
+  <% end %>
+</div>

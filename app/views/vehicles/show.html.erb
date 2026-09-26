@@ -57,7 +57,61 @@
         <dt class="text-xs font-bold text-gray-400 uppercase">Renavam</dt>
         <dd class="text-gray-800 font-mono"><%= @vehicle.renavam.presence || '-' %></dd>
       </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">CRLV (Documento)</dt>
+        <dd class="text-gray-800 font-mono"><%= @vehicle.crlv_number.presence || 'Não informado' %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Vencimento CRLV</dt>
+        <dd class="text-gray-800">
+          <% if @vehicle.crlv_expiration %>
+            <span class="inline-flex items-center gap-1.5 <%= @vehicle.crlv_expired? ? 'text-red-600 font-bold' : (@vehicle.crlv_expiring_soon? ? 'text-amber-600 font-bold' : 'text-gray-800') %>">
+              <%= I18n.l(@vehicle.crlv_expiration, format: :long) %>
+              <% if @vehicle.crlv_expired? %>
+                <span class="px-2 py-0.5 text-10 bg-red-100 text-red-700 rounded-full">VENCIDO</span>
+              <% elsif @vehicle.crlv_expiring_soon? %>
+                <span class="px-2 py-0.5 text-10 bg-amber-100 text-amber-700 rounded-full">VENCE EM BREVE</span>
+              <% end %>
+            </span>
+          <% else %>
+            -
+          <% end %>
+        </dd>
+      </div>
     </dl>
+
+    <!-- Histórico de Abastecimentos Registrados -->
+    <% if @vehicle.fuel_refuels.any? %>
+      <div class="mt-8 border-t pt-6">
+        <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">⛽ Histórico de Abastecimentos</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b text-gray-400">
+                <th class="py-2">Data</th>
+                <th class="py-2">Motorista</th>
+                <th class="py-2">Combustível</th>
+                <th class="py-2">Litragem</th>
+                <th class="py-2">Odômetro</th>
+                <th class="py-2 text-right">Valor Pago</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <% @vehicle.fuel_refuels.recent.limit(10).each do |refuel| %>
+                <tr>
+                  <td class="py-2 font-medium text-gray-600"><%= refuel.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+                  <td class="py-2 text-gray-900 font-semibold"><%= refuel.driver.name %></td>
+                  <td class="py-2 text-gray-600"><%= refuel.fuel_type_human %></td>
+                  <td class="py-2 text-gray-600"><%= refuel.liters %> L</td>
+                  <td class="py-2 text-gray-600"><%= number_with_delimiter(refuel.current_mileage_km) %> km</td>
+                  <td class="py-2 text-right font-bold text-gray-900"><%= number_to_currency(refuel.total_amount, unit: "R$ ") %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <!-- Motorista Atribuído & Ações -->

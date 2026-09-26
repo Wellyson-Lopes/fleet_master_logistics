@@ -1,0 +1,76 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Clientes & Contratantes</div>
+    <div class="sys-dash-subtitle">Gerencie os clientes para fretes, entregas e aluguel de máquinas</div>
+  </div>
+  <div class="flex items-center gap-2">
+    <%= link_to new_client_path, class: "sys-btn sys-btn-primary sys-btn-sm" do %>
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="sys-w-13 sys-h-13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Novo Cliente
+    <% end %>
+  </div>
+</div>
+
+<div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+  <%= form_with(url: clients_path, method: :get, local: true, class: "w-full flex gap-3 items-center") do |f| %>
+    <div class="flex-1">
+      <%= f.text_field :query, value: params[:query], placeholder: "Buscar por nome, documento ou e-mail...", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+    <%= f.submit "Buscar", class: "px-4 py-2.5 bg-gray-800 hover:bg-gray-900 text-white rounded-xl text-sm font-semibold transition" %>
+    <% if params[:query].present? %>
+      <%= link_to "Limpar", clients_path, class: "px-3 py-2.5 text-xs text-gray-500 hover:text-gray-700 font-semibold" %>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+  <% if @clients.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-sm">
+        <thead>
+          <tr class="bg-gray-50 border-b border-gray-200 text-xs font-bold text-gray-600 uppercase">
+            <th class="py-3 px-4">Nome do Cliente</th>
+            <th class="py-3 px-4">Documento (CPF/CNPJ)</th>
+            <th class="py-3 px-4">Contato (E-mail / Tel)</th>
+            <th class="py-3 px-4">Cidade / UF</th>
+            <th class="py-3 px-4">Status</th>
+            <th class="py-3 px-4 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% @clients.each do |c| %>
+            <tr class="hover:bg-gray-50/80 transition">
+              <td class="py-3.5 px-4 font-bold text-gray-900">
+                <%= link_to c.name, client_path(c), class: "text-blue-600 hover:underline" %>
+              </td>
+              <td class="py-3.5 px-4 font-mono text-gray-700 text-xs">
+                <%= c.formatted_document %>
+              </td>
+              <td class="py-3.5 px-4 text-gray-600 text-xs">
+                <div><%= c.email.presence || '-' %></div>
+                <div class="text-gray-400"><%= c.phone.presence || '-' %></div>
+              </td>
+              <td class="py-3.5 px-4 text-gray-700 text-xs">
+                <%= [c.city, c.state].compact_blank.join(' - ').presence || '-' %>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold <%= c.status == 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+                  <%= c.status == 'active' ? 'Ativo' : 'Inativo' %>
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right space-x-2">
+                <%= link_to "Ver", client_path(c), class: "text-xs font-semibold text-blue-600 hover:text-blue-800" %>
+                <%= link_to "Editar", edit_client_path(c), class: "text-xs font-semibold text-gray-600 hover:text-gray-900" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="p-8 text-center bg-gray-50 rounded-xl">
+      <p class="text-sm font-semibold text-gray-700">Nenhum cliente cadastrado ainda.</p>
+      <%= link_to "Cadastrar Primeiro Cliente", new_client_path, class: "mt-3 inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl transition" %>
+    </div>
+  <% end %>
+</div>

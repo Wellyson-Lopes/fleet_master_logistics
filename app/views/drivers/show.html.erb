@@ -35,15 +35,23 @@
         <dd class="text-gray-800 font-mono"><%= @driver.cnh.presence || '-' %></dd>
       </div>
       <div>
-        <dt class="text-xs font-bold text-gray-400 uppercase">Validade da CNH</dt>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Status do Acesso</dt>
         <dd class="text-gray-800">
-          <% if @driver.cnh_expiration.present? %>
-            <%= I18n.l(@driver.cnh_expiration, format: :long) %>
-            <% if @driver.cnh_expired? %>
-              <span class="ml-2 text-xs font-bold text-red-600">(VENCIDA)</span>
-            <% end %>
+          <% if @driver.invitation_accepted_at.present? %>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800">
+              Conta Ativada (<%= I18n.l(@driver.invitation_accepted_at, format: :short) %>)
+            </span>
+          <% elsif @driver.invitation_code.present? %>
+            <div class="space-y-1">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">
+                Convite Pendente - Código: <strong class="ml-1 font-mono text-blue-700 text-sm"><%= @driver.invitation_code %></strong>
+              </span>
+              <div class="mt-1">
+                <%= button_to "Reenviar Código por E-mail", resend_invitation_driver_path(@driver), method: :post, class: "text-xs font-bold text-blue-600 hover:text-blue-800 underline bg-transparent border-0 p-0 cursor-pointer" %>
+              </div>
+            </div>
           <% else %>
-            -
+            <span class="text-xs text-gray-400">Sem convite pendente</span>
           <% end %>
         </dd>
       </div>

@@ -184,3 +184,126 @@
   color: var(--gray-900); background: white;
 }
 .sys-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,108,246,0.12); }
+
+/* ── MODO ESCURO (DARK THEME) ── */
+html.dark, body.dark, .dark {
+  --gray-50:    #0B1628;
+  --gray-100:   #132036;
+  --gray-200:   #1C2E4A;
+  --gray-300:   #243553;
+  --gray-400:   #64748B;
+  --gray-500:   #94A3B8;
+  --gray-600:   #CBD5E1;
+  --gray-700:   #E2E8F0;
+  --gray-800:   #F1F5F9;
+  --gray-900:   #F8FAFC;
+  --white:      #132036;
+  color-scheme: dark;
+}
+
+html.dark body, body.dark {
+  background-color: #0B1628 !important;
+  color: #F8FAFC !important;
+}
+
+.dark .sys-dash-layout {
+  background: #0B1628 !important;
+}
+
+.dark .sys-dash-title {
+  color: #F8FAFC !important;
+}
+
+.dark .sys-dash-subtitle {
+  color: #94A3B8 !important;
+}
+
+.dark .sys-kpi-card,
+.dark .sys-card {
+  background: #132036 !important;
+  border-color: #1C2E4A !important;
+}
+
+.dark .sys-kpi-value {
+  color: #F8FAFC !important;
+}
+
+.dark .sys-kpi-label {
+  color: #94A3B8 !important;
+}
+
+.dark .bg-white {
+  background-color: #132036 !important;
+  color: #F8FAFC;
+}
+
+.dark .bg-gray-50 {
+  background-color: #0E1A2E !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #1C2E4A !important;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: #1C2E4A !important;
+}
+
+.dark .text-gray-900 {
+  color: #F8FAFC !important;
+}
+
+.dark .text-gray-800 {
+  color: #F1F5F9 !important;
+}
+
+.dark .text-gray-700,
+.dark .text-gray-600 {
+  color: #CBD5E1 !important;
+}
+
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: #94A3B8 !important;
+}
+
+.dark table th {
+  background-color: #0E1A2E !important;
+  color: #94A3B8 !important;
+  border-color: #1C2E4A !important;
+}
+
+.dark table td {
+  border-color: #1C2E4A !important;
+  color: #E2E8F0 !important;
+}
+
+.dark table tbody tr:hover td {
+  background-color: #1C2E4A !important;
+}
+
+.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #1C2E4A !important;
+}
+
+.dark input,
+.dark select,
+.dark textarea,
+.dark .sys-input {
+  background-color: #0E1A2E !important;
+  border-color: #243553 !important;
+  color: #F8FAFC !important;
+}
+
+.dark .sys-btn-ghost {
+  border-color: #243553 !important;
+  color: #CBD5E1 !important;
+}
+
+.dark .sys-btn-ghost:hover {
+  background: #1C2E4A !important;
+  color: #FFFFFF !important;
+}

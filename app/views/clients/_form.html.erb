@@ -1,0 +1,71 @@
+<%= form_with(model: client, local: true, class: "space-y-4") do |f| %>
+  <% if client.errors.any? %>
+    <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+      <strong class="font-bold">Corrija os erros abaixo:</strong>
+      <ul class="list-disc list-inside mt-1">
+        <% client.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "Razão Social / Nome Completo *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+    <%= f.text_field :name, placeholder: "Ex: Construtora Horizonte LTDA", required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <%= f.label :document, "CPF ou CNPJ", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :document, placeholder: "00.000.000/0000-00", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-mono focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div>
+      <%= f.label :phone, "Telefone / WhatsApp", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :phone, placeholder: "(81) 98888-7777", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <%= f.label :email, "E-mail de Contato / Cobrança", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.email_field :email, placeholder: "financeiro@cliente.com.br", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div>
+      <%= f.label :status, "Status", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.select :status, [["Ativo", "active"], ["Inativo", "inactive"]], {}, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :address, "Endereço Completo", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+    <%= f.text_field :address, placeholder: "Av. Principal, 1500 - Distrito Industrial", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4">
+    <div>
+      <%= f.label :city, "Cidade", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :city, placeholder: "Recife", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+    <div>
+      <%= f.label :state, "UF", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :state, placeholder: "PE", maxlength: 2, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm uppercase focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+    <div>
+      <%= f.label :zip_code, "CEP", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :zip_code, placeholder: "50000-000", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-mono focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :notes, "Observações Internas", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+    <%= f.text_area :notes, rows: 2, placeholder: "Instruções de recebimento, faturamento...", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+  </div>
+
+  <div class="pt-4 flex justify-end space-x-3 items-center border-t border-gray-100">
+    <%= link_to "Cancelar", clients_path, class: "px-5 py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-800" %>
+    <%= f.submit client.persisted? ? "Salvar Alterações" : "Cadastrar Cliente", class: "px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition" %>
+  </div>
+<% end %>

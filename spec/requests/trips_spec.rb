@@ -29,6 +29,30 @@ RSpec.describe 'Trips', type: :request do
     end
   end
 
+  describe 'GET /trips/:id' do
+    it 'renderiza a tela da viagem com mapa e histórico sem erros' do
+      get trip_path(trip)
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(trip.code)
+      expect(response.body).to include('Localização em Tempo Real')
+    end
+
+    it 'renderiza com localizações GPS registradas' do
+      DriverLocation.create!(
+        company: company,
+        driver: driver,
+        trip: trip,
+        latitude: -23.5505,
+        longitude: -46.6333,
+        recorded_at: Time.current
+      )
+
+      get trip_path(trip)
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('Sinal GPS Ativo')
+    end
+  end
+
   describe 'POST /trips' do
     it 'cadastra uma nova viagem com sucesso' do
       expect {

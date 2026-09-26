@@ -18,6 +18,11 @@ class DashboardController < ApplicationController
     @total_drivers = @drivers.count
     @active_drivers = @drivers.where(active: true).count
 
+    # Veículos em rota (entregas ativas em andamento)
+    @in_transit_trips = policy_scope(Trip).where(status: %w[in_transit delayed])
+                                          .includes(:vehicle, :driver)
+                                          .order(started_at: :desc)
+
     # Veículos com motoristas atribuídos em operação
     @active_assignments = VehicleAssignment.joins(:vehicle)
                                            .where(vehicles: { company_id: @company.id }, unassigned_at: nil)
@@ -30,6 +35,15 @@ class DashboardController < ApplicationController
                           .where('cnh_expiration <= ?', 45.days.from_now)
                           .order(cnh_expiration: :asc)
                           .limit(5)
+
+    # Alertas reais de CRLV de veículos da empresa
+    @crlv_alerts = @vehicles.where.not(crlv_expiration: nil)
+                            .where('crlv_expiration <= ?', 45.days.from_now)
+                            .order(crlv_expiration: :asc)
+                            .limit(5)
+
+    # Máquinas e Locações ativas
+    @active_rentals = policy_scope(MachineryRental).where(status: 'active').includes(:machinery, :client).limit(5)
 
     # Veículos cadastrados recentemente
     @recent_vehicles = @vehicles.order(created_at: :desc).limit(5)

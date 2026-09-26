@@ -8,6 +8,15 @@ class VehiclesController < ApplicationController
     @vehicles = policy_scope(Vehicle).order(created_at: :desc)
     @vehicles = @vehicles.by_type(params[:type]) if params[:type].present?
     @vehicles = @vehicles.where(status: params[:status]) if params[:status].present?
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        send_data ExportService.vehicles_to_excel(@vehicles),
+                  filename: "frota_veiculos_#{Date.current}.csv",
+                  type: 'text/csv; charset=utf-8'
+      end
+    end
   end
 
   def show; end
@@ -86,6 +95,6 @@ class VehiclesController < ApplicationController
   end
 
   def vehicle_params
-    params.require(:vehicle).permit(:type, :plate, :brand, :model, :year, :load_capacity_kg, :current_mileage_km, :status, :chassis, :renavam)
+    params.require(:vehicle).permit(:type, :plate, :brand, :model, :year, :load_capacity_kg, :current_mileage_km, :status, :chassis, :renavam, :crlv_number, :crlv_expiration, :photo)
   end
 end

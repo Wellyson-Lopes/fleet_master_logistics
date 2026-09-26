@@ -1,0 +1,99 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Locação <%= @rental.code %></div>
+    <div class="sys-dash-subtitle"><%= @rental.machinery.name %> · <%= @rental.client.name %></div>
+  </div>
+  <div class="flex items-center gap-2">
+    <%= link_to "← Voltar", machinery_rentals_path, class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+    <% if @rental.status == 'active' %>
+      <%= button_to "Finalizar Locação (Liberar Máquina)", complete_machinery_rental_path(@rental), method: :patch, class: "sys-btn sys-btn-sm bg-green-600 hover:bg-green-700 text-white font-bold" %>
+    <% end %>
+    <%= link_to "Editar", edit_machinery_rental_path(@rental), class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="md:col-span-2 space-y-6">
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <h3 class="text-lg font-bold text-gray-900 border-b pb-4 mb-4">Dados do Contrato de Locação</h3>
+
+      <dl class="grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Equipamento Alugado</dt>
+          <dd class="text-base font-bold text-gray-900">
+            <%= link_to @rental.machinery.name, machinery_path(@rental.machinery), class: "text-blue-600 hover:underline" %>
+          </dd>
+          <span class="text-xs text-gray-500"><%= @rental.machinery.category %></span>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Cliente Contratante</dt>
+          <dd class="text-base font-bold text-gray-900">
+            <%= link_to @rental.client.name, client_path(@rental.client), class: "text-blue-600 hover:underline" %>
+          </dd>
+          <span class="text-xs text-gray-500"><%= @rental.client.formatted_document %></span>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Modalidade & Duração</dt>
+          <dd class="text-gray-800 font-semibold">
+            <%= @rental.rental_type_human %>: <%= @rental.duration.to_i %> <%= @rental.rental_type == 'hourly' ? 'horas' : 'dias' %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Taxa Unitária Aplicada</dt>
+          <dd class="text-gray-800 font-bold"><%= number_to_currency(@rental.rate_applied, unit: 'R$ ') %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Data de Início</dt>
+          <dd class="text-gray-800"><%= I18n.l(@rental.start_date, format: :long) %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Previsão / Data Término</dt>
+          <dd class="text-gray-800"><%= @rental.end_date ? I18n.l(@rental.end_date, format: :long) : 'Em aberto' %></dd>
+        </div>
+        <div class="col-span-2">
+          <dt class="text-xs font-bold text-gray-400 uppercase">Endereço da Obra / Entrega</dt>
+          <dd class="text-gray-800"><%= @rental.delivery_address.presence || 'Sede da contratante / não informado' %></dd>
+        </div>
+        <% if @rental.notes.present? %>
+          <div class="col-span-2">
+            <dt class="text-xs font-bold text-gray-400 uppercase">Condições & Observações</dt>
+            <dd class="text-gray-700 bg-gray-50 p-3 rounded-xl mt-1 text-xs"><%= simple_format(@rental.notes) %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <!-- Card Financeiro -->
+    <div class="bg-gray-900 text-white rounded-2xl p-6 shadow-sm">
+      <span class="text-xs font-bold text-gray-400 uppercase tracking-wide block mb-1">Total do Contrato</span>
+      <div class="text-3xl font-black text-amber-400 font-mono mb-4">
+        <%= number_to_currency(@rental.total_amount, unit: 'R$ ') %>
+      </div>
+
+      <div class="border-t border-gray-800 pt-4 space-y-2 text-xs">
+        <div class="flex justify-between">
+          <span class="text-gray-400">Status:</span>
+          <span class="font-bold uppercase <%= @rental.status == 'active' ? 'text-blue-400' : (@rental.status == 'completed' ? 'text-green-400' : 'text-gray-300') %>">
+            <%= @rental.status_human %>
+          </span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400">Taxa base:</span>
+          <span class="text-white"><%= number_to_currency(@rental.rate_applied, unit: 'R$ ') %></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400">Período:</span>
+          <span class="text-white"><%= @rental.duration.to_i %> <%= @rental.rental_type == 'hourly' ? 'horas' : 'dias' %></span>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-gray-800">
+        <%= link_to new_payment_path(payable_type: 'MachineryRental', payable_id: @rental.id, client_id: @rental.client_id, value: @rental.total_amount), class: "w-full text-center block px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition" do %>
+          💳 Emitir Cobrança Asaas (PIX / Boleto)
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

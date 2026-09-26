@@ -47,14 +47,25 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <%= f.label :client_name, "Cliente / Destinatário *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
-        <%= f.text_field :client_name, placeholder: "Ex: Construtora Horizonte S.A.", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Selecionar Cliente Cadastrado (Opcional)</label>
+        <select id="trip_client_select" onchange="const opt = this.options[this.selectedIndex]; if(opt.value){ document.getElementById('trip_client_name').value = opt.dataset.name; if(opt.dataset.address) document.getElementById('trip_destination').value = opt.dataset.address; document.getElementById('trip_client_id').value = opt.value; }" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500">
+          <option value="">-- Selecione ou digite manualmente abaixo --</option>
+          <% @clients.each do |c| %>
+            <option value="<%= c.id %>" data-name="<%= c.name %>" data-address="<%= [c.address, c.city, c.state].compact.reject(&:blank?).join(', ') %>"><%= c.name %></option>
+          <% end %>
+        </select>
+        <%= f.hidden_field :client_id, id: "trip_client_id" %>
       </div>
 
       <div>
-        <%= f.label :cargo_description, "Material / Carga Transportada *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
-        <%= f.text_field :cargo_description, placeholder: "Ex: 400 Sacos de Cimento e Brita", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+        <%= f.label :client_name, "Nome do Cliente / Destinatário *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :client_name, id: "trip_client_name", placeholder: "Ex: Construtora Horizonte S.A.", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
       </div>
+    </div>
+
+    <div>
+      <%= f.label :cargo_description, "Material / Carga Transportada *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :cargo_description, placeholder: "Ex: 400 Sacos de Cimento e Brita", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

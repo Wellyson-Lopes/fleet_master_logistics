@@ -3,7 +3,10 @@
     <div class="sys-dash-title">Gestão da Frota</div>
     <div class="sys-dash-subtitle">Listagem de veículos e caminhões da empresa</div>
   </div>
-  <div>
+  <div class="flex items-center gap-2">
+    <%= link_to vehicles_path(format: :csv, status: params[:status]), data: { turbo: false }, class: "sys-btn sys-btn-ghost sys-btn-sm" do %>
+      📊 Exportar Excel (.csv)
+    <% end %>
     <%= link_to new_vehicle_path, class: "sys-btn sys-btn-primary sys-btn-sm" do %>
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="sys-w-13 sys-h-13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Novo Veículo

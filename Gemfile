@@ -48,6 +48,7 @@ gem 'thruster', require: false
 gem 'image_processing', '~> 1.2'
 
 gem 'cpf_cnpj'
+gem 'csv'
 gem 'devise'
 gem 'devise_invitable'
 gem 'devise-jwt'

@@ -1,0 +1,95 @@
+<div data-controller="rental-pricing">
+  <%= form_with(model: rental, local: true, class: "space-y-4") do |f| %>
+    <% if rental.errors.any? %>
+      <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+        <strong class="font-bold">Corrija os erros abaixo:</strong>
+        <ul class="list-disc list-inside mt-1">
+          <% rental.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :machinery_id, "Selecionar Máquina / Equipamento *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <select name="machinery_rental[machinery_id]" id="machinery_rental_machinery_id" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" data-rental-pricing-target="machinerySelect" data-action="change->rental-pricing#updateMachinery">
+          <option value="">-- Escolha uma máquina --</option>
+          <% @machineries.each do |m| %>
+            <option value="<%= m.id %>" data-hourly-rate="<%= m.hourly_rate %>" data-daily-rate="<%= m.daily_rate %>" <%= 'selected' if rental.machinery_id == m.id %>>
+              <%= m.name %> (<%= m.category %>) - R$ <%= m.hourly_rate %>/h | R$ <%= m.daily_rate %>/dia
+            </option>
+          <% end %>
+        </select>
+      </div>
+
+      <div>
+        <%= f.label :client_id, "Selecionar Cliente Contratante *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.collection_select :client_id, @clients, :id, :name, { prompt: "-- Escolha o cliente --" }, { required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" } %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-blue-50/60 p-4 border border-blue-100 rounded-2xl">
+      <div>
+        <%= f.label :rental_type, "Modalidade de Cobrança *", class: "block text-xs font-bold text-blue-950 uppercase mb-1" %>
+        <%= f.select :rental_type, [["Diária (R$/dia)", "daily"], ["Por Hora (R$/hora)", "hourly"]], {}, class: "w-full p-2.5 bg-white border border-blue-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-blue-500", data: { rental_pricing_target: "rentalType", action: "change->rental-pricing#updateRentalType" } %>
+      </div>
+
+      <div>
+        <%= f.label :duration, "Tempo / Duração *", class: "block text-xs font-bold text-blue-950 uppercase mb-1" %>
+        <%= f.number_field :duration, step: "0.5", min: "0.5", value: (rental.duration || 1), required: true, class: "w-full p-2.5 bg-white border border-blue-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-2 focus:ring-blue-500", data: { rental_pricing_target: "duration", action: "input->rental-pricing#calculate" } %>
+      </div>
+
+      <div>
+        <%= f.label :rate_applied, "Valor Aplicado (R$) *", class: "block text-xs font-bold text-blue-950 uppercase mb-1" %>
+        <%= f.number_field :rate_applied, step: "0.01", min: "0", value: rental.rate_applied, required: true, class: "w-full p-2.5 bg-white border border-blue-200 rounded-xl text-sm font-extrabold text-blue-800 focus:ring-2 focus:ring-blue-500", data: { rental_pricing_target: "rateApplied", action: "input->rental-pricing#calculate" } %>
+      </div>
+    </div>
+
+    <!-- Card de Valor Total Calculado -->
+    <div class="p-4 bg-gray-900 text-white rounded-2xl flex justify-between items-center">
+      <div>
+        <span class="text-xs text-gray-400 font-bold uppercase tracking-wider block">Valor Total Estimado</span>
+        <span class="text-xs text-gray-300">Calculado automaticamente (Duração × Taxa)</span>
+      </div>
+      <div class="text-2xl font-black text-amber-400 font-mono" data-rental-pricing-target="totalAmount">
+        <%= number_to_currency(rental.total_amount || 0, unit: "R$ ") %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :start_date, "Data de Início do Aluguel *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.datetime_field :start_date, required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :end_date, "Data de Devolução / Término", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.datetime_field :end_date, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :delivery_address, "Local de Entrega / Obra", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.text_field :delivery_address, placeholder: "Canteiro de Obras - Lote 14, Porto de Suape", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :status, "Status do Contrato", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.select :status, [["Em Andamento (Ativo)", "active"], ["Pendente / Reservado", "pending"], ["Finalizado (Concluído)", "completed"], ["Cancelado", "canceled"]], {}, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :notes, "Condições Especiais / Observações", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_area :notes, rows: 2, placeholder: "Incluso operador, combustível por conta do cliente, seguro...", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div class="pt-4 flex justify-end space-x-3 items-center border-t border-gray-100">
+      <%= link_to "Cancelar", machinery_rentals_path, class: "px-5 py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-800" %>
+      <%= f.submit rental.persisted? ? "Salvar Alterações" : "Emitir Contrato de Aluguel", class: "px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition" %>
+    </div>
+  <% end %>
+</div>

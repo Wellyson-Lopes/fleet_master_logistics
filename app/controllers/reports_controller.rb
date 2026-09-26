@@ -4,6 +4,31 @@ class ReportsController < ApplicationController
   before_action :authenticate_user!
 
   def index
+    load_report_data
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        company_slug = @company&.name&.parameterize.presence || 'empresa'
+        send_data ExportService.trips_to_excel(@trips),
+                  filename: "relatorio_viagens_#{company_slug}_#{Date.current}.csv",
+                  type: 'text/csv; charset=utf-8'
+      end
+      format.pdf do
+        render 'print_pdf', layout: 'print'
+      end
+    end
+  end
+
+  # View especial otimizada para impressão direta em PDF (Ctrl+P ou salvar como PDF)
+  def print_pdf
+    load_report_data
+    render 'print_pdf', layout: 'print'
+  end
+
+  private
+
+  def load_report_data
     @company = current_user.company
     @trips = policy_scope(Trip).includes(:vehicle, :driver)
 
@@ -17,8 +42,8 @@ class ReportsController < ApplicationController
 
     # Totais consolidados
     @total_trips = @trips.count
-    @total_revenue = @trips.sum(:freight_value)
-    @total_cargo_kg = @trips.sum(:cargo_weight_kg)
+    @total_revenue = @trips.sum(:freight_value) || 0.0
+    @total_cargo_kg = @trips.sum(:cargo_weight_kg) || 0
     @total_cargo_ton = (@total_cargo_kg / 1000.0).round(1)
     @avg_ticket = @total_trips.positive? ? (@total_revenue / @total_trips).round(2) : 0.0
 
@@ -40,7 +65,7 @@ class ReportsController < ApplicationController
     @vehicle_stats = @trips.group_by(&:vehicle).map do |vehicle, vehicle_trips|
       revenue = vehicle_trips.sum(&:freight_value)
       cargo_ton = (vehicle_trips.sum(&:cargo_weight_kg) / 1000.0).round(1)
-      avg_occupancy = (vehicle_trips.sum(&:capacity_occupancy_percentage) / vehicle_trips.size).round(1)
+      avg_occupancy = vehicle_trips.any? ? (vehicle_trips.sum(&:capacity_occupancy_percentage) / vehicle_trips.size).round(1) : 0.0
       {
         vehicle: vehicle,
         trips_count: vehicle_trips.count,

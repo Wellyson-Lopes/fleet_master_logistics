@@ -5,6 +5,8 @@ import { KpiType } from '../components/styled/Kpi';
 import api from '../api/client';
 
 export interface TripData { 
+  id?: string;
+  rawStatus?: string;
   plate: string; 
   vehicle: string; 
   client: string; 
@@ -60,6 +62,8 @@ export const useHomeData = () => {
           const t = data.active_trip;
           const v = data.assigned_vehicle;
           setActiveTrip({
+            id: t.id,
+            rawStatus: t.status,
             plate: v?.plate || t.code,
             vehicle: v ? `${v.brand || ''} ${v.model || ''}`.trim() : t.code,
             client: t.client_name || data.company?.name || 'Cliente',
@@ -110,5 +114,30 @@ export const useHomeData = () => {
     recentTrips,
     kpis,
     loading,
+    reload: () => {
+      if (user) {
+        setLoading(true);
+        api.get('/api/v1/drivers/home_data').then((res) => {
+          const data = res.data;
+          if (data.active_trip) {
+            const t = data.active_trip;
+            const v = data.assigned_vehicle;
+            setActiveTrip({
+              id: t.id,
+              rawStatus: t.status,
+              plate: v?.plate || t.code,
+              vehicle: v ? `${v.brand || ''} ${v.model || ''}`.trim() : t.code,
+              client: t.client_name || data.company?.name || 'Cliente',
+              load: `${t.cargo_description} (${t.cargo_weight_kg ? Number(t.cargo_weight_kg).toLocaleString('pt-BR') : 0} kg)`,
+              kmRemaining: t.distance_km ? `${t.distance_km} km` : 'Em rota',
+              deliveries: t.destination || 'Em trânsito',
+              sla: t.status_human || 'Em rota',
+            });
+          } else {
+            setActiveTrip(null);
+          }
+        }).finally(() => setLoading(false));
+      }
+    }
   };
 };

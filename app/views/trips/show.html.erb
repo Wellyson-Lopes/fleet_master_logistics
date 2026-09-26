@@ -118,6 +118,88 @@
         </div>
       <% end %>
     </div>
+
+    <!-- Mapa em Tempo Real da Rota (Leaflet + OpenStreetMap) -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-center justify-between border-b pb-4 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <span class="flex h-3 w-3 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-600"></span>
+            </span>
+            Localização em Tempo Real (GPS do Motorista)
+          </h3>
+          <p class="text-xs text-gray-500 mt-0.5">Rastreamento da carga via coordenadas enviadas pelo aplicativo móvel</p>
+        </div>
+        <% last_loc = @trip.driver_locations.order(recorded_at: :desc).first %>
+        <% lat = last_loc&.latitude || @trip.driver&.current_latitude %>
+        <% lng = last_loc&.longitude || @trip.driver&.current_longitude %>
+        <% if lat.present? && lng.present? %>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-green-100 text-green-800 rounded-full">Sinal GPS Ativo</span>
+        <% else %>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full">Aguardando Sinal</span>
+        <% end %>
+      </div>
+
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+      <div id="trip-map" class="w-full h-80 rounded-xl bg-gray-100 border border-gray-200 z-0"></div>
+
+      <% map_lat = lat || -23.5505 %>
+      <% map_lng = lng || -46.6333 %>
+      <script>
+        document.addEventListener("turbo:load", initMap);
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+          setTimeout(initMap, 200);
+        }
+
+        function initMap() {
+          const mapEl = document.getElementById('trip-map');
+          if (!mapEl || mapEl._leaflet_id) return;
+
+          const lat = <%= map_lat %>;
+          const lng = <%= map_lng %>;
+          const map = L.map('trip-map').setView([lat, lng], 13);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+          }).addTo(map);
+
+          const marker = L.marker([lat, lng]).addTo(map);
+          marker.bindPopup("<b><%= @trip.vehicle.plate %> - <%= @trip.driver.name %></b><br><%= @trip.cargo_description %><br>Status: <%= @trip.status_human %>").openPopup();
+        }
+      </script>
+    </div>
+
+    <!-- Ocorrências e Histórico da Viagem -->
+    <% if @trip.trip_status_updates.any? %>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+        <h3 class="text-lg font-bold text-gray-900 border-b pb-4 mb-4">Histórico de Ocorrências e Atualizações</h3>
+        <div class="space-y-4">
+          <% @trip.trip_status_updates.recent.each do |upd| %>
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-sm text-gray-900"><%= upd.reason_human.presence || upd.status.titleize %></span>
+                <span class="text-xs text-gray-500"><%= upd.created_at.strftime("%d/%m/%Y às %H:%M") %></span>
+              </div>
+              <% if upd.notes.present? %>
+                <p class="text-sm text-gray-600 mb-2"><%= upd.notes %></p>
+              <% end %>
+              <% if upd.photos.attached? %>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <% upd.photos.each do |photo| %>
+                    <%= image_tag photo, class: "w-20 h-20 object-cover rounded-lg border border-gray-200" %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <!-- Cards Laterais: Financeiro & Veículo/Motorista -->

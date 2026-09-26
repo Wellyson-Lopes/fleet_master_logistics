@@ -20,6 +20,15 @@ class TripsController < ApplicationController
     @total_freight_value = @trips.sum(:freight_value)
     @total_cargo_weight_ton = (@trips.sum(:cargo_weight_kg) / 1000.0).round(1)
     @in_transit_count = @trips.where(status: 'in_transit').count
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        send_data ExportService.trips_to_excel(@trips),
+                  filename: "viagens_fleetmaster_#{Date.current}.csv",
+                  type: 'text/csv; charset=utf-8'
+      end
+    end
   end
 
   def show; end
@@ -34,6 +43,14 @@ class TripsController < ApplicationController
     @trip.company = current_user.company
 
     if @trip.save
+      @trip.driver.driver_notifications.create(
+        company_id: @trip.company_id,
+        title: "Nova Viagem: #{@trip.code}",
+        message: "Nova rota atribuída de #{@trip.origin} para #{@trip.destination}. Carga: #{@trip.cargo_description}.",
+        notification_type: 'new_trip',
+        notifiable: @trip
+      )
+
       redirect_to trip_path(@trip), notice: "Viagem #{@trip.code} criada com sucesso para #{@trip.destination}!"
     else
       load_form_resources
@@ -86,11 +103,12 @@ class TripsController < ApplicationController
   def load_form_resources
     @vehicles = current_user.company.vehicles.order(:plate)
     @drivers = current_user.company.drivers.order(:name)
+    @clients = current_user.company.clients.active.order(:name)
   end
 
   def trip_params
     params.require(:trip).permit(
-      :code, :vehicle_id, :driver_id, :origin, :destination,
+      :code, :vehicle_id, :driver_id, :client_id, :origin, :destination,
       :client_name, :cargo_description, :cargo_weight_kg,
       :freight_value, :distance_km, :status, :started_at,
       :estimated_delivery_at, :notes

@@ -5,11 +5,14 @@
 class Trip < ApplicationRecord
   include TenantScoped
 
-  STATUSES = %w[scheduled in_transit delayed delivered canceled].freeze
+  STATUSES = %w[scheduled accepted in_transit delayed delivered canceled not_delivered].freeze
 
   belongs_to :company
   belongs_to :vehicle
   belongs_to :driver
+  belongs_to :client, optional: true
+  has_many :driver_locations, dependent: :nullify
+  has_many :trip_status_updates, dependent: :destroy
 
   before_validation :generate_trip_code, on: :create
   before_validation :sync_company_from_vehicle
@@ -49,9 +52,11 @@ class Trip < ApplicationRecord
   # @return [String]
   def status_human
     case status
+    when 'accepted' then 'Aceita'
     when 'in_transit' then 'Em Trânsito'
     when 'delivered' then 'Entregue'
     when 'delayed' then 'Atrasada'
+    when 'not_delivered' then 'Não Entregue'
     when 'canceled' then 'Cancelada'
     else 'Agendada'
     end
@@ -62,11 +67,12 @@ class Trip < ApplicationRecord
   # @return [String]
   def status_badge_class
     case status
+    when 'accepted' then 'bg-indigo-100 text-indigo-800'
     when 'in_transit' then 'bg-blue-100 text-blue-800'
     when 'delivered' then 'bg-green-100 text-green-800'
-    when 'delayed' then 'bg-red-100 text-red-800'
-    when 'canceled' then 'bg-gray-100 text-gray-800'
-    else 'bg-amber-100 text-amber-800'
+    when 'delayed' then 'bg-amber-100 text-amber-800'
+    when 'not_delivered', 'canceled' then 'bg-red-100 text-red-800'
+    else 'bg-gray-100 text-gray-800'
     end
   end
 

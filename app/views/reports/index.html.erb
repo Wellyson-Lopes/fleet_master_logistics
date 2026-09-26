@@ -4,6 +4,12 @@
     <div class="sys-dash-subtitle">Consolidado financeiro, tonelagem transportada e eficiência operacional da frota</div>
   </div>
   <div class="flex items-center gap-2">
+    <%= link_to reports_path(format: :csv, period: params[:period]), data: { turbo: false }, class: "sys-btn sys-btn-ghost sys-btn-sm" do %>
+      📊 Exportar Excel (.csv)
+    <% end %>
+    <%= link_to print_pdf_reports_path(period: params[:period]), target: "_blank", data: { turbo: false }, class: "sys-btn sys-btn-ghost sys-btn-sm" do %>
+      🖨️ Imprimir / PDF
+    <% end %>
     <%= link_to "Todo o Período", reports_path, class: "sys-btn #{params[:period].blank? ? 'sys-btn-primary' : 'sys-btn-ghost'} sys-btn-sm" %>
     <%= link_to "Últimos 30 dias", reports_path(period: 'last_30_days'), class: "sys-btn #{params[:period] == 'last_30_days' ? 'sys-btn-primary' : 'sys-btn-ghost'} sys-btn-sm" %>
     <%= link_to "Este Mês", reports_path(period: 'this_month'), class: "sys-btn #{params[:period] == 'this_month' ? 'sys-btn-primary' : 'sys-btn-ghost'} sys-btn-sm" %>

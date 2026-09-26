@@ -1,0 +1,13 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Nova Máquina para Locação</div>
+    <div class="sys-dash-subtitle">Cadastre equipamentos pesados definindo valor por hora e diária</div>
+  </div>
+  <div>
+    <%= link_to "← Voltar para Máquinas", machineries_path, class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <%= render "form", machinery: @machinery %>
+</div>

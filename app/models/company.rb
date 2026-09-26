@@ -11,6 +11,15 @@ class Company < ApplicationRecord
   has_many :drivers, dependent: :destroy
   has_many :vehicles, dependent: :destroy
   has_many :trips, dependent: :destroy
+  has_many :clients, dependent: :destroy
+  has_many :machineries, dependent: :destroy
+  has_many :machinery_rentals, dependent: :destroy
+  has_many :driver_locations, dependent: :destroy
+  has_many :driver_notifications, dependent: :destroy
+  has_many :trip_status_updates, dependent: :destroy
+  has_many :fuel_refuels, dependent: :destroy
+  has_many :notifications, dependent: :destroy
+  has_many :asaas_charges, dependent: :destroy
 
   validates :name, :cnpj, presence: true
   validates :cnpj, uniqueness: true

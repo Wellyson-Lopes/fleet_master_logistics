@@ -13,6 +13,8 @@ class Vehicle < ApplicationRecord
   has_many :vehicle_assignments, dependent: :destroy
   has_many :drivers, through: :vehicle_assignments
   has_many :trips, dependent: :destroy
+  has_many :fuel_refuels, dependent: :destroy
+  has_one_attached :photo
 
   # Validações
   validates :type, presence: true
@@ -42,5 +44,15 @@ class Vehicle < ApplicationRecord
   # @return [Driver, nil]
   def current_driver
     current_assignment&.driver
+  end
+
+  # Verifica se o documento CRLV está vencido.
+  def crlv_expired?
+    crlv_expiration.present? && crlv_expiration < Date.current
+  end
+
+  # Verifica se o documento CRLV vai vencer nos próximos 30 dias.
+  def crlv_expiring_soon?
+    crlv_expiration.present? && crlv_expiration >= Date.current && crlv_expiration <= 30.days.from_now.to_date
   end
 end

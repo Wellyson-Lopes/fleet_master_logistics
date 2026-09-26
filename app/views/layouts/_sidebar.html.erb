@@ -31,6 +31,25 @@
     Motoristas
   <% end %>
 
+  <%= link_to clients_path, class: "sys-sidebar-item #{'active' if controller_name == 'clients'}" do %>
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+    Clientes
+  <% end %>
+
+  <%= link_to machinery_rentals_path, class: "sys-sidebar-item #{'active' if %w[machineries machinery_rentals].include?(controller_name)}" do %>
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+    Aluguel de Máquinas
+  <% end %>
+
+  <%= link_to notifications_path, class: "sys-sidebar-item #{'active' if controller_name == 'notifications'}" do %>
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+    Notificações
+    <% unread = current_user.company.notifications.unread.count %>
+    <% if unread > 0 %>
+      <span class="sys-ml-auto sys-bg-red-500 sys-text-white sys-text-10 sys-font-bold sys-px-6 sys-py-2 sys-rounded-full"><%= unread %></span>
+    <% end %>
+  <% end %>
+
   <%= link_to reports_path, class: "sys-sidebar-item #{'active' if controller_name == 'reports'}" do %>
     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
     Relatórios
@@ -46,7 +65,11 @@
     Plano & Vendas
   <% end %>
 
-  <div class="sys-mt-auto sys-pt-12 sys-border-top sys-border-white-5">
+  <div class="sys-mt-auto sys-pt-12 sys-border-top sys-border-white-5 sys-space-y-2">
+    <button type="button" data-action="click->theme#toggle" class="sys-sidebar-item sys-w-full sys-text-left sys-bg-transparent sys-border-none sys-p-0 sys-cursor-pointer">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      <span data-theme-target="label">Modo Escuro</span>
+    </button>
     <%= button_to destroy_user_session_path, method: :delete, class: "sys-sidebar-item sys-w-full sys-text-left sys-bg-transparent sys-border-none sys-p-0 sys-cursor-pointer" do %>
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
       Sair

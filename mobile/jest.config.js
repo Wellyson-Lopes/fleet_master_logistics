@@ -5,6 +5,7 @@ module.exports = {
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleNameMapper: {
+    '\\.svg$': '<rootDir>/__mocks__/svgMock.js',
     '^test-renderer$': 'react-test-renderer',
   },
 };

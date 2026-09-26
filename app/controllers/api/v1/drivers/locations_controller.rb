@@ -31,8 +31,8 @@ module Api
             status: 'success',
             message: 'Localização registrada com sucesso.',
             data: {
-              latitude: location.latitude,
-              longitude: location.longitude,
+              latitude: location.latitude.to_f,
+              longitude: location.longitude.to_f,
               recorded_at: location.recorded_at,
               trip_code: trip&.code
             }

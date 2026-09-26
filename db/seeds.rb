@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+return if Rails.env.test?
+
 puts '== Populando dados reais e variados para o FleetMaster Logistics =='
 
 # 1. Criação ou recuperação da empresa principal

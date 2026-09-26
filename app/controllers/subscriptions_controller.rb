@@ -16,7 +16,8 @@ class SubscriptionsController < ApplicationController
     if @company.update(subscription_params)
       redirect_to subscriptions_path, notice: "Plano atualizado para #{@company.plan_name_human} com sucesso!"
     else
-      redirect_to subscriptions_path, alert: "Não foi possível atualizar o plano: #{@company.errors.full_messages.join(', ')}"
+      redirect_to subscriptions_path,
+                  alert: "Não foi possível atualizar o plano: #{@company.errors.full_messages.join(', ')}"
     end
   end
 

@@ -50,7 +50,9 @@ class CheckExpiringDocumentsService
     return false if existing
 
     title = '🚨 CNH Vencida!'
-    message = "A Carteira Nacional de Habilitação do motorista #{driver.name} (#{driver.cpf}) venceu em #{I18n.l(driver.cnh_expiration, format: :long)}."
+    message = "A Carteira Nacional de Habilitação do motorista #{driver.name} (#{driver.cpf}) venceu em #{I18n.l(
+      driver.cnh_expiration, format: :long
+    )}."
 
     # Notificação mobile
     driver.driver_notifications.create!(
@@ -84,7 +86,8 @@ class CheckExpiringDocumentsService
     return false if existing
 
     title = "⚠️ CNH Vence em #{days_left} dias"
-    message = "A CNH do motorista #{driver.name} vencerá em #{I18n.l(driver.cnh_expiration, format: :long)}. Agende a renovação."
+    message = "A CNH do motorista #{driver.name} vencerá em #{I18n.l(driver.cnh_expiration,
+                                                                     format: :long)}. Agende a renovação."
 
     driver.driver_notifications.create!(
       company_id: driver.company_id,
@@ -116,7 +119,9 @@ class CheckExpiringDocumentsService
 
     vehicle.company.notifications.create!(
       title: "🚨 CRLV Vencido: Placa #{vehicle.plate}",
-      message: "O documento do caminhão #{vehicle.brand} #{vehicle.model} (Placa: #{vehicle.plate}) venceu em #{I18n.l(vehicle.crlv_expiration, format: :long)}.",
+      message: "O documento do caminhão #{vehicle.brand} #{vehicle.model} (Placa: #{vehicle.plate}) venceu em #{I18n.l(
+        vehicle.crlv_expiration, format: :long
+      )}.",
       notification_type: 'document_expiring',
       notifiable: vehicle
     )
@@ -134,9 +139,10 @@ class CheckExpiringDocumentsService
 
     return false if existing
 
+    formatted_date = I18n.l(vehicle.crlv_expiration, format: :long)
     vehicle.company.notifications.create!(
       title: "⚠️ CRLV Vence em #{days_left} dias: #{vehicle.plate}",
-      message: "O documento CRLV do veículo #{vehicle.plate} vencerá em #{I18n.l(vehicle.crlv_expiration, format: :long)}. Renove junto ao Detran.",
+      message: "O documento CRLV do veículo #{vehicle.plate} vencerá em #{formatted_date}. Renove junto ao Detran.",
       notification_type: 'document_expiring',
       notifiable: vehicle
     )

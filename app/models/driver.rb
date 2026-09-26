@@ -26,7 +26,7 @@ class Driver < ApplicationRecord
 
   # Gera um código numérico de 6 dígitos para o convite do motorista
   def generate_invitation_code!
-    self.invitation_code = sprintf('%06d', SecureRandom.random_number(1_000_000))
+    self.invitation_code = format('%06d', SecureRandom.random_number(1_000_000))
     self.invitation_code_sent_at = Time.current
     self.invitation_code_expires_at = 7.days.from_now
     save(validate: false)
@@ -36,6 +36,7 @@ class Driver < ApplicationRecord
   # Verifica se o código de 6 dígitos fornecido é válido e ainda não expirou (válido por 7 dias)
   def valid_invitation_code?(code)
     return false if invitation_code.blank? || code.blank?
+
     if invitation_code_expires_at.present?
       return false if invitation_code_expires_at < Time.current
     elsif invitation_code_sent_at.present?

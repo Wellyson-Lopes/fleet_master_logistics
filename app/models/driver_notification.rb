@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-# Representa uma notificação enviada para o aplicativo do motorista (nova viagem, CNH vencida, documento do veículo, etc.).
+# Representa uma notificação enviada para o aplicativo do motorista
+# (nova viagem, CNH vencida, documento do veículo, etc.).
 class DriverNotification < ApplicationRecord
   include TenantScoped
 
-  TYPES = %w[trip_assigned trip_accepted new_trip trip_status_change cnh_expired cnh_expiring_soon vehicle_alert system welcome].freeze
+  TYPES = %w[trip_assigned trip_accepted new_trip trip_status_change cnh_expired cnh_expiring_soon vehicle_alert system
+             welcome].freeze
 
   belongs_to :driver
   belongs_to :notifiable, polymorphic: true, optional: true

@@ -41,15 +41,15 @@ RSpec.describe 'Payments', type: :request do
       allow(AsaasService).to receive(:new).and_return(asaas_service_double)
       allow(asaas_service_double).to receive(:find_or_create_customer).and_return({ 'id' => 'cus_123' })
       allow(asaas_service_double).to receive(:create_charge).and_return({
-        'id' => 'pay_456',
-        'invoiceUrl' => 'https://asaas.com/i/456',
-        'bankSlipUrl' => 'https://asaas.com/b/456',
-        'status' => 'PENDING'
-      })
+                                                                          'id' => 'pay_456',
+                                                                          'invoiceUrl' => 'https://asaas.com/i/456',
+                                                                          'bankSlipUrl' => 'https://asaas.com/b/456',
+                                                                          'status' => 'PENDING'
+                                                                        })
       allow(asaas_service_double).to receive(:get_pix_qr_code).and_return({
-        'encodedImage' => 'base64image',
-        'payload' => 'pixcopyandpaste'
-      })
+                                                                            'encodedImage' => 'base64image',
+                                                                            'payload' => 'pixcopyandpaste'
+                                                                          })
     end
 
     it 'cria uma nova cobrança e redireciona' do

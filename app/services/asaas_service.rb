@@ -13,7 +13,7 @@ class AsaasService
 
   def initialize(api_key = nil, environment = nil)
     @api_key = api_key || ENV['ASAAS_API_KEY'] || 'simulated_key'
-    @base_url = (environment == 'production' || Rails.env.production?) ? PRODUCTION_URL : SANDBOX_URL
+    @base_url = environment == 'production' || Rails.env.production? ? PRODUCTION_URL : SANDBOX_URL
   end
 
   # Cria ou localiza um cliente no Asaas.
@@ -95,7 +95,8 @@ class AsaasService
     request['access_token'] = @api_key
     request['Content-Type'] = 'application/json'
 
-    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https', open_timeout: 10, read_timeout: 15) do |http|
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https', open_timeout: 10,
+                                                       read_timeout: 15) do |http|
       http.request(request)
     end
 
@@ -133,8 +134,10 @@ class AsaasService
 
   def simulated_pix_qr_code
     {
-      'encodedImage' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-      'payload' => '00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-4266141740005204000053039865802BR5913FleetMaster6008Recife62070503***6304E2CA'
+      'encodedImage' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+' \
+                        'M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+      'payload' => '00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-4266141740005204000053039865802BR5913' \
+                   'FleetMaster6008Recife62070503***6304E2CA'
     }
   end
 end

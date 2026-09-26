@@ -41,7 +41,9 @@ class NotificationsController < ApplicationController
     current_user.company.notifications.unread.update_all(read: true, read_at: Time.current)
 
     respond_to do |format|
-      format.html { redirect_back fallback_location: notifications_path, notice: 'Todas as notificações foram marcadas como lidas.' }
+      format.html do
+        redirect_back fallback_location: notifications_path, notice: 'Todas as notificações foram marcadas como lidas.'
+      end
       format.json { render json: { status: 'success' } }
     end
   end

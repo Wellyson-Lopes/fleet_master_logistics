@@ -91,8 +91,8 @@ class Trip < ApplicationRecord
   def vehicle_and_driver_belong_to_same_company
     return unless vehicle && driver
 
-    if vehicle.company_id != company_id || driver.company_id != company_id
-      errors.add(:base, 'Veículo e motorista devem pertencer à mesma empresa.')
-    end
+    return unless vehicle.company_id != company_id || driver.company_id != company_id
+
+    errors.add(:base, 'Veículo e motorista devem pertencer à mesma empresa.')
   end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# Representa uma cobrança gerada via Asaas (PIX, Boleto ou Cartão de Crédito) para fretes, aluguel de máquinas ou planos.
+# Representa uma cobrança gerada via Asaas (PIX, Boleto ou Cartão de Crédito)
+# para fretes, aluguel de máquinas ou planos.
 class AsaasCharge < ApplicationRecord
   include TenantScoped
 

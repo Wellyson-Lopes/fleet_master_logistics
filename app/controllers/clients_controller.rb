@@ -6,7 +6,10 @@ class ClientsController < ApplicationController
 
   def index
     @clients = policy_scope(Client).order(created_at: :desc)
-    @clients = @clients.where('name ILIKE :q OR document ILIKE :q OR email ILIKE :q', q: "%#{params[:query]}%") if params[:query].present?
+    return unless params[:query].present?
+
+    @clients = @clients.where('name ILIKE :q OR document ILIKE :q OR email ILIKE :q',
+                              q: "%#{params[:query]}%")
   end
 
   def show; end
@@ -48,6 +51,7 @@ class ClientsController < ApplicationController
   end
 
   def client_params
-    params.require(:client).permit(:name, :document, :email, :phone, :address, :city, :state, :zip_code, :status, :notes)
+    params.require(:client).permit(:name, :document, :email, :phone, :address, :city, :state, :zip_code, :status,
+                                   :notes)
   end
 end

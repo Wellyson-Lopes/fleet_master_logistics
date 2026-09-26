@@ -23,7 +23,9 @@ class VehiclesController < ApplicationController
 
   def new
     unless current_user.company.can_add_vehicle?
-      redirect_to vehicles_path, alert: "Você atingiu o limite de caminhões do seu plano (#{current_user.company.plan_name_human}). Faça um upgrade para adicionar mais!"
+      plan_name = current_user.company.plan_name_human
+      redirect_to vehicles_path,
+                  alert: "Você atingiu o limite de caminhões do plano (#{plan_name}). Faça upgrade!"
       return
     end
 
@@ -32,7 +34,9 @@ class VehiclesController < ApplicationController
 
   def create
     unless current_user.company.can_add_vehicle?
-      redirect_to vehicles_path, alert: "Você atingiu o limite de caminhões do seu plano (#{current_user.company.plan_name_human}). Faça um upgrade para adicionar mais!"
+      plan_name = current_user.company.plan_name_human
+      redirect_to vehicles_path,
+                  alert: "Você atingiu o limite de caminhões do plano (#{plan_name}). Faça upgrade!"
       return
     end
 
@@ -63,10 +67,10 @@ class VehiclesController < ApplicationController
 
   def assign_driver
     driver = current_user.company.drivers.find(params[:driver_id])
-    
+
     # Encerra atribuição anterior do veículo se existir
     @vehicle.current_assignment&.update(unassigned_at: Time.current)
-    
+
     # Encerra atribuição anterior do motorista se existir
     VehicleAssignment.where(driver: driver, unassigned_at: nil).update_all(unassigned_at: Time.current)
 
@@ -76,7 +80,8 @@ class VehiclesController < ApplicationController
       assigned_at: Time.current
     )
 
-    redirect_to vehicle_path(@vehicle), notice: "Motorista #{driver.name} atribuído ao veículo #{@vehicle.plate} com sucesso!"
+    redirect_to vehicle_path(@vehicle),
+                notice: "Motorista #{driver.name} atribuído ao veículo #{@vehicle.plate} com sucesso!"
   end
 
   def unassign_driver
@@ -84,7 +89,7 @@ class VehiclesController < ApplicationController
       assignment.update(unassigned_at: Time.current)
       redirect_to vehicle_path(@vehicle), notice: "Motorista desatribuído do veículo #{@vehicle.plate}."
     else
-      redirect_to vehicle_path(@vehicle), alert: "Este veículo não possui motorista atribuído."
+      redirect_to vehicle_path(@vehicle), alert: 'Este veículo não possui motorista atribuído.'
     end
   end
 
@@ -95,6 +100,7 @@ class VehiclesController < ApplicationController
   end
 
   def vehicle_params
-    params.require(:vehicle).permit(:type, :plate, :brand, :model, :year, :load_capacity_kg, :current_mileage_km, :status, :chassis, :renavam, :crlv_number, :crlv_expiration, :photo)
+    params.require(:vehicle).permit(:type, :plate, :brand, :model, :year, :load_capacity_kg, :current_mileage_km,
+                                    :status, :chassis, :renavam, :crlv_number, :crlv_expiration, :photo)
   end
 end

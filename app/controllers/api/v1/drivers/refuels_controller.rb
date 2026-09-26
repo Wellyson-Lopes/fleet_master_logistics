@@ -8,7 +8,8 @@ module Api
         skip_before_action :authorize_action!
 
         def create
-          vehicle = current_driver.current_vehicle || current_driver.company.vehicles.find_by(id: refuel_params[:vehicle_id])
+          vehicle = current_driver.current_vehicle ||
+                    current_driver.company.vehicles.find_by(id: refuel_params[:vehicle_id])
 
           if vehicle.nil?
             render json: { error: 'Nenhum veículo atribuído ao motorista.' }, status: :unprocessable_entity
@@ -36,7 +37,8 @@ module Api
             # Cria notificação para o painel web da empresa
             current_driver.company.notifications.create!(
               title: "⛽ Novo Abastecimento: #{vehicle.plate}",
-              message: "O motorista #{current_driver.name} registrou #{refuel.liters}L de #{refuel.fuel_type_human} (R$ #{refuel.total_amount}) para o veículo #{vehicle.plate}.",
+              message: "Motorista #{current_driver.name} registrou #{refuel.liters}L de " \
+                       "#{refuel.fuel_type_human} (R$ #{refuel.total_amount}) para o veículo #{vehicle.plate}.",
               notification_type: 'fuel_refuel',
               notifiable: refuel
             )

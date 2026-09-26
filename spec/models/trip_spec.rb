@@ -4,9 +4,9 @@ require 'rails_helper'
 
 RSpec.describe Trip, type: :model do
   let(:company) { create(:company) }
-  let(:vehicle) { create(:vehicle, company: company, load_capacity_kg: 20000) }
+  let(:vehicle) { create(:vehicle, company: company, load_capacity_kg: 20_000) }
   let(:driver) { create(:driver, company: company) }
-  let(:trip) { build(:trip, company: company, vehicle: vehicle, driver: driver, cargo_weight_kg: 15000) }
+  let(:trip) { build(:trip, company: company, vehicle: vehicle, driver: driver, cargo_weight_kg: 15_000) }
 
   describe 'validações' do
     it { should validate_presence_of(:origin) }
@@ -30,7 +30,7 @@ RSpec.describe Trip, type: :model do
     end
 
     it 'retorna true quando o peso da carga excede o limite do caminhão' do
-      trip.cargo_weight_kg = 25000
+      trip.cargo_weight_kg = 25_000
       expect(trip.overweight?).to be true
     end
   end

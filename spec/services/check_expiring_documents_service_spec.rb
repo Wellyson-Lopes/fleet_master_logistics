@@ -12,9 +12,9 @@ RSpec.describe CheckExpiringDocumentsService do
   end
 
   it 'gera alertas de documentos prestes a vencer' do
-    expect {
+    expect do
       described_class.call
-    }.to change(DriverNotification, :count).by(1)
-     .and change(Notification, :count).by(2)
+    end.to change(DriverNotification, :count).by(1)
+                                             .and change(Notification, :count).by(2)
   end
 end

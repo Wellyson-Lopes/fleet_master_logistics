@@ -13,7 +13,7 @@ module Api
         #
         # @example URL
         #   POST /api/v1/drivers/location
-        #   Body: { "location": { "latitude": -8.0578, "longitude": -34.8829, "speed": 65.5, "heading": 180.0, "trip_id": "uuid" } }
+        #   Body: { "location": { "latitude": -8.05, "longitude": -34.88, "speed": 60, "trip_id": "uuid" } }
         def create
           loc_params = params.require(:location).permit(:latitude, :longitude, :speed, :heading, :trip_id)
 

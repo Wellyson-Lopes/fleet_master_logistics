@@ -112,7 +112,8 @@ module Api
               if %w[not_delivered delayed].include?(new_status) || params[:reason].present?
                 current_driver.company.notifications.create(
                   title: "⚠️ Incidente na Viagem #{@trip.code}",
-                  message: "Motorista #{current_driver.name} reportou #{update_record.reason_human || new_status}: #{params[:notes]}",
+                  message: "#{current_driver.name} reportou #{update_record.reason_human || new_status}: " \
+                           "#{params[:notes]}",
                   notification_type: 'incident',
                   notifiable: @trip
                 )
@@ -164,11 +165,13 @@ module Api
             status_human: t.status_human,
             capacity_occupancy: t.capacity_occupancy_percentage,
             overweight: t.overweight?,
-            last_location: last_loc ? {
-              latitude: last_loc.latitude,
-              longitude: last_loc.longitude,
-              recorded_at: last_loc.recorded_at
-            } : nil,
+            last_location: if last_loc
+                             {
+                               latitude: last_loc.latitude,
+                               longitude: last_loc.longitude,
+                               recorded_at: last_loc.recorded_at
+                             }
+                           end,
             vehicle: {
               plate: t.vehicle.plate,
               type: t.vehicle.type,

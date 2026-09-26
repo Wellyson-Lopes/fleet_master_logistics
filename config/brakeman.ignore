@@ -1,0 +1,25 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Unmaintained Dependency",
+      "warning_code": 122,
+      "fingerprint": "98b26f60d776fd41ee6f088c833725145be9aac2d7c5b33780241c273622db42",
+      "check_name": "EOLRails",
+      "message": "Support for Rails 8.0.5 ends on 2026-10-07",
+      "file": "Gemfile.lock",
+      "line": 649,
+      "link": "https://brakemanscanner.org/docs/warning_types/unmaintained_dependency/",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "Medium",
+      "cwe_id": [
+        1104
+      ],
+      "note": "Aviso prévio de EOL da série Rails 8.0.x previsto para outubro/2026. Upgrade da série planejado em story dedicada."
+    }
+  ],
+  "updated": "2026-09-26 11:48:00 -0300",
+  "brakeman_version": "8.0.5"
+}

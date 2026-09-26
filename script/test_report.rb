@@ -7,5 +7,5 @@ puts "User: #{user&.email}"
 company = user.company
 puts "Company: #{company&.name}"
 
-controller = ReportsController.new
-puts "ReportsController exists"
+ReportsController.new
+puts 'ReportsController exists'

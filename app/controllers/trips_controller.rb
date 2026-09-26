@@ -10,10 +10,9 @@ class TripsController < ApplicationController
 
     if params[:query].present?
       q = "%#{params[:query]}%"
-      @trips = @trips.joins(:vehicle, :driver).where(
-        'trips.code ILIKE :q OR trips.origin ILIKE :q OR trips.destination ILIKE :q OR trips.client_name ILIKE :q OR vehicles.plate ILIKE :q OR drivers.name ILIKE :q',
-        q: q
-      )
+      search_sql = 'trips.code ILIKE :q OR trips.origin ILIKE :q OR trips.destination ILIKE :q OR ' \
+                   'trips.client_name ILIKE :q OR vehicles.plate ILIKE :q OR drivers.name ILIKE :q'
+      @trips = @trips.joins(:vehicle, :driver).where(search_sql, q: q)
     end
 
     # Métricas agregadas de logística

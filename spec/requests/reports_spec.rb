@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Reports', type: :request do
   let(:company) { create(:company) }
   let(:user) { create(:user, company: company) }
-  let(:vehicle) { create(:vehicle, company: company, load_capacity_kg: 24000) }
+  let(:vehicle) { create(:vehicle, company: company, load_capacity_kg: 24_000) }
   let(:driver) { create(:driver, company: company) }
 
   before do
@@ -14,7 +14,8 @@ RSpec.describe 'Reports', type: :request do
 
   context 'com viagens cadastradas' do
     before do
-      create(:trip, company: company, vehicle: vehicle, driver: driver, freight_value: 6000.0, cargo_weight_kg: 20000, status: 'delivered')
+      create(:trip, company: company, vehicle: vehicle, driver: driver, freight_value: 6000.0, cargo_weight_kg: 20_000,
+                    status: 'delivered')
     end
 
     describe 'GET /reports' do

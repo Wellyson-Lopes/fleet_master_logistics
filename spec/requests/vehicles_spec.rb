@@ -28,7 +28,7 @@ RSpec.describe 'Vehicles', type: :request do
 
   describe 'POST /vehicles' do
     it 'creates a new vehicle when under plan limit' do
-      expect {
+      expect do
         post vehicles_path, params: {
           vehicle: {
             plate: 'ABC-9999',
@@ -36,11 +36,11 @@ RSpec.describe 'Vehicles', type: :request do
             brand: 'Volvo',
             model: 'FH 460',
             year: 2022,
-            load_capacity_kg: 15000,
+            load_capacity_kg: 15_000,
             status: 'active'
           }
         }
-      }.to change(Vehicle, :count).by(1)
+      end.to change(Vehicle, :count).by(1)
 
       expect(response).to redirect_to(vehicles_path)
       follow_redirect!

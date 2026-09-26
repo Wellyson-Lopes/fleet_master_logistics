@@ -32,7 +32,8 @@ Rails.application.routes.draw do
         post 'drivers/refuels', to: 'drivers/refuels#create'
         post 'drivers/trips/:id/accept', to: 'drivers/trips#accept'
         patch 'drivers/trips/:id/status', to: 'drivers/trips#update_status'
-        resources :notifications, only: [:index], module: :drivers, controller: 'notifications', path: 'drivers/notifications' do
+        resources :notifications, only: [:index], module: :drivers, controller: 'notifications',
+                                  path: 'drivers/notifications' do
           member do
             patch :read
           end

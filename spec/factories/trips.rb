@@ -11,7 +11,7 @@ FactoryBot.define do
     destination { 'Curitiba - PR' }
     client_name { 'Construtora Teste LTDA' }
     cargo_description { 'Cimento e Argamassa' }
-    cargo_weight_kg { 15000 }
+    cargo_weight_kg { 15_000 }
     freight_value { 5000.00 }
     distance_km { 400 }
     status { 'scheduled' }

@@ -65,7 +65,8 @@ class ReportsController < ApplicationController
     @vehicle_stats = @trips.group_by(&:vehicle).map do |vehicle, vehicle_trips|
       revenue = vehicle_trips.sum(&:freight_value)
       cargo_ton = (vehicle_trips.sum(&:cargo_weight_kg) / 1000.0).round(1)
-      avg_occupancy = vehicle_trips.any? ? (vehicle_trips.sum(&:capacity_occupancy_percentage) / vehicle_trips.size).round(1) : 0.0
+      total_occ = vehicle_trips.sum(&:capacity_occupancy_percentage)
+      avg_occupancy = vehicle_trips.any? ? (total_occ / vehicle_trips.size).round(1) : 0.0
       {
         vehicle: vehicle,
         trips_count: vehicle_trips.count,

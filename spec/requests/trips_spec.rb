@@ -7,7 +7,10 @@ RSpec.describe 'Trips', type: :request do
   let(:user) { create(:user, :admin, company: company) }
   let(:vehicle) { create(:vehicle, company: company) }
   let(:driver) { create(:driver, company: company) }
-  let!(:trip) { create(:trip, company: company, vehicle: vehicle, driver: driver, origin: 'São Paulo - SP', destination: 'Curitiba - PR', freight_value: 5000.0) }
+  let!(:trip) do
+    create(:trip, company: company, vehicle: vehicle, driver: driver, origin: 'São Paulo - SP',
+                  destination: 'Curitiba - PR', freight_value: 5000.0)
+  end
 
   before do
     sign_in user
@@ -55,7 +58,7 @@ RSpec.describe 'Trips', type: :request do
 
   describe 'POST /trips' do
     it 'cadastra uma nova viagem com sucesso' do
-      expect {
+      expect do
         post trips_path, params: {
           trip: {
             vehicle_id: vehicle.id,
@@ -64,13 +67,13 @@ RSpec.describe 'Trips', type: :request do
             destination: 'Vitória - ES',
             client_name: 'Mineração Sudeste',
             cargo_description: 'Minério de Ferro',
-            cargo_weight_kg: 24000,
+            cargo_weight_kg: 24_000,
             freight_value: 8200.00,
             distance_km: 510,
             status: 'scheduled'
           }
         }
-      }.to change(Trip, :count).by(1)
+      end.to change(Trip, :count).by(1)
 
       expect(response).to redirect_to(trip_path(Trip.order(created_at: :desc).first))
       follow_redirect!

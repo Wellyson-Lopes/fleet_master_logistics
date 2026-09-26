@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-c = Company.find_by("name ILIKE ?", "%horus%")
+c = Company.find_by('name ILIKE ?', '%horus%')
 puts "Empresa: #{c.name} (#{c.id})"
 puts "CNPJ: #{c.cnpj}"
 puts "Plano: #{c.plan} | Status: #{c.subscription_status}"

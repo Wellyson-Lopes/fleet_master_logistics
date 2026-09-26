@@ -1,0 +1,152 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Meu Plano & Vendas</div>
+    <div class="sys-dash-subtitle">Gerencie sua assinatura, limites da frota e faça upgrades</div>
+  </div>
+</div>
+
+<div class="sys-dash-content-grid sys-grid-cols-1 md:sys-grid-cols-3 sys-gap-6 sys-mb-8">
+  <!-- Card Plano Atual -->
+  <div class="sys-card sys-p-20 bg-white border border-gray-200 rounded-2xl shadow-sm">
+    <div class="sys-flex sys-items-center sys-justify-between sys-mb-4">
+      <span class="text-xs font-bold text-gray-400 tracking-wider uppercase">Plano Ativo</span>
+      <% if @company.subscription_status == 'trialing' %>
+        <span class="px-2.5 py-1 text-xs font-semibold text-amber-700 bg-amber-100 rounded-full">
+          Teste Grátis (<%= @company.trial_days_remaining %> dias restantes)
+        </span>
+      <% else %>
+        <span class="px-2.5 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+          Assinatura Ativa
+        </span>
+      <% end %>
+    </div>
+    <h2 class="text-3xl font-extrabold text-gray-900 mb-1"><%= @company.plan_name_human %></h2>
+    <p class="text-sm text-gray-500 mb-6">Faturamento <%= @company.billing_cycle == 'annual' ? 'Anual (20% off)' : 'Mensal' %></p>
+
+    <div class="space-y-3 border-t pt-4">
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-600">Empresa:</span>
+        <span class="font-semibold text-gray-900"><%= @company.name %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-600">CNPJ:</span>
+        <span class="font-semibold text-gray-900"><%= @company.cnpj %></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Limites de Uso -->
+  <div class="sys-card sys-p-20 bg-white border border-gray-200 rounded-2xl shadow-sm col-span-2">
+    <h3 class="text-lg font-bold text-gray-900 mb-4">Uso Atual & Limites da Frota</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Veículos -->
+      <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+        <div class="text-xs text-gray-500 font-semibold mb-1">Caminhões / Veículos</div>
+        <div class="text-2xl font-bold text-gray-900">
+          <%= @vehicles_count %> <span class="text-sm font-normal text-gray-500">/ <%= @limits[:max_vehicles] == Float::INFINITY ? '∞' : @limits[:max_vehicles] %></span>
+        </div>
+        <div class="w-full bg-gray-200 h-2 rounded-full mt-3 overflow-hidden">
+          <% pct_v = @limits[:max_vehicles] == Float::INFINITY ? 10 : [(@vehicles_count.to_f / @limits[:max_vehicles] * 100).round, 100].min %>
+          <div class="bg-blue-600 h-2 rounded-full" style="width: <%= pct_v %>%"></div>
+        </div>
+      </div>
+
+      <!-- Motoristas -->
+      <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+        <div class="text-xs text-gray-500 font-semibold mb-1">Motoristas Cadastrados</div>
+        <div class="text-2xl font-bold text-gray-900">
+          <%= @drivers_count %> <span class="text-sm font-normal text-gray-500">/ <%= @limits[:max_drivers] == Float::INFINITY ? '∞' : @limits[:max_drivers] %></span>
+        </div>
+        <div class="w-full bg-gray-200 h-2 rounded-full mt-3 overflow-hidden">
+          <% pct_d = @limits[:max_drivers] == Float::INFINITY ? 10 : [(@drivers_count.to_f / @limits[:max_drivers] * 100).round, 100].min %>
+          <div class="bg-teal-600 h-2 rounded-full" style="width: <%= pct_d %>%"></div>
+        </div>
+      </div>
+
+      <!-- Usuários Web -->
+      <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+        <div class="text-xs text-gray-500 font-semibold mb-1">Usuários do Painel</div>
+        <div class="text-2xl font-bold text-gray-900">
+          <%= @users_count %> <span class="text-sm font-normal text-gray-500">/ <%= @limits[:max_users] == Float::INFINITY ? '∞' : @limits[:max_users] %></span>
+        </div>
+        <div class="w-full bg-gray-200 h-2 rounded-full mt-3 overflow-hidden">
+          <% pct_u = @limits[:max_users] == Float::INFINITY ? 10 : [(@users_count.to_f / @limits[:max_users] * 100).round, 100].min %>
+          <div class="bg-purple-600 h-2 rounded-full" style="width: <%= pct_u %>%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Opções de Upgrade de Plano -->
+<div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <h3 class="text-xl font-bold text-gray-900 mb-2">Alterar ou Fazer Upgrade de Plano</h3>
+  <p class="text-sm text-gray-500 mb-6">Escolha o plano ideal para o tamanho atual da sua frota logística.</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Starter -->
+    <div class="border rounded-2xl p-6 flex flex-col justify-between <%= 'ring-2 ring-blue-600 bg-blue-50/20' if @company.plan == 'starter' %>">
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="font-bold text-lg text-gray-900">Starter</h4>
+          <% if @company.plan == 'starter' %>
+            <span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">Atual</span>
+          <% end %>
+        </div>
+        <div class="text-2xl font-extrabold text-gray-900 mb-4">R$ 197 <span class="text-xs font-normal text-gray-500">/mês</span></div>
+        <ul class="text-sm space-y-2 text-gray-600 mb-6">
+          <li>✓ Até 3 funcionários no painel</li>
+          <li>✓ Até 5 motoristas</li>
+          <li>✓ Até 5 caminhões na frota</li>
+        </ul>
+      </div>
+      <% unless @company.plan == 'starter' %>
+        <%= button_to "Mudar para Starter", subscription_path, method: :patch, params: { company: { plan: 'starter' } }, class: "w-full py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold rounded-xl text-sm transition" %>
+      <% end %>
+    </div>
+
+    <!-- Professional -->
+    <div class="border rounded-2xl p-6 flex flex-col justify-between <%= 'ring-2 ring-blue-600 bg-blue-50/20' if @company.plan == 'pro' %>">
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="font-bold text-lg text-blue-600">Professional</h4>
+          <% if @company.plan == 'pro' %>
+            <span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">Atual</span>
+          <% end %>
+        </div>
+        <div class="text-2xl font-extrabold text-blue-600 mb-4">R$ 397 <span class="text-xs font-normal text-gray-500">/mês</span></div>
+        <ul class="text-sm space-y-2 text-gray-600 mb-6">
+          <li>✓ Até 10 funcionários no painel</li>
+          <li>✓ Até 20 motoristas</li>
+          <li>✓ Até 20 caminhões na frota</li>
+          <li>✓ Suporte prioritário</li>
+        </ul>
+      </div>
+      <% unless @company.plan == 'pro' %>
+        <%= button_to "Upgrade para Professional", subscription_path, method: :patch, params: { company: { plan: 'pro' } }, class: "w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition" %>
+      <% end %>
+    </div>
+
+    <!-- Enterprise -->
+    <div class="border rounded-2xl p-6 flex flex-col justify-between <%= 'ring-2 ring-blue-600 bg-blue-50/20' if @company.plan == 'enterprise' %>">
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="font-bold text-lg text-gray-900">Enterprise</h4>
+          <% if @company.plan == 'enterprise' %>
+            <span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">Atual</span>
+          <% end %>
+        </div>
+        <div class="text-2xl font-extrabold text-gray-900 mb-4">R$ 797 <span class="text-xs font-normal text-gray-500">/mês</span></div>
+        <ul class="text-sm space-y-2 text-gray-600 mb-6">
+          <li>✓ Funcionários <strong>ilimitados</strong></li>
+          <li>✓ Caminhões <strong>ilimitados</strong></li>
+          <li>✓ SLA garantido + onboarding</li>
+        </ul>
+      </div>
+      <% unless @company.plan == 'enterprise' %>
+        <%= button_to "Upgrade para Enterprise", subscription_path, method: :patch, params: { company: { plan: 'enterprise' } }, class: "w-full py-2.5 px-4 bg-gray-900 hover:bg-black text-white font-semibold rounded-xl text-sm transition" %>
+      <% end %>
+    </div>
+  </div>
+</div>

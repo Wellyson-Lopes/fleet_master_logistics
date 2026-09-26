@@ -1,0 +1,13 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Editar Máquina</div>
+    <div class="sys-dash-subtitle"><%= @machinery.name %></div>
+  </div>
+  <div>
+    <%= link_to "← Voltar para Detalhes", machinery_path(@machinery), class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <%= render "form", machinery: @machinery %>
+</div>

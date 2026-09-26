@@ -1,0 +1,106 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Cobrança <%= @charge.asaas_id.presence || @charge.id %></div>
+    <div class="sys-dash-subtitle">Emitida via Asaas · Status: <%= @charge.status_human %></div>
+  </div>
+  <div class="flex items-center gap-2">
+    <%= link_to "← Voltar", payments_path, class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+    <% if @charge.invoice_url.present? %>
+      <a href="<%= @charge.invoice_url %>" target="_blank" class="sys-btn sys-btn-ghost sys-btn-sm text-blue-600 font-bold">
+        Abrir Fatura Asaas ↗
+      </a>
+    <% end %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="md:col-span-2 space-y-6">
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <h3 class="text-lg font-bold text-gray-900 border-b pb-4 mb-4">Detalhes da Cobrança</h3>
+
+      <dl class="grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Cliente</dt>
+          <dd class="text-base font-bold text-gray-900"><%= @charge.client&.name || 'Cliente Avulso' %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Status</dt>
+          <dd class="mt-1">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold <%= @charge.status_badge_class %>">
+              <%= @charge.status_human %>
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Forma de Pagamento</dt>
+          <dd class="text-gray-800 font-mono font-bold"><%= @charge.billing_type %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Data de Vencimento</dt>
+          <dd class="text-gray-800"><%= I18n.l(@charge.due_date, format: :long) %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Valor</dt>
+          <dd class="text-xl font-black text-gray-900"><%= number_to_currency(@charge.value, unit: 'R$ ') %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">ID Asaas</dt>
+          <dd class="text-gray-800 font-mono text-xs"><%= @charge.asaas_id.presence || '-' %></dd>
+        </div>
+        <% if @charge.description.present? %>
+          <div class="col-span-2">
+            <dt class="text-xs font-bold text-gray-400 uppercase">Descrição</dt>
+            <dd class="text-gray-700 bg-gray-50 p-3 rounded-xl mt-1 text-xs"><%= @charge.description %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+
+    <!-- Seção de Pagamento PIX -->
+    <% if @charge.billing_type == 'PIX' && @charge.pix_copy_paste.present? %>
+      <div class="bg-white border border-blue-200 rounded-2xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-blue-900 mb-3 flex items-center gap-2">
+          <span class="text-xl">⚡</span> Chave PIX Copia e Cola & QR Code
+        </h3>
+        <p class="text-xs text-gray-500 mb-4">Envie o código copia e cola para o cliente efetuar o pagamento instantâneo pelo aplicativo do banco.</p>
+
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 flex items-center justify-between gap-3">
+          <input type="text" readonly value="<%= @charge.pix_copy_paste %>" class="w-full bg-transparent border-0 font-mono text-xs text-gray-700 select-all focus:ring-0" id="pixCodeInput">
+          <button onclick="navigator.clipboard.writeText(document.getElementById('pixCodeInput').value); alert('Chave PIX copiada!')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg whitespace-nowrap">
+            Copiar PIX
+          </button>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Seção de Boleto Bancário -->
+    <% if @charge.bank_slip_url.present? %>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
+        <div>
+          <h4 class="font-bold text-gray-900 text-sm">Boleto Bancário Disponível</h4>
+          <p class="text-xs text-gray-500 mt-0.5">Visualize ou baixe a segunda via do boleto em formato PDF oficial.</p>
+        </div>
+        <a href="<%= @charge.bank_slip_url %>" target="_blank" class="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold rounded-xl transition">
+          📄 Abrir Boleto PDF
+        </a>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-6">
+    <div class="bg-gray-900 text-white rounded-2xl p-6 shadow-sm">
+      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Status da Cobrança</span>
+      <div class="text-2xl font-black <%= @charge.paid? ? 'text-green-400' : 'text-amber-400' %> mb-2">
+        <%= @charge.status_human %>
+      </div>
+      <p class="text-xs text-gray-400">
+        <%= @charge.paid? ? "Pagamento confirmado em #{I18n.l(@charge.payment_date || Time.current, format: :short)}" : "Aguardando pagamento até #{I18n.l(@charge.due_date, format: :short)}" %>
+      </p>
+
+      <div class="mt-6 pt-4 border-t border-gray-800 text-xs text-gray-400 space-y-1">
+        <div>Emissor: <%= current_user.company.name %></div>
+        <div>Gateway: Asaas v3 Pagamentos</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -44,6 +44,10 @@ export default class extends Controller {
       if (this.hasAnnualStarterTarget) this.annualStarterTarget.textContent = "Cobrança anual · economia de R$ 480/ano"
       if (this.hasAnnualProTarget) this.annualProTarget.textContent = "Cobrança anual · economia de R$ 960/ano"
       if (this.hasAnnualEntTarget) this.annualEntTarget.textContent = "Cobrança anual · economia de R$ 1.920/ano"
+
+      this.element.querySelectorAll("[data-plan]").forEach(el => {
+        el.dataset.billingCycle = "annual"
+      })
     } else {
       if (this.hasMonthLabelTarget) {
         this.monthLabelTarget.classList.remove("text-gray-500", "dark:text-gray-400", "font-normal")
@@ -61,6 +65,10 @@ export default class extends Controller {
       if (this.hasAnnualStarterTarget) this.annualStarterTarget.textContent = ""
       if (this.hasAnnualProTarget) this.annualProTarget.textContent = ""
       if (this.hasAnnualEntTarget) this.annualEntTarget.textContent = ""
+
+      this.element.querySelectorAll("[data-plan]").forEach(el => {
+        el.dataset.billingCycle = "monthly"
+      })
     }
   }
 }

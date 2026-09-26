@@ -1,0 +1,13 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Editar Locação</div>
+    <div class="sys-dash-subtitle"><%= @rental.code %> · <%= @rental.machinery.name %></div>
+  </div>
+  <div>
+    <%= link_to "← Voltar para Contrato", machinery_rental_path(@rental), class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="max-w-3xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <%= render "form", rental: @rental %>
+</div>

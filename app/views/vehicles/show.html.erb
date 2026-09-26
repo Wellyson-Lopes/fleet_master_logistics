@@ -1,0 +1,152 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title font-mono">Veículo: <%= @vehicle.plate %></div>
+    <div class="sys-dash-subtitle"><%= "#{@vehicle.brand} #{@vehicle.model}".strip.presence || @vehicle.type %></div>
+  </div>
+  <div class="flex items-center gap-2">
+    <%= link_to "← Voltar para Frota", vehicles_path, class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+    <%= link_to "Editar", edit_vehicle_path(@vehicle), class: "sys-btn sys-btn-primary sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <!-- Detalhes do Veículo -->
+  <div class="md:col-span-2 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+    <div class="flex justify-between items-center border-b pb-4 mb-4">
+      <h3 class="text-lg font-bold text-gray-900">Especificações Técnicas</h3>
+      <% case @vehicle.status %>
+      <% when 'active' %>
+        <span class="px-3 py-1 text-xs font-bold bg-green-100 text-green-800 rounded-full">Ativo</span>
+      <% when 'maintenance' %>
+        <span class="px-3 py-1 text-xs font-bold bg-amber-100 text-amber-800 rounded-full">Em Manutenção</span>
+      <% else %>
+        <span class="px-3 py-1 text-xs font-bold bg-gray-100 text-gray-800 rounded-full">Inativo</span>
+      <% end %>
+    </div>
+
+    <dl class="grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Placa</dt>
+        <dd class="text-base font-bold text-gray-900 font-mono"><%= @vehicle.plate %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Tipo</dt>
+        <dd class="text-gray-800 font-medium"><%= @vehicle.type %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Marca / Modelo</dt>
+        <dd class="text-gray-800"><%= "#{@vehicle.brand} #{@vehicle.model}".strip.presence || '-' %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Ano</dt>
+        <dd class="text-gray-800"><%= @vehicle.year || '-' %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Capacidade de Carga</dt>
+        <dd class="text-gray-800"><%= @vehicle.load_capacity_kg ? "#{number_with_delimiter(@vehicle.load_capacity_kg)} kg" : '-' %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Quilometragem Atual</dt>
+        <dd class="text-gray-800"><%= @vehicle.current_mileage_km ? "#{number_with_delimiter(@vehicle.current_mileage_km)} km" : '-' %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Chassi</dt>
+        <dd class="text-gray-800 font-mono"><%= @vehicle.chassis.presence || '-' %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Renavam</dt>
+        <dd class="text-gray-800 font-mono"><%= @vehicle.renavam.presence || '-' %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">CRLV (Documento)</dt>
+        <dd class="text-gray-800 font-mono"><%= @vehicle.crlv_number.presence || 'Não informado' %></dd>
+      </div>
+      <div>
+        <dt class="text-xs font-bold text-gray-400 uppercase">Vencimento CRLV</dt>
+        <dd class="text-gray-800">
+          <% if @vehicle.crlv_expiration %>
+            <span class="inline-flex items-center gap-1.5 <%= @vehicle.crlv_expired? ? 'text-red-600 font-bold' : (@vehicle.crlv_expiring_soon? ? 'text-amber-600 font-bold' : 'text-gray-800') %>">
+              <%= I18n.l(@vehicle.crlv_expiration, format: :long) %>
+              <% if @vehicle.crlv_expired? %>
+                <span class="px-2 py-0.5 text-10 bg-red-100 text-red-700 rounded-full">VENCIDO</span>
+              <% elsif @vehicle.crlv_expiring_soon? %>
+                <span class="px-2 py-0.5 text-10 bg-amber-100 text-amber-700 rounded-full">VENCE EM BREVE</span>
+              <% end %>
+            </span>
+          <% else %>
+            -
+          <% end %>
+        </dd>
+      </div>
+    </dl>
+
+    <!-- Histórico de Abastecimentos Registrados -->
+    <% if @vehicle.fuel_refuels.any? %>
+      <div class="mt-8 border-t pt-6">
+        <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">⛽ Histórico de Abastecimentos</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b text-gray-400">
+                <th class="py-2">Data</th>
+                <th class="py-2">Motorista</th>
+                <th class="py-2">Combustível</th>
+                <th class="py-2">Litragem</th>
+                <th class="py-2">Odômetro</th>
+                <th class="py-2 text-right">Valor Pago</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <% @vehicle.fuel_refuels.recent.limit(10).each do |refuel| %>
+                <tr>
+                  <td class="py-2 font-medium text-gray-600"><%= refuel.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+                  <td class="py-2 text-gray-900 font-semibold"><%= refuel.driver.name %></td>
+                  <td class="py-2 text-gray-600"><%= refuel.fuel_type_human %></td>
+                  <td class="py-2 text-gray-600"><%= refuel.liters %> L</td>
+                  <td class="py-2 text-gray-600"><%= number_with_delimiter(refuel.current_mileage_km) %> km</td>
+                  <td class="py-2 text-right font-bold text-gray-900"><%= number_to_currency(refuel.total_amount, unit: "R$ ") %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Motorista Atribuído & Ações -->
+  <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+    <div>
+      <h3 class="text-lg font-bold text-gray-900 border-b pb-4 mb-4">Motorista Atribuído</h3>
+      
+      <% if driver = @vehicle.current_driver %>
+        <div class="p-4 bg-teal-50 border border-teal-100 rounded-xl mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center">
+              <%= driver.name.first %>
+            </div>
+            <div>
+              <div class="font-bold text-gray-900"><%= driver.name %></div>
+              <div class="text-xs text-gray-500">CPF: <%= driver.cpf %></div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-teal-800 font-medium">
+            Atribuído em: <%= I18n.l(@vehicle.current_assignment.assigned_at, format: :short) %>
+          </div>
+        </div>
+
+        <%= button_to "Desatribuir Motorista", unassign_driver_vehicle_path(@vehicle), method: :delete, class: "w-full py-2 px-3 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold rounded-xl transition" %>
+      <% else %>
+        <p class="text-sm text-gray-500 mb-4">Nenhum motorista alocado no momento para este veículo.</p>
+        
+        <%= form_with(url: assign_driver_vehicle_path(@vehicle), method: :post, class: "space-y-3") do |f| %>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Selecione o Motorista</label>
+            <%= f.select :driver_id, current_user.company.drivers.active.map { |d| [d.name, d.id] }, { include_blank: "Selecione..." }, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500", required: true %>
+          </div>
+          <%= f.submit "Atribuir Motorista", class: "w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition" %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

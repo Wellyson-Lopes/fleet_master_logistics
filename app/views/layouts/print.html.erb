@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Relatório Operacional · <%= @company&.name || 'FleetMaster Logistics' %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: #111827;
+        margin: 20px;
+        font-size: 12px;
+      }
+      .header {
+        border-bottom: 2px solid #1e3a8a;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+      .logo {
+        font-size: 20px;
+        font-weight: 800;
+        color: #1e3a8a;
+      }
+      .company-info {
+        font-size: 11px;
+        color: #4b5563;
+      }
+      .kpis {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .kpi-box {
+        flex: 1;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #f9fafb;
+      }
+      .kpi-val {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1f2937;
+      }
+      .kpi-lbl {
+        font-size: 10px;
+        color: #6b7280;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        font-size: 11px;
+      }
+      th {
+        background-color: #f3f4f6;
+        border-bottom: 1px solid #d1d5db;
+        padding: 8px 6px;
+        text-align: left;
+        font-weight: bold;
+      }
+      td {
+        border-bottom: 1px solid #e5e7eb;
+        padding: 6px;
+      }
+      .footer {
+        margin-top: 30px;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        color: #6b7280;
+      }
+      @media print {
+        .no-print { display: none !important; }
+        body { margin: 0; padding: 10mm; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="no-print" style="margin-bottom: 16px; text-align: right;">
+      <button onclick="window.print()" style="background-color: #2563eb; color: white; padding: 8px 16px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+        🖨️ Imprimir / Salvar em PDF
+      </button>
+    </div>
+
+    <div class="header">
+      <div>
+        <div class="logo">🚛 FleetMaster Logistics</div>
+        <div class="company-info"><%= @company&.name %> · CNPJ: <%= @company&.cnpj %></div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-weight: bold; font-size: 14px;">Relatório Consolidado de Desempenho</div>
+        <div class="company-info">Gerado em <%= I18n.l(Time.current, format: :long) %></div>
+      </div>
+    </div>
+
+    <%= yield %>
+
+    <div class="footer">
+      <div>FleetMaster Logistics Software · Gestão Inteligente de Frotas e Cargas</div>
+      <div>Página 1 de 1</div>
+    </div>
+  </body>
+</html>

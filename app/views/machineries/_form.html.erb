@@ -1,0 +1,69 @@
+<%= form_with(model: machinery, local: true, class: "space-y-4") do |f| %>
+  <% if machinery.errors.any? %>
+    <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+      <strong class="font-bold">Corrija os erros abaixo:</strong>
+      <ul class="list-disc list-inside mt-1">
+        <% machinery.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "Nome do Equipamento / Máquina *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+    <%= f.text_field :name, placeholder: "Ex: Escavadeira Hidráulica CAT 320", required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <%= f.label :category, "Categoria *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.select :category, Machinery::CATEGORIES, { prompt: "Selecione uma categoria" }, required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white" %>
+    </div>
+
+    <div>
+      <%= f.label :status, "Status Operacional", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.select :status, [["Disponível para Locação", "available"], ["Alugada / Em Operação", "rented"], ["Em Manutenção", "maintenance"]], {}, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4">
+    <div>
+      <%= f.label :brand, "Fabricante / Marca", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :brand, placeholder: "Caterpillar", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+    <div>
+      <%= f.label :model, "Modelo", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :model, placeholder: "320D", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+    <div>
+      <%= f.label :year, "Ano de Fabricação", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.number_field :year, placeholder: "2023", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <%= f.label :serial_number, "Nº de Série / Chassi", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :serial_number, placeholder: "CAT320DX-84920", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-mono focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+    <div>
+      <%= f.label :hourly_rate, "Valor por Hora (R$) *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.number_field :hourly_rate, step: "0.01", min: "0", required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-bold text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+    <div>
+      <%= f.label :daily_rate, "Valor da Diária (R$) *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.number_field :daily_rate, step: "0.01", min: "0", required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-extrabold text-blue-700 focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :notes, "Observações Técnicas / Condições", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+    <%= f.text_area :notes, rows: 2, placeholder: "Horímetro atual, condições de pneus/esteiras, implementos inclusos...", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+  </div>
+
+  <div class="pt-4 flex justify-end space-x-3 items-center border-t border-gray-100">
+    <%= link_to "Cancelar", machineries_path, class: "px-5 py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-800" %>
+    <%= f.submit machinery.persisted? ? "Salvar Alterações" : "Cadastrar Máquina", class: "px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition" %>
+  </div>
+<% end %>

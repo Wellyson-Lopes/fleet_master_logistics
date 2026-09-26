@@ -1,0 +1,68 @@
+<div class="kpis">
+  <div class="kpi-box">
+    <div class="kpi-val"><%= number_to_currency(@total_revenue, unit: "R$ ") %></div>
+    <div class="kpi-lbl">Faturamento Total</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-val"><%= number_with_delimiter(@total_cargo_ton) %> ton</div>
+    <div class="kpi-lbl">Volume Carga</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-val"><%= @total_trips %></div>
+    <div class="kpi-lbl">Total de Viagens</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-val"><%= number_to_currency(@avg_ticket, unit: "R$ ") %></div>
+    <div class="kpi-lbl">Ticket Médio / Viagem</div>
+  </div>
+</div>
+
+<h3 style="margin-top: 24px; margin-bottom: 8px; font-size: 13px; text-transform: uppercase;">1. Desempenho por Motorista</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Motorista</th>
+      <th>Viagens</th>
+      <th>Entregues</th>
+      <th>Volume Carga (ton)</th>
+      <th style="text-align: right;">Faturamento (R$)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @driver_stats.each do |st| %>
+      <tr>
+        <td style="font-weight: bold;"><%= st[:driver]&.name || '-' %></td>
+        <td><%= st[:trips_count] %></td>
+        <td><%= st[:delivered_count] %></td>
+        <td><%= st[:cargo_ton] %> ton</td>
+        <td style="text-align: right; font-weight: bold;"><%= number_to_currency(st[:revenue], unit: "R$ ") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h3 style="margin-top: 24px; margin-bottom: 8px; font-size: 13px; text-transform: uppercase;">2. Desempenho por Veículo da Frota</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Placa</th>
+      <th>Modelo</th>
+      <th>Viagens</th>
+      <th>Volume Carga (ton)</th>
+      <th>Ocupação Média</th>
+      <th style="text-align: right;">Faturamento Gerado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @vehicle_stats.each do |st| %>
+      <tr>
+        <td style="font-family: monospace; font-weight: bold;"><%= st[:vehicle]&.plate || '-' %></td>
+        <td><%= "#{st[:vehicle]&.brand} #{st[:vehicle]&.model}".strip %></td>
+        <td><%= st[:trips_count] %></td>
+        <td><%= st[:cargo_ton] %> ton</td>
+        <td><%= st[:avg_occupancy] %>%</td>
+        <td style="text-align: right; font-weight: bold;"><%= number_to_currency(st[:revenue], unit: "R$ ") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

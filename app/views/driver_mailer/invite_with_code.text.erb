@@ -1,0 +1,13 @@
+Olá, <%= @driver.name.presence || 'Motorista' %>!
+
+Você foi convidado para fazer parte da equipe de motoristas da transportadora <%= @company.name %> no FleetMaster.
+
+Seu código de primeiro acesso de 6 dígitos:
+<%= @code %>
+
+Passo a passo:
+1. Abra o aplicativo FleetMaster Motorista;
+2. Digite seu e-mail (<%= @driver.email %>) e o código <%= @code %>;
+3. Crie sua senha definitiva.
+
+© <%= Time.current.year %> FleetMaster Logistics.

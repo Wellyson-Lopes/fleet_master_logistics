@@ -31,6 +31,10 @@ class DriverPolicy < ApplicationPolicy
     admin?
   end
 
+  def resend_invitation?
+    admin? && same_company?
+  end
+
   # Verifica se o usuário pode atualizar um motorista.
   # Motoristas só podem editar seu próprio perfil.
   # Admins podem editar qualquer um da empresa.

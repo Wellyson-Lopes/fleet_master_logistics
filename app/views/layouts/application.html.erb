@@ -23,18 +23,34 @@
     <% end %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('fleetmaster-theme');
+          var isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
 
-  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen antialiased font-sans" data-controller="auth-modal">
+  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen antialiased font-sans" data-controller="theme auth-modal">
     <% if user_signed_in? && !devise_controller? %>
       <div class="sys-dash-layout">
         <%= render "layouts/sidebar" %>
         <main class="sys-dash-main">
+          <%= render "layouts/flash" %>
           <%= yield %>
         </main>
       </div>
     <% else %>
       <%= render "layouts/navbar" %>
+      <%= render "layouts/flash" %>
       <%= yield %>
     <% end %>
 

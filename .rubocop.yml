@@ -1,3 +1,5 @@
+inherit_from: .rubocop_todo.yml
+
 require:
   - standard
 
@@ -37,6 +39,3 @@ Naming/PredicatePrefix:
 Style/SymbolProc:
   Exclude:
     - 'config/routes.rb'
-
-
-

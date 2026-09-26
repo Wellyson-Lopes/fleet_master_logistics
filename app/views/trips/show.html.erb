@@ -1,0 +1,251 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title font-mono">Viagem: <%= @trip.code %></div>
+    <div class="sys-dash-subtitle"><%= @trip.origin %> → <%= @trip.destination %> · Cliente: <%= @trip.client_name %></div>
+  </div>
+  <div class="flex items-center gap-2">
+    <%= link_to "← Voltar para Viagens", trips_path, class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+    <%= link_to "Editar", edit_trip_path(@trip), class: "sys-btn sys-btn-primary sys-btn-sm" %>
+  </div>
+</div>
+
+<!-- Barra de Transição de Status da Rota -->
+<div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <span class="text-xs font-bold uppercase text-gray-500 block mb-1">Status Atual da Rota</span>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold <%= @trip.status_badge_class %>">
+          <%= @trip.status_human %>
+        </span>
+        <% if @trip.started_at %>
+          <span class="text-xs text-gray-500">Saída: <%= I18n.l(@trip.started_at, format: :short) %></span>
+        <% end %>
+        <% if @trip.delivered_at %>
+          <span class="text-xs text-green-700 font-semibold">Entregue em: <%= I18n.l(@trip.delivered_at, format: :short) %></span>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Botões de Ação de Rota -->
+    <div class="flex flex-wrap gap-2">
+      <% if @trip.status == 'scheduled' %>
+        <%= button_to update_status_trip_path(@trip), method: :patch, params: { new_status: 'in_transit' }, class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl transition shadow-sm" do %>
+          🚚 Iniciar Viagem / Em Rota
+        <% end %>
+      <% end %>
+
+      <% if @trip.status == 'in_transit' %>
+        <%= button_to update_status_trip_path(@trip), method: :patch, params: { new_status: 'delivered' }, class: "px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold text-xs rounded-xl transition shadow-sm" do %>
+          ✓ Confirmar Entrega
+        <% end %>
+        <%= button_to update_status_trip_path(@trip), method: :patch, params: { new_status: 'delayed' }, class: "px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs rounded-xl transition shadow-sm" do %>
+          ⚠️ Registrar Atraso na Rota
+        <% end %>
+      <% end %>
+
+      <% if @trip.status == 'delayed' %>
+        <%= button_to update_status_trip_path(@trip), method: :patch, params: { new_status: 'delivered' }, class: "px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold text-xs rounded-xl transition shadow-sm" do %>
+          ✓ Concluir Entrega
+        <% end %>
+      <% end %>
+
+      <% unless %w[delivered canceled].include?(@trip.status) %>
+        <%= button_to update_status_trip_path(@trip), method: :patch, params: { new_status: 'canceled' }, data: { confirm: "Deseja cancelar esta viagem?" }, class: "px-4 py-2 bg-gray-100 hover:bg-red-50 hover:text-red-700 text-gray-600 font-semibold text-xs rounded-xl transition" do %>
+          Cancelar Viagem
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <!-- Informações de Carga & Capacidade do Caminhão -->
+  <div class="md:col-span-2 space-y-6">
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <h3 class="text-lg font-bold text-gray-900 border-b pb-4 mb-4">Carga, Materiais & Capacidade da Frota</h3>
+
+      <div class="mb-6 p-4 rounded-xl border <%= @trip.overweight? ? 'bg-red-50 border-red-200' : 'bg-blue-50/50 border-blue-100' %>">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs font-bold uppercase text-gray-700">Aproveitamento da Capacidade</span>
+          <span class="text-sm font-bold <%= @trip.overweight? ? 'text-red-700' : 'text-blue-700' %>">
+            <%= @trip.capacity_occupancy_percentage %>%
+          </span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-3">
+          <div class="h-3 rounded-full <%= @trip.overweight? ? 'bg-red-600' : 'bg-blue-600' %>" style="width: <%= [@trip.capacity_occupancy_percentage, 100].min %>%;"></div>
+        </div>
+        <div class="flex justify-between text-xs text-gray-500 mt-2">
+          <span>Peso da Carga: <strong><%= number_with_delimiter(@trip.cargo_weight_kg) %> kg</strong></span>
+          <span>Capacidade do Caminhão: <strong><%= number_with_delimiter(@trip.vehicle.load_capacity_kg) %> kg</strong></span>
+        </div>
+        <% if @trip.overweight? %>
+          <p class="text-xs text-red-700 font-bold mt-2">⚠️ ATENÇÃO: O peso da carga excede a capacidade homologada do caminhão!</p>
+        <% end %>
+      </div>
+
+      <dl class="grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Material Transportado</dt>
+          <dd class="text-base font-bold text-gray-900"><%= @trip.cargo_description %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Cliente Destinatário</dt>
+          <dd class="text-gray-800 font-semibold"><%= @trip.client_name %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Origem da Rota</dt>
+          <dd class="text-gray-800 font-medium"><%= @trip.origin %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Destino da Entrega</dt>
+          <dd class="text-gray-800 font-medium"><%= @trip.destination %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Distância Prevista</dt>
+          <dd class="text-gray-800"><%= @trip.distance_km ? "#{@trip.distance_km} km" : 'Não informada' %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold text-gray-400 uppercase">Previsão de Entrega</dt>
+          <dd class="text-gray-800"><%= @trip.estimated_delivery_at ? I18n.l(@trip.estimated_delivery_at, format: :long) : '-' %></dd>
+        </div>
+      </dl>
+
+      <% if @trip.notes.present? %>
+        <div class="mt-6 pt-4 border-t">
+          <dt class="text-xs font-bold text-gray-400 uppercase mb-1">Observações da Carga / Entrega</dt>
+          <dd class="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl"><%= @trip.notes %></dd>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Mapa em Tempo Real da Rota (Leaflet + OpenStreetMap) -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-center justify-between border-b pb-4 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <span class="flex h-3 w-3 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-600"></span>
+            </span>
+            Localização em Tempo Real (GPS do Motorista)
+          </h3>
+          <p class="text-xs text-gray-500 mt-0.5">Rastreamento da carga via coordenadas enviadas pelo aplicativo móvel</p>
+        </div>
+        <% last_loc = @trip.driver_locations.order(recorded_at: :desc).first %>
+        <% lat = last_loc&.latitude || @trip.driver&.current_latitude %>
+        <% lng = last_loc&.longitude || @trip.driver&.current_longitude %>
+        <% if lat.present? && lng.present? %>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-green-100 text-green-800 rounded-full">Sinal GPS Ativo</span>
+        <% else %>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full">Aguardando Sinal</span>
+        <% end %>
+      </div>
+
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+      <div id="trip-map" class="w-full h-80 rounded-xl bg-gray-100 border border-gray-200 z-0"></div>
+
+      <% map_lat = lat || -23.5505 %>
+      <% map_lng = lng || -46.6333 %>
+      <script>
+        document.addEventListener("turbo:load", initMap);
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+          setTimeout(initMap, 200);
+        }
+
+        function initMap() {
+          const mapEl = document.getElementById('trip-map');
+          if (!mapEl || mapEl._leaflet_id) return;
+
+          const lat = <%= map_lat %>;
+          const lng = <%= map_lng %>;
+          const map = L.map('trip-map').setView([lat, lng], 13);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+          }).addTo(map);
+
+          const marker = L.marker([lat, lng]).addTo(map);
+          marker.bindPopup("<b><%= @trip.vehicle.plate %> - <%= @trip.driver.name %></b><br><%= @trip.cargo_description %><br>Status: <%= @trip.status_human %>").openPopup();
+        }
+      </script>
+    </div>
+
+    <!-- Ocorrências e Histórico da Viagem -->
+    <% if @trip.trip_status_updates.any? %>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+        <h3 class="text-lg font-bold text-gray-900 border-b pb-4 mb-4">Histórico de Ocorrências e Atualizações</h3>
+        <div class="space-y-4">
+          <% @trip.trip_status_updates.recent.each do |upd| %>
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-sm text-gray-900"><%= upd.reason_human.presence || upd.status.titleize %></span>
+                <span class="text-xs text-gray-500"><%= upd.created_at.strftime("%d/%m/%Y às %H:%M") %></span>
+              </div>
+              <% if upd.notes.present? %>
+                <p class="text-sm text-gray-600 mb-2"><%= upd.notes %></p>
+              <% end %>
+              <% if upd.photos.attached? %>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <% upd.photos.each do |photo| %>
+                    <%= image_tag photo, class: "w-20 h-20 object-cover rounded-lg border border-gray-200" %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Cards Laterais: Financeiro & Veículo/Motorista -->
+  <div class="space-y-6">
+    <!-- Card Financeiro -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <h3 class="text-sm font-bold text-gray-500 uppercase mb-3">Valor da Viagem / Frete</h3>
+      <div class="text-3xl font-extrabold text-green-600 mb-2">
+        <%= number_to_currency(@trip.freight_value, unit: "R$ ", separator: ",", delimiter: ".") %>
+      </div>
+      <% if @trip.cargo_weight_kg.positive? %>
+        <% val_ton = (@trip.freight_value / (@trip.cargo_weight_kg / 1000.0)).round(2) %>
+        <div class="text-xs text-gray-500">
+          Equivalente a <strong><%= number_to_currency(val_ton, unit: "R$ ", separator: ",", delimiter: ".") %>/tonelada</strong>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Card Caminhão Alocado -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <h3 class="text-sm font-bold text-gray-500 uppercase mb-3">Veículo Alocado</h3>
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+          🚛
+        </div>
+        <div>
+          <div class="font-mono font-bold text-gray-900"><%= @trip.vehicle.plate %></div>
+          <div class="text-xs text-gray-500"><%= "#{@trip.vehicle.brand} #{@trip.vehicle.model}".strip.presence || @trip.vehicle.type %></div>
+        </div>
+      </div>
+      <%= link_to "Ver ficha do caminhão →", vehicle_path(@trip.vehicle), class: "text-xs text-blue-600 font-semibold hover:underline block mt-3" %>
+    </div>
+
+    <!-- Card Motorista -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <h3 class="text-sm font-bold text-gray-500 uppercase mb-3">Motorista Responsável</h3>
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold">
+          <%= @trip.driver.name.first %>
+        </div>
+        <div>
+          <div class="font-bold text-gray-900"><%= @trip.driver.name %></div>
+          <div class="text-xs text-gray-500"><%= @trip.driver.phone || @trip.driver.email %></div>
+        </div>
+      </div>
+      <%= link_to "Ver perfil do motorista →", driver_path(@trip.driver), class: "text-xs text-blue-600 font-semibold hover:underline block mt-3" %>
+    </div>
+  </div>
+</div>

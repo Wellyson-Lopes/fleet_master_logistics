@@ -7,6 +7,13 @@ interface AuthContextData {
   user: LoginResponse['data'] | null;
   loading: boolean;
   signIn(email: string, password: string): Promise<void>;
+  signInWithCode(data: {
+    email: string;
+    code: string;
+    password: string;
+    password_confirmation: string;
+    name?: string;
+  }): Promise<void>;
   signOut(): Promise<void>;
 }
 
@@ -46,6 +53,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }
 
+  async function signInWithCode(data: {
+    email: string;
+    code: string;
+    password: string;
+    password_confirmation: string;
+    name?: string;
+  }) {
+    try {
+      const { user: userData, token } = await authService.setPasswordWithCode(data);
+      if (token && userData) {
+        await storage.saveToken(token);
+        await storage.saveUser(userData);
+        setUser(userData);
+      } else {
+        throw new Error('Falha na resposta da ativação de senha.');
+      }
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
   async function signOut() {
     try {
       await authService.logout();
@@ -58,7 +86,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }
 
   return (
-    <AuthContext.Provider value={{ signed: !!user, user, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ signed: !!user, user, loading, signIn, signInWithCode, signOut }}>
       {children}
     </AuthContext.Provider>
   );

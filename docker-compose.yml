@@ -41,7 +41,10 @@ services:
     command: ./bin/dev
     volumes:
       - .:/app
+      - bundle_data:/usr/local/bundle
+      - assets_builds:/app/assets/builds
     ports:
+
       - "3000:3000"
     depends_on:
       - db
@@ -50,6 +53,7 @@ services:
       - ./.env.development
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-fleet_master_development}
+      - BUNDLE_PATH=/usr/local/bundle
     networks:
       - fleetmaster_net
 
@@ -62,8 +66,10 @@ services:
       - ./.env.development
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-fleet_master_development}
+      - BUNDLE_PATH=/usr/local/bundle
     volumes:
       - .:/app
+      - bundle_data:/usr/local/bundle
     depends_on:
       - db
       - redis
@@ -77,6 +83,7 @@ services:
     command: bundle exec rspec
     volumes:
       - .:/app
+      - bundle_data:/usr/local/bundle
     depends_on:
       - db
       - redis
@@ -84,13 +91,18 @@ services:
       - ./.env.test
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/fleet_master_test
+      - BUNDLE_PATH=/usr/local/bundle
     networks:
       - fleetmaster_net
 
 volumes:
   postgres_data:
   redis_data:
+  bundle_data:
+  assets_builds:
+
 
 networks:
   fleetmaster_net:
     driver: bridge
+

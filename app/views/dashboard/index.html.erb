@@ -1,14 +1,13 @@
 <div class="sys-dash-topbar">
   <div>
-    <div class="sys-dash-title">Dashboard</div>
-    <div class="sys-dash-subtitle"><%= I18n.l(Date.current, format: :long) %> · Boa tarde, <%= current_user.name.split.first %></div>
+    <div class="sys-dash-title">Dashboard Operacional</div>
+    <div class="sys-dash-subtitle"><%= I18n.l(Date.current, format: :long) %> · Olá, <%= current_user.name.split.first %></div>
   </div>
   <div class="sys-flex sys-gap-2">
-    <button class="sys-btn sys-btn-ghost sys-btn-sm">Esta semana</button>
-    <button class="sys-btn sys-btn-primary sys-btn-sm">
+    <%= link_to new_vehicle_path, class: "sys-btn sys-btn-primary sys-btn-sm" do %>
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="sys-w-13 sys-h-13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Nova Viagem
-    </button>
+      Novo Veículo
+    <% end %>
   </div>
 </div>
 
@@ -16,124 +15,260 @@
 <div class="sys-mb-6 sys-flex sys-flex-wrap sys-gap-2 sys-items-center">
   <div class="sys-badge sys-badge-green">
     <span class="sys-dot sys-bg-green-500 sys-animate-pulse"></span>
-    <%= current_user.company_name %> · <%= current_user.owner? ? "Administrador" : "Colaborador" %>
+    <%= @company.name %> · <%= current_user.owner? ? "Administrador" : "Colaborador" %>
   </div>
   <div class="sys-badge sys-badge-blue">
-    CNPJ: <%= current_user.cnpj %>
+    CNPJ: <%= @company.cnpj %>
+  </div>
+  <div class="sys-badge sys-badge-gray">
+    Plano: <%= @company.plan_name_human %> (<%= @company.billing_cycle == 'annual' ? 'Anual' : 'Mensal' %>)
   </div>
 </div>
 
-<!-- KPIs -->
-<!-- MOCK DATA: Os valores abaixo são estáticos e devem ser substituídos por dados reais da empresa -->
+<!-- KPIs Reais da Empresa -->
 <div class="sys-kpis-row">
   <div class="sys-kpi-card blue">
-    <div class="sys-kpi-icon blue"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg></div>
-    <div class="sys-kpi-value">8</div>
-    <div class="sys-kpi-label">Viagens Ativas</div>
-    <div class="sys-kpi-delta up"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" class="sys-w-9 sys-h-9"><polyline points="18 15 12 9 6 15"/></svg>+2</div>
-  </div>
-  <div class="sys-kpi-card teal">
-    <div class="sys-kpi-icon teal"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
-    <div class="sys-kpi-value">47</div>
-    <div class="sys-kpi-label">Entregas Esta Semana</div>
-    <div class="sys-kpi-delta up"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" class="sys-w-9 sys-h-9"><polyline points="18 15 12 9 6 15"/></svg>+12%</div>
-  </div>
-  <div class="sys-kpi-card amber">
-    <div class="sys-kpi-icon amber"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
-    <div class="sys-kpi-value">3</div>
-    <div class="sys-kpi-label">Ocorrências Abertas</div>
-    <div class="sys-kpi-delta down"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" class="sys-w-9 sys-h-9"><polyline points="6 9 12 15 18 9"/></svg>Atenção</div>
-  </div>
-  <div class="sys-kpi-card green">
-    <div class="sys-kpi-icon green"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
-    <div class="sys-kpi-value">12</div>
+    <div class="sys-kpi-icon blue">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 4v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    </div>
+    <div class="sys-kpi-value"><%= @total_vehicles %></div>
     <div class="sys-kpi-label">Veículos na Frota</div>
-    <div class="sys-kpi-delta up"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" class="sys-w-9 sys-h-9"><polyline points="18 15 12 9 6 15"/></svg>9 livres</div>
+    <div class="sys-kpi-delta <%= @total_vehicles > 0 ? 'up' : 'down' %>">
+      <%= @available_vehicles %> disponíveis
+    </div>
   </div>
+
+  <div class="sys-kpi-card teal">
+    <div class="sys-kpi-icon teal">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    </div>
+    <div class="sys-kpi-value"><%= @total_drivers %></div>
+    <div class="sys-kpi-label">Motoristas Cadastrados</div>
+    <div class="sys-kpi-delta up"><%= @active_drivers %> ativos</div>
+  </div>
+
+  <div class="sys-kpi-card green">
+    <div class="sys-kpi-icon green">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="sys-kpi-value"><%= @active_assignments.count %></div>
+    <div class="sys-kpi-label">Alocações em Operação</div>
+    <div class="sys-kpi-delta up">Em rota / ativos</div>
+  </div>
+
+  <div class="sys-kpi-card amber">
+    <div class="sys-kpi-icon amber">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+    </div>
+    <div class="sys-kpi-value"><%= @maintenance_vehicles %></div>
+    <div class="sys-kpi-label">Em Manutenção</div>
+    <div class="sys-kpi-delta <%= @maintenance_vehicles > 0 ? 'down' : 'up' %>">
+      <%= @maintenance_vehicles > 0 ? 'Atenção necessária' : 'Frota operacional' %>
+    </div>
+  </div>
+</div>
+
+<!-- Tabela de Veículos em Rota / Entregas em Tempo Real -->
+<div class="mt-8 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-gray-100 pb-4 mb-4">
+    <div>
+      <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+        <span class="flex h-3 w-3 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-600"></span>
+        </span>
+        🚛 Veículos em Rota & Entregas em Andamento
+      </h3>
+      <p class="text-xs text-gray-500 mt-0.5">Rastreamento da frota em tempo real com localização e status de entrega</p>
+    </div>
+    <div>
+      <%= link_to "Ver Todas as Viagens →", trips_path, class: "text-xs font-bold text-blue-600 hover:text-blue-800" %>
+    </div>
+  </div>
+
+  <% if @in_transit_trips.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider bg-gray-50">
+            <th class="py-3 px-4">Caminhão</th>
+            <th class="py-3 px-4">Motorista</th>
+            <th class="py-3 px-4">Viagem / Rota</th>
+            <th class="py-3 px-4">Cliente / Carga</th>
+            <th class="py-3 px-4">Status da Entrega</th>
+            <th class="py-3 px-4">Última Posição GPS</th>
+            <th class="py-3 px-4 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 text-sm">
+          <% @in_transit_trips.each do |trip| %>
+            <tr class="hover:bg-gray-50 transition">
+              <td class="py-3 px-4">
+                <div class="font-extrabold font-mono text-blue-900 text-sm"><%= trip.vehicle.plate %></div>
+                <div class="text-xs text-gray-500"><%= "#{trip.vehicle.brand} #{trip.vehicle.model}".strip.presence || trip.vehicle.type %></div>
+              </td>
+              <td class="py-3 px-4">
+                <div class="font-semibold text-gray-900"><%= trip.driver.name %></div>
+                <div class="text-xs text-gray-500"><%= trip.driver.phone.presence || trip.driver.email %></div>
+              </td>
+              <td class="py-3 px-4">
+                <div class="font-mono text-xs font-bold text-gray-700"><%= trip.code %></div>
+                <div class="text-xs text-gray-600 flex items-center gap-1 mt-0.5">
+                  <span><%= trip.origin %></span>
+                  <span class="text-gray-400">→</span>
+                  <span class="font-semibold text-gray-800"><%= trip.destination %></span>
+                </div>
+              </td>
+              <td class="py-3 px-4">
+                <div class="font-semibold text-gray-900 text-xs"><%= trip.client_name %></div>
+                <div class="text-xs text-gray-500"><%= trip.cargo_description %> (<%= trip.cargo_weight_kg %> kg)</div>
+              </td>
+              <td class="py-3 px-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold <%= trip.status_badge_class %>">
+                  <span class="w-1.5 h-1.5 rounded-full mr-1.5 <%= trip.status == 'in_transit' ? 'bg-blue-600 animate-pulse' : 'bg-red-600' %>"></span>
+                  <%= trip.status_human %>
+                </span>
+                <% if trip.estimated_delivery_at.present? %>
+                  <div class="text-xs text-gray-400 mt-1">Prev: <%= I18n.l(trip.estimated_delivery_at, format: :short) %></div>
+                <% end %>
+              </td>
+              <td class="py-3 px-4">
+                <% if trip.driver.current_latitude.present? && trip.driver.current_longitude.present? %>
+                  <div class="font-mono text-xs text-gray-800 font-semibold flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                    <%= trip.driver.current_latitude.round(4) %>, <%= trip.driver.current_longitude.round(4) %>
+                  </div>
+                  <% if trip.driver.last_location_at.present? %>
+                    <div class="text-xs text-gray-400">Há <%= time_ago_in_words(trip.driver.last_location_at) %></div>
+                  <% end %>
+                <% else %>
+                  <span class="text-xs text-gray-400">Aguardando sinal GPS</span>
+                <% end %>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <%= link_to "Detalhes", trip_path(trip), class: "px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-lg transition" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="p-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
+      <svg class="w-10 h-10 mx-auto text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="1" y="3" width="15" height="13"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      <p class="text-sm font-semibold text-gray-700">Nenhum veículo em trânsito no momento</p>
+      <p class="text-xs text-gray-500 mt-1">Quando os motoristas iniciarem viagens pelo app móvel, eles aparecerão aqui com telemetria ao vivo.</p>
+    </div>
+  <% end %>
 </div>
 
 <div class="sys-dash-content-grid">
-  <!-- Viagens recentes -->
-  <!-- MOCK DATA: Listagem estática de viagens -->
+  <!-- Alocações e Operações Ativas -->
   <div class="sys-card sys-p-16">
     <div class="sys-card-header sys-mb-12">
-      <div class="sys-card-title">Viagens Recentes</div>
-      <button class="sys-btn sys-btn-ghost sys-btn-sm">Ver todas</button>
+      <div class="sys-card-title">Operações e Alocações Ativas</div>
+      <%= link_to "Ver Frota", vehicles_path, class: "sys-btn sys-btn-ghost sys-btn-sm" %>
     </div>
     <div class="sys-flex sys-flex-col sys-gap-2">
-      <div class="sys-item-row">
-        <div class="sys-item-icon-box sys-bg-amber-light-10">
-          <svg fill="none" viewBox="0 0 24 24" stroke="#F59E0B" stroke-width="2" class="sys-w-16 sys-h-16"><rect x="1" y="3" width="15" height="13"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      <% if @active_assignments.any? %>
+        <% @active_assignments.each do |assignment| %>
+          <div class="sys-item-row">
+            <div class="sys-item-icon-box sys-bg-blue-light-10">
+              <svg fill="none" viewBox="0 0 24 24" stroke="#2563EB" stroke-width="2" class="sys-w-16 sys-h-16"><rect x="1" y="3" width="15" height="13"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <div class="sys-item-info">
+              <div class="sys-item-title"><%= assignment.driver.name %> · <span class="font-mono"><%= assignment.vehicle.plate %></span></div>
+              <div class="sys-item-subtitle"><%= "#{assignment.vehicle.brand} #{assignment.vehicle.model}".strip.presence || assignment.vehicle.type %> · Desde <%= I18n.l(assignment.assigned_at, format: :short) %></div>
+            </div>
+            <span class="sys-badge sys-badge-green">Alocado</span>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="p-8 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+          <svg class="w-10 h-10 mx-auto text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="1" y="3" width="15" height="13"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <p class="text-sm font-semibold text-gray-700">Nenhum veículo alocado no momento</p>
+          <p class="text-xs text-gray-500 mt-1">Acesse a gestão de veículos para atribuir motoristas aos caminhões.</p>
+          <%= link_to "Gerenciar Frota", vehicles_path, class: "mt-4 inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-xl transition" %>
         </div>
-        <div class="sys-item-info">
-          <div class="sys-item-title">Carlos Silva · ABC-1234</div>
-          <div class="sys-item-subtitle">Construtora Nordeste · 240 sacos</div>
-        </div>
-        <span class="sys-badge sys-badge-amber">Em Rota</span>
-      </div>
-      <div class="sys-item-row-alt">
-        <div class="sys-item-icon-box sys-bg-red-light-10">
-          <svg fill="none" viewBox="0 0 24 24" stroke="#EF4444" stroke-width="2" class="sys-w-16 sys-h-16"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
-        </div>
-        <div class="sys-item-info">
-          <div class="sys-item-title">Pedro Alves · XYZ-5678</div>
-          <div class="sys-item-subtitle">Ocorrência: Pneu furado</div>
-        </div>
-        <span class="sys-badge sys-badge-red">Alerta</span>
-      </div>
-      <div class="sys-item-row">
-        <div class="sys-item-icon-box sys-bg-teal-light-10">
-          <svg fill="none" viewBox="0 0 24 24" stroke="#10B981" stroke-width="2" class="sys-w-16 sys-h-16"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <div class="sys-item-info">
-          <div class="sys-item-title">Marcos Oliveira · DEF-9012</div>
-          <div class="sys-item-subtitle">210 km · Distribuição Centro</div>
-        </div>
-        <span class="sys-badge sys-badge-teal">Concluída</span>
-      </div>
+      <% end %>
     </div>
   </div>
 
-  <!-- Status da Frota -->
-  <!-- MOCK DATA: Indicadores de frota estáticos -->
+  <!-- Status da Frota e Alertas -->
   <div class="sys-card sys-p-16">
     <div class="sys-card-header sys-mb-12">
-      <div class="sys-card-title">Status da Frota</div>
+      <div class="sys-card-title">Status da Frota & Alertas</div>
     </div>
     <div class="sys-status-list">
       <div>
         <div class="sys-flex sys-justify-between sys-mb-1 sys-text-11">
-          <span class="sys-text-gray-600">Disponíveis</span>
-          <span class="sys-font-bold sys-text-green">9/12</span>
+          <span class="sys-text-gray-600">Disponíveis / Ativos</span>
+          <span class="sys-font-bold sys-text-green"><%= @available_vehicles %>/<%= @total_vehicles %></span>
         </div>
-        <div class="sys-progress-bar"><div class="sys-progress-fill sys-bg-green sys-w-75"></div></div>
+        <% pct_disp = @total_vehicles > 0 ? (@available_vehicles.to_f / @total_vehicles * 100).round : 0 %>
+        <div class="sys-progress-bar"><div class="sys-progress-fill sys-bg-green" style="width: <%= pct_disp %>%;"></div></div>
       </div>
       <div>
         <div class="sys-flex sys-justify-between sys-mb-1 sys-text-11">
-          <span class="sys-text-gray-600">Em Viagem</span>
-          <span class="sys-font-bold sys-text-amber">2/12</span>
+          <span class="sys-text-gray-600">Em Manutenção</span>
+          <span class="sys-font-bold sys-text-amber"><%= @maintenance_vehicles %>/<%= @total_vehicles %></span>
         </div>
-        <div class="sys-progress-bar"><div class="sys-progress-fill sys-bg-amber sys-w-17"></div></div>
+        <% pct_maint = @total_vehicles > 0 ? (@maintenance_vehicles.to_f / @total_vehicles * 100).round : 0 %>
+        <div class="sys-progress-bar"><div class="sys-progress-fill sys-bg-amber" style="width: <%= pct_maint %>%;"></div></div>
       </div>
       <div>
         <div class="sys-flex sys-justify-between sys-mb-1 sys-text-11">
-          <span class="sys-text-gray-600">Manutenção</span>
-          <span class="sys-font-bold sys-text-red">1/12</span>
+          <span class="sys-text-gray-600">Inativos</span>
+          <span class="sys-font-bold sys-text-red"><%= @inactive_vehicles %>/<%= @total_vehicles %></span>
         </div>
-        <div class="sys-progress-bar"><div class="sys-progress-fill sys-bg-red sys-w-8"></div></div>
+        <% pct_inact = @total_vehicles > 0 ? (@inactive_vehicles.to_f / @total_vehicles * 100).round : 0 %>
+        <div class="sys-progress-bar"><div class="sys-progress-fill sys-bg-red" style="width: <%= pct_inact %>%;"></div></div>
       </div>
     </div>
+
     <div class="sys-mt-6 sys-pt-12 sys-border-top">
-      <div class="sys-text-11 sys-font-bold sys-text-gray-500 sys-mb-2">Alertas de Vencimento</div>
+      <div class="sys-text-11 sys-font-bold sys-text-gray-500 sys-mb-2">Alertas de Vencimento de CNH</div>
       <div class="sys-alert-list">
-        <div class="sys-flex sys-justify-between sys-text-11">
-          <span class="sys-text-gray-700">🚨 GHI-3456 · Seguro</span>
-          <span class="sys-text-red sys-font-bold">Vencido</span>
-        </div>
-        <div class="sys-flex sys-justify-between sys-text-11">
-          <span class="sys-text-gray-700">⚠️ ABC-1234 · Vistoria</span>
-          <span class="sys-text-amber sys-font-bold">8 dias</span>
-        </div>
+        <% if @cnh_alerts.any? %>
+          <% @cnh_alerts.each do |driver| %>
+            <div class="sys-flex sys-justify-between sys-text-11 py-1 border-b border-gray-100 last:border-none">
+              <span class="sys-text-gray-700">👤 <%= driver.name %></span>
+              <% if driver.cnh_expired? %>
+                <span class="sys-text-red sys-font-bold">CNH Vencida</span>
+              <% else %>
+                <span class="sys-text-amber sys-font-bold"><%= ((driver.cnh_expiration - Date.current).to_i) %> dias</span>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="text-xs text-green-600 flex items-center gap-1.5 py-1">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Todas as CNHs em dia
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="sys-mt-4 sys-pt-12 sys-border-top">
+      <div class="sys-text-11 sys-font-bold sys-text-gray-500 sys-mb-2">Alertas de Vencimento de CRLV</div>
+      <div class="sys-alert-list">
+        <% if @crlv_alerts.any? %>
+          <% @crlv_alerts.each do |vehicle| %>
+            <div class="sys-flex sys-justify-between sys-text-11 py-1 border-b border-gray-100 last:border-none">
+              <span class="sys-text-gray-700">🚛 <%= vehicle.plate %> (<%= vehicle.model %>)</span>
+              <% if vehicle.crlv_expired? %>
+                <span class="sys-text-red sys-font-bold">CRLV Vencido</span>
+              <% else %>
+                <span class="sys-text-amber sys-font-bold"><%= ((vehicle.crlv_expiration - Date.current).to_i) %> dias</span>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="text-xs text-green-600 flex items-center gap-1.5 py-1">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Todos os CRLVs em dia
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

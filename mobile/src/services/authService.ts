@@ -76,4 +76,35 @@ export const authService = {
   async logout() {
     await api.delete('/api/v1/drivers/logout');
   },
+
+  /**
+   * Valida o código de 6 dígitos recebido por e-mail no primeiro acesso.
+   */
+  async verifyInvitationCode(email: string, code: string) {
+    const response = await api.post('/api/v1/drivers/invitation/verify_code', {
+      driver: { email, code },
+    });
+    return response.data;
+  },
+
+  /**
+   * Define a nova senha do motorista utilizando o código validado.
+   */
+  async setPasswordWithCode(data: {
+    email: string;
+    code: string;
+    password: string;
+    password_confirmation: string;
+    name?: string;
+  }): Promise<{ user: LoginResponse['data']; token: string | undefined }> {
+    const response = await api.post<LoginResponse>('/api/v1/drivers/invitation/set_password', {
+      driver: data,
+    });
+    const headers = response.headers;
+    const token = headers['authorization'] || headers['Authorization'];
+    return {
+      user: response.data.data,
+      token,
+    };
+  },
 };

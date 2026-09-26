@@ -1,0 +1,59 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Nova Cobrança via Asaas</div>
+    <div class="sys-dash-subtitle">Gere cobranças com chave PIX copia-e-cola, QR Code instantâneo ou Boleto Bancário</div>
+  </div>
+  <div>
+    <%= link_to "← Voltar para Cobranças", payments_path, class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <%= form_with(model: @charge, url: payments_path, local: true, class: "space-y-4") do |f| %>
+    <% if @charge.errors.any? %>
+      <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+        <strong class="font-bold">Corrija os erros abaixo:</strong>
+        <ul class="list-disc list-inside mt-1">
+          <% @charge.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= f.hidden_field :payable_type %>
+    <%= f.hidden_field :payable_id %>
+
+    <div>
+      <%= f.label :client_id, "Cliente Pagador", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.collection_select :client_id, @clients, :id, :name, { prompt: "-- Selecione o cliente ou deixe em branco para avulso --" }, { class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" } %>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :billing_type, "Forma de Pagamento *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.select :billing_type, [["PIX (Instantâneo com QR Code)", "PIX"], ["Boleto Bancário", "BOLETO"], ["Cartão de Crédito", "CREDIT_CARD"]], {}, required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-semibold focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= f.label :value, "Valor da Cobrança (R$) *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+        <%= f.number_field :value, step: "0.01", min: "1", required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-extrabold text-blue-800 focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :due_date, "Data de Vencimento *", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.date_field :due_date, required: true, class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div>
+      <%= f.label :description, "Descrição da Cobrança / Referência", class: "block text-xs font-bold text-gray-700 uppercase mb-1" %>
+      <%= f.text_field :description, placeholder: "Ex: Frete Carga Recife-Salvador ou Aluguel Escavadeira", class: "w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <div class="pt-4 flex justify-end space-x-3 items-center border-t border-gray-100">
+      <%= link_to "Cancelar", payments_path, class: "px-5 py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-800" %>
+      <%= f.submit "Gerar Cobrança Asaas", class: "px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition" %>
+    </div>
+  <% end %>
+</div>

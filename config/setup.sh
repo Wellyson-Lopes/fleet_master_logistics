@@ -49,10 +49,9 @@ if [ "$RAILS_ENV" != "development" ]; then
   echo '--> end migrations'
   echo '--> Precompiling assets'
   rails assets:precompile
-  echo '--> Cleaning assets'
-  rails assets:clobber
 else
-  echo '--> Skiping assets precompilation on development'
+  echo '--> Skipping assets precompilation on development'
 fi
+
 
 exec "$@" # executa o command do container

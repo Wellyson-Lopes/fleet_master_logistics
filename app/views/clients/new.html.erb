@@ -1,0 +1,13 @@
+<div class="sys-dash-topbar">
+  <div>
+    <div class="sys-dash-title">Novo Cliente</div>
+    <div class="sys-dash-subtitle">Cadastre um cliente para emissão de fretes e contratos de locação</div>
+  </div>
+  <div>
+    <%= link_to "← Voltar para Clientes", clients_path, class: "sys-btn sys-btn-ghost sys-btn-sm" %>
+  </div>
+</div>
+
+<div class="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <%= render "form", client: @client %>
+</div>
